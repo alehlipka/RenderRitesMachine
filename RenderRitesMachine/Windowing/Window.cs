@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.Utilities;
 
 namespace RenderRitesMachine.Windowing;
@@ -44,7 +45,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
                                             $"CPU: {FpsCounter.GetCpuTime():0.00} ms";
         #endif
         
-        RenderRites.Machine.SceneManager.Current?.UpdateScene(args);
+        // RenderRites.Machine.SceneManager.Current?.UpdateScene(args);
         
         if (KeyboardState.IsKeyPressed(Keys.Escape))
         {
@@ -59,7 +60,8 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         FpsCounter.BeginGpuMeasure();
         #endif
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        RenderRites.Machine.SceneManager.Current?.RenderScene(args);
+        // RenderRites.Machine.SceneManager.Current?.RenderScene(args);
+        World.Update((float)args.Time);
         #if DEBUG
         FpsCounter.EndGpuMeasure();
         #endif
