@@ -121,9 +121,9 @@ public class World : IDisposable
         {
             component.Dispose();
         }
-        
-        _entities.Clear();
+
         _systems.Clear();
         _components.Clear();
+        _entities.Clear();
     }
 }

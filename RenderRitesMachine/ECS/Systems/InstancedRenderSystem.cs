@@ -3,7 +3,7 @@ using RenderRitesMachine.ECS.Components;
 
 namespace RenderRitesMachine.ECS.Systems;
 
-public class RenderSystem : ISystem
+public class InstancedRenderSystem : ISystem
 {
     public void Update(float deltaTime, World world)
     {
@@ -22,6 +22,7 @@ public class RenderSystem : ISystem
             texture.Bind();
             shader.Use();
             shader.SetMatrix4("model", transform.ModelMatrix);
+            
             GL.BindVertexArray(mesh.Vao);
             GL.DrawElements(mesh.PrimitiveType, mesh.Count, mesh.DrawElementsType, mesh.IndicesStoreLocation);
         }
