@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace RenderRitesMachine.GraphicsResources.Shader;
+namespace RenderRitesMachine.Output;
 
 internal class Shader
 {

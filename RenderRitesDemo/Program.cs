@@ -1,5 +1,5 @@
 ﻿using OpenTK.Windowing.Common;
-using RenderRitesDemo.Scenes;
+using RenderRitesDemo.Scenes.Preloader;
 using RenderRitesMachine;
 
 namespace RenderRitesDemo;
@@ -8,9 +8,8 @@ internal static class Program
 {
     private static void Main()
     {
-        RenderRites.Machine.SceneManager.AddMany([
-            new PreloaderScene("preloader"),
-            new MainScene("main")
+        RenderRites.Machine.Scenes.AddMany([
+            new PreloaderScene("preloader")
         ]).SetCurrent("preloader");
 
         RenderRites.Machine.RunWindow("RenderRites Machine Demo", 0, VSyncMode.On, 8);

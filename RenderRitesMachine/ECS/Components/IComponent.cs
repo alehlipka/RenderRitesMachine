@@ -1,3 +1,3 @@
 namespace RenderRitesMachine.ECS.Components;
 
-public interface IComponent;
+public interface IComponent : IDisposable;
