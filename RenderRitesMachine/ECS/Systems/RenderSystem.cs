@@ -16,8 +16,18 @@ public class RenderSystem : ISystem
 
     public void Render(float deltaTime, World world)
     {
-        var renderItems = world.GetComponents<TransformComponent, MeshComponent, ShaderComponent, TextureComponent>();
-        foreach ((TransformComponent transform, MeshComponent mesh, ShaderComponent shader, TextureComponent texture) in renderItems)
+        var renderItems = world.GetComponents<
+            TransformComponent,
+            MeshComponent,
+            ShaderComponent,
+            TextureComponent
+        >();
+        foreach ((
+            TransformComponent transform,
+            MeshComponent mesh,
+            ShaderComponent shader,
+            TextureComponent texture
+        ) in renderItems)
         {
             texture.Bind();
             shader.Use();

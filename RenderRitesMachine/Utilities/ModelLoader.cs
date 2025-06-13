@@ -14,7 +14,7 @@ public static class ModelLoader
         Scene? scene = importer.ImportFile(path,
             PostProcessSteps.Triangulate |
             PostProcessSteps.GenerateSmoothNormals |
-            PostProcessSteps.GenerateUVCoords
+            PostProcessSteps.GenerateBoundingBoxes
         );
 
         if (scene == null)
@@ -78,6 +78,10 @@ public static class ModelLoader
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.DeleteBuffer(vao);
             GL.DeleteBuffer(ebo);
+
+            BoundingBox aabb = mesh.BoundingBox;
+            Vector3 min = new(aabb.Min.X, aabb.Min.Y, aabb.Min.Z);
+            Vector3 max = new(aabb.Max.X, aabb.Max.Y, aabb.Max.Z);
         
             yield return new MeshComponent()
             {
@@ -85,7 +89,9 @@ public static class ModelLoader
                 PrimitiveType = PrimitiveType.Triangles,
                 Count = indices.Length,
                 DrawElementsType = DrawElementsType.UnsignedInt,
-                IndicesStoreLocation = 0
+                IndicesStoreLocation = 0,
+                Minimum = min,
+                Maximum = max
             };
         }
     }

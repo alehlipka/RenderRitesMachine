@@ -15,26 +15,37 @@ public class PreloaderScene(string name) : Scene(name)
         RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
         
         TextureComponent texture = new(Path.Combine("Assets", "Textures", "debug.jpg"));
-        PerspectiveCameraComponent camera = new() { Position = new Vector3(0, 0, 20) };
+        PerspectiveCameraComponent camera = new() { Position = new Vector3(0, 0, 25) };
         ShaderComponent shader = new(Path.Combine("Assets", "Shaders", "Default"));
-        
-        RenderSystem render = new();
-
-        Entity test = World.CreateEntity();
-        World.AddComponent(test, texture);
-        World.AddComponent(test, camera);
-        World.AddComponent(test, shader);
-        World.AddComponent(test, new TransformComponent(
+        ShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));
+        TransformComponent transform = new(
             position: Vector3.Zero,
             rotation: new RotationInfo { Axis = new Vector3(0.6f, 1.0f, 0.5f), Angle = 0 }
-        ));
+        );
+        
+        // GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+        // GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+
+        Entity cow = World.CreateEntity();
+        World.AddComponent(cow, texture);
+        World.AddComponent(cow, camera);
+        World.AddComponent(cow, shader);
+        World.AddComponent(cow, transform);
         var cubeMeshes = ModelLoader.Load(Path.Combine("Assets", "Objects", "cow.obj"));
         foreach (MeshComponent cubeMesh in cubeMeshes)
         {
-            World.AddComponent(test, cubeMesh);
+            World.AddComponent(cow, cubeMesh);
+            
+            Entity boundingBox = World.CreateEntity();
+            World.AddComponent(boundingBox, BoundingBoxCreator.CreateForEntity(World, cow));
+            World.AddComponent(boundingBox, texture);
+            World.AddComponent(boundingBox, camera);
+            World.AddComponent(boundingBox, boundingShader);
+            World.AddComponent(boundingBox, new TransformComponent(Vector3.Zero));
         }
         
-        World.AddSystem(render);
+        World.AddSystem(new RenderSystem());
+        World.AddSystem(new BoundingBoxRenderSystem());
     }
 
     protected override void Unload()
