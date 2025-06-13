@@ -15,7 +15,7 @@ public class PreloaderScene(string name) : Scene(name)
         RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
         
         TextureComponent texture = new(Path.Combine("Assets", "Textures", "debug.jpg"));
-        PerspectiveCameraComponent camera = new() { Position = new Vector3(0, 0, 100) };
+        PerspectiveCameraComponent camera = new() { Position = new Vector3(0, 0, 20) };
         ShaderComponent shader = new(Path.Combine("Assets", "Shaders", "Default"));
         
         RenderSystem render = new();
@@ -26,9 +26,9 @@ public class PreloaderScene(string name) : Scene(name)
         World.AddComponent(test, shader);
         World.AddComponent(test, new TransformComponent(
             position: Vector3.Zero,
-            rotation: new RotationInfo { Axis = new Vector3(0, 1, 0), Angle = 0 }
+            rotation: new RotationInfo { Axis = new Vector3(0.6f, 1.0f, 0.5f), Angle = 0 }
         ));
-        var cubeMeshes = ModelLoader.Load(Path.Combine("Assets", "Objects", "teddy.obj"));
+        var cubeMeshes = ModelLoader.Load(Path.Combine("Assets", "Objects", "cow.obj"));
         foreach (MeshComponent cubeMesh in cubeMeshes)
         {
             World.AddComponent(test, cubeMesh);
