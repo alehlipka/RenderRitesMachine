@@ -3,9 +3,9 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using RenderRitesMachine.Utilities;
+using RenderRitesMachine.Debug;
 
-namespace RenderRitesMachine.Windowing;
+namespace RenderRitesMachine.Output;
 
 public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWindow(gws, nws)
 {
@@ -26,25 +26,21 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.ClearColor(Color4.Black);
         GL.ActiveTexture(TextureUnit.Texture0);
         
-        RenderRites.Machine.SceneManager.Current?.Initialize();
+        RenderRites.Machine.Scenes.Current?.Initialize();
     }
 
     protected override void OnResize(ResizeEventArgs e)
     {
-        RenderRites.Machine.SceneManager.Current?.ResizeScene(e);
+        RenderRites.Machine.Scenes.Current?.ResizeScene(e);
     }
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
         #if DEBUG
-        FpsCounter.Update(args.Time);
-        RenderRites.Machine.Window!.Title = "RenderRates Machine " +
-                                            $"FPS: {FpsCounter.GetFps():0.0} | " +
-                                            $"GPU: {FpsCounter.GetGpuTime():0.00} ms | " +
-                                            $"CPU: {FpsCounter.GetCpuTime():0.00} ms";
+        RenderRites.Machine.Window!.Title = $"RenderRates Machine FPS: {FpsCounter.GetFps():F0}";
         #endif
         
-        RenderRites.Machine.SceneManager.Current?.UpdateScene(args);
+        RenderRites.Machine.Scenes.Current?.UpdateScene(args);
         
         if (KeyboardState.IsKeyPressed(Keys.Escape))
         {
@@ -55,17 +51,11 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         #if DEBUG
-        FpsCounter.BeginCpuMeasure();
-        FpsCounter.BeginGpuMeasure();
+        FpsCounter.Update();
         #endif
+        
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        RenderRites.Machine.SceneManager.Current?.RenderScene(args);
-        #if DEBUG
-        FpsCounter.EndGpuMeasure();
-        #endif
+        RenderRites.Machine.Scenes.Current?.RenderScene(args);
         SwapBuffers();
-        #if DEBUG
-        FpsCounter.EndCpuMeasure();
-        #endif
     }
 }

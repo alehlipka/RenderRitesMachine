@@ -1,8 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using RenderRitesMachine.Managers;
-using RenderRitesMachine.Windowing;
+using RenderRitesMachine.Output;
 
 namespace RenderRitesMachine;
 
@@ -12,19 +11,11 @@ public sealed class RenderRites
     public static RenderRites Machine => LazyMachine.Value;
 
     public Window? Window;
-    public readonly SceneManager SceneManager;
-    public readonly ObjectManager ObjectManager;
-    public readonly ShaderManager ShaderManager;
-    public readonly TextureManager TextureManager;
-    public readonly Random Random;
+    public readonly SceneManager Scenes;
 
     private RenderRites()
     {
-        SceneManager = new SceneManager();
-        ObjectManager = new ObjectManager();
-        ShaderManager = new ShaderManager();
-        TextureManager = new TextureManager();
-        Random = new Random();
+        Scenes = new SceneManager();
     }
 
     public void RunWindow(string title, double updateFrequency = 60, VSyncMode vSync = VSyncMode.Adaptive, int samples = 4)
@@ -54,9 +45,6 @@ public sealed class RenderRites
         Window = new Window(gws, nws);
         Window.Run();
 
-        SceneManager.Dispose();
-        ObjectManager.Dispose();
-        ShaderManager.Dispose();
-        TextureManager.Dispose();
+        Scenes.Dispose();
     }
 }

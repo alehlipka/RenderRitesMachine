@@ -1,6 +1,6 @@
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 
-namespace RenderRitesMachine.GraphicsResources.Objects;
+namespace RenderRitesMachine.Utilities;
 
 public class RotationInfo
 {

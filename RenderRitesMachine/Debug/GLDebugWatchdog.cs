@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL4;
 
-namespace RenderRitesMachine.Utilities;
+namespace RenderRitesMachine.Debug;
 
 internal static class GlDebugWatchdog
 {

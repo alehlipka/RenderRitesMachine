@@ -1,20 +1,20 @@
-﻿namespace RenderRitesMachine.Managers;
+﻿namespace RenderRitesMachine.Output;
 
-public abstract class Manager<T> : IDisposable where T : Resource
+public class SceneManager : IDisposable
 {
-    private readonly Dictionary<string, T> _items = new();
-    public T? Current { get; private set; }
-
-    public Manager<T> Add(T item)
+    private readonly Dictionary<string, Scene> _items = new();
+    public Scene? Current { get; private set; }
+    
+    public SceneManager Add(Scene item)
     {
         _items.TryAdd(item.Name, item);
 
         return this;
     }
 
-    public Manager<T> AddMany(T[] items)
+    public SceneManager AddMany(Scene[] items)
     {
-        foreach (T item in items)
+        foreach (Scene item in items)
         {
             Add(item);
         }
@@ -22,22 +22,22 @@ public abstract class Manager<T> : IDisposable where T : Resource
         return this;
     }
     
-    public void ForEach(Action<T> action)
+    public void ForEach(Action<Scene> action)
     {
-        foreach (T item in _items.Values)
+        foreach (Scene item in _items.Values)
         {
             action(item);
         }
     }
     
-    public IEnumerable<TResult> Select<TResult>(Func<T, TResult> selector)
+    public IEnumerable<TResult> Select<TResult>(Func<Scene, TResult> selector)
     {
         return _items.Values.Select(selector);
     }
 
     public void SetCurrent(string name)
     {
-        if (!_items.TryGetValue(name, out T? value))
+        if (!_items.TryGetValue(name, out Scene? value))
         {
             Current = null;
             return;
