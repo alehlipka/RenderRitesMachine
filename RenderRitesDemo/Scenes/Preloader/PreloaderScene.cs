@@ -20,7 +20,7 @@ public class PreloaderScene(string name) : Scene(name)
         ShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));
         TransformComponent transform = new(
             position: Vector3.Zero,
-            rotation: new RotationInfo { Axis = new Vector3(0.6f, 1.0f, 0.5f), Angle = 0 }
+            rotation: new RotationInfo { Axis = new Vector3(0.0f, 1.0f, 0.0f) }
         );
         
         // GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);

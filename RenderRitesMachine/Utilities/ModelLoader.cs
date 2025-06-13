@@ -76,7 +76,7 @@ public static class ModelLoader
             GL.BindVertexArray(0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-            GL.DeleteBuffer(vao);
+            GL.DeleteBuffer(vbo);
             GL.DeleteBuffer(ebo);
 
             BoundingBox aabb = mesh.BoundingBox;

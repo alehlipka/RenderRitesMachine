@@ -46,13 +46,13 @@ public static class BoundingBoxCreator
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        GL.DeleteBuffer(vao);
         GL.DeleteBuffer(ebo);
         
         return new BoundingBoxComponent()
         {
             Parent = parent,
             Vao = vao,
+            Vbo = vbo,
             PrimitiveType = PrimitiveType.Lines,
             Count = indices.Length,
             DrawElementsType = DrawElementsType.UnsignedInt,

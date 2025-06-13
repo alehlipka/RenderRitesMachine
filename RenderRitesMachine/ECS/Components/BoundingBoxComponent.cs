@@ -8,6 +8,7 @@ public class BoundingBoxComponent : IComponent
 {
     public Entity Parent;
     public int Vao;
+    public int Vbo;
     public PrimitiveType PrimitiveType;
     public int Count;
     public DrawElementsType DrawElementsType;
@@ -43,14 +44,20 @@ public class BoundingBoxComponent : IComponent
             newMin = Vector3.ComponentMin(newMin, transformedVertices[i]);
             newMax = Vector3.ComponentMax(newMax, transformedVertices[i]);
         }
-
-        BoundingBoxComponent newBox = BoundingBoxCreator.Create(Parent, newMin, newMax);
         
-        Vao = newBox.Vao;
-        PrimitiveType = newBox.PrimitiveType;
-        Count = newBox.Count;
-        DrawElementsType = newBox.DrawElementsType;
-        IndicesStoreLocation = newBox.IndicesStoreLocation;
+        float[] newVertices =
+        [
+            newMin.X, newMin.Y, newMin.Z,
+            newMax.X, newMin.Y, newMin.Z,
+            newMax.X, newMax.Y, newMin.Z,
+            newMin.X, newMax.Y, newMin.Z,
+            newMin.X, newMin.Y, newMax.Z,
+            newMax.X, newMin.Y, newMax.Z,
+            newMax.X, newMax.Y, newMax.Z,
+            newMin.X, newMax.Y, newMax.Z
+        ];
+        
+        GL.NamedBufferSubData(Vbo, IntPtr.Zero, newVertices.Length * sizeof(float), newVertices);
     }
     
     public void Dispose()
