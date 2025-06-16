@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using System.Runtime.CompilerServices;
+using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.ECS.Components;
 
 namespace RenderRitesMachine.ECS.Systems;
@@ -7,28 +8,22 @@ public class RenderSystem : ISystem
 {
     public void Update(float deltaTime, World world)
     {
-        var updateItems = world.GetComponents<TransformComponent>();
-        foreach (TransformComponent transform in updateItems)
+        foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent)))
         {
+            TransformComponent transform = (TransformComponent)tuple[0]!;
             transform.Rotation.Rotate(1.5f, deltaTime);
         }
     }
 
     public void Render(float deltaTime, World world)
     {
-        var renderItems = world.GetComponents<
-            TransformComponent,
-            MeshComponent,
-            ShaderComponent,
-            TextureComponent
-        >();
-        foreach ((
-            TransformComponent transform,
-            MeshComponent mesh,
-            ShaderComponent shader,
-            TextureComponent texture
-        ) in renderItems)
+        foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent), typeof(MeshComponent), typeof(ShaderComponent), typeof(TextureComponent)))
         {
+            TransformComponent transform = (TransformComponent)tuple[0]!;
+            MeshComponent mesh = (MeshComponent)tuple[1]!;
+            ShaderComponent shader = (ShaderComponent)tuple[2]!;
+            TextureComponent texture = (TextureComponent)tuple[3]!;
+            
             texture.Bind();
             shader.Use();
             shader.SetMatrix4("model", transform.ModelMatrix);
@@ -40,9 +35,11 @@ public class RenderSystem : ISystem
     public void Resize(int width, int height, World world)
     {
         GL.Viewport(0, 0, width, height);
-        var resizeItems = world.GetComponents<ShaderComponent, PerspectiveCameraComponent>();
-        foreach ((ShaderComponent shader, PerspectiveCameraComponent camera) in resizeItems)
+        foreach (ITuple tuple in world.GetComponents(typeof(ShaderComponent), typeof(PerspectiveCameraComponent)))
         {
+            ShaderComponent shader = (ShaderComponent)tuple[0]!;
+            PerspectiveCameraComponent camera = (PerspectiveCameraComponent)tuple[1]!;
+            
             shader.Use();
             shader.SetMatrix4("view", camera.ViewMatrix);
             shader.SetMatrix4("projection", camera.ProjectionMatrix);
