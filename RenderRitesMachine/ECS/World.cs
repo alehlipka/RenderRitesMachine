@@ -1,15 +1,16 @@
 using System.Runtime.CompilerServices;
 using RenderRitesMachine.ECS.Components;
-using RenderRitesMachine.ECS.Systems;
+using RenderRitesMachine.ECS.Systems.Contracts;
 
 namespace RenderRitesMachine.ECS;
 
-public class World : IDisposable
+public class World
 {
     private readonly List<Entity> _entities = [];
     private readonly Dictionary<Type, Dictionary<Entity, IComponent>> _components = new();
     private static readonly Dictionary<Type[], Func<IComponent[], ITuple>> TupleFactories = new();
     private readonly List<ISystem> _systems = [];
+    private readonly Dictionary<Type, List<ISystem>> _systemsByInterface = new();
 
     public Entity CreateEntity()
     {
@@ -60,13 +61,51 @@ public class World : IDisposable
         }
     }
 
+    public void AddSystem(ISystem system)
+    {
+        _systems.Add(system);
+        UpdateInterfaceGroups(system);
+    }
+    
+    public void RemoveSystem(ISystem system)
+    {
+        _systems.Remove(system);
+        RebuildInterfaceGroups();
+    }
+
+    public void Resize(int width, int height)
+    {
+        foreach (IResizeSystem resizeSystem in GetSystemsByInterface<IResizeSystem>())
+        {
+            resizeSystem.Resize(width, height, this);
+        }
+    }
+
+    public void Update(float deltaTime)
+    {
+        foreach (IUpdateSystem updateSystem in GetSystemsByInterface<IUpdateSystem>())
+        {
+            updateSystem.Update(deltaTime, this);
+        }
+    }
+
+    public void Render(float deltaTime)
+    {
+        foreach (IRenderSystem renderSystem in GetSystemsByInterface<IRenderSystem>())
+        {
+            renderSystem.Render(deltaTime, this);
+        }
+    }
+    
     private static Func<IComponent[], ITuple> GetTupleFactory(Type[] componentTypes)
     {
-        if (!TupleFactories.TryGetValue(componentTypes, out var factory))
+        if (TupleFactories.TryGetValue(componentTypes, out var factory))
         {
-            factory = CreateTupleFactory(componentTypes);
-            TupleFactories[componentTypes] = factory;
+            return factory;
         }
+        
+        factory = CreateTupleFactory(componentTypes);
+        TupleFactories[componentTypes] = factory;
 
         return factory;
     }
@@ -96,39 +135,35 @@ public class World : IDisposable
         };
     }
 
-    public void AddSystem(ISystem system)
+    private IEnumerable<T> GetSystemsByInterface<T>() where T : class, ISystem
     {
-        _systems.Add(system);
+        return _systemsByInterface.TryGetValue(typeof(T), out var systems)
+            ? systems.Cast<T>()
+            : [];
     }
-
-    public void Resize(int width, int height)
+    
+    private void UpdateInterfaceGroups(ISystem system)
     {
-        _systems.ForEach(system => system.Resize(width, height, this));
-    }
-
-    public void Update(float deltaTime)
-    {
-        _systems.ForEach(system => system.Update(deltaTime, this));
-    }
-
-    public void Render(float deltaTime)
-    {
-        _systems.ForEach(system => system.Render(deltaTime, this));
-    }
-
-    public void Dispose()
-    {
-        _systems.ForEach(system => system.Dispose());
-        var entityComponentDict = _components.Values.SelectMany(entityComponentDict => entityComponentDict.Values
-        );
-
-        foreach (IComponent component in entityComponentDict)
+        foreach (Type interfaceType in GetSupportedInterfaces(system))
         {
-            component.Dispose();
+            if (!_systemsByInterface.ContainsKey(interfaceType))
+            {
+                _systemsByInterface[interfaceType] = [];
+            }
+            
+            _systemsByInterface[interfaceType].Add(system);
         }
-
-        _systems.Clear();
-        _components.Clear();
-        _entities.Clear();
+    }
+    
+    private static IEnumerable<Type> GetSupportedInterfaces(ISystem system)
+    {
+        return system.GetType().GetInterfaces()
+            .Where(type => type != typeof(ISystem) && typeof(ISystem).IsAssignableFrom(type));
+    }
+    
+    private void RebuildInterfaceGroups()
+    {
+        _systemsByInterface.Clear();
+        _systems.ForEach(UpdateInterfaceGroups);
     }
 }

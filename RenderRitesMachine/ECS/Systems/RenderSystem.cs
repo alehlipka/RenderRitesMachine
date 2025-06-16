@@ -1,20 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Systems.Contracts;
 
 namespace RenderRitesMachine.ECS.Systems;
 
-public class RenderSystem : ISystem
+public class RenderSystem : IRenderSystem
 {
-    public void Update(float deltaTime, World world)
-    {
-        foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent)))
-        {
-            TransformComponent transform = (TransformComponent)tuple[0]!;
-            transform.Rotation.Rotate(1.5f, deltaTime);
-        }
-    }
-
     public void Render(float deltaTime, World world)
     {
         foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent), typeof(MeshComponent), typeof(ShaderComponent), typeof(TextureComponent)))
@@ -30,24 +22,22 @@ public class RenderSystem : ISystem
             GL.BindVertexArray(mesh.Vao);
             GL.DrawElements(mesh.PrimitiveType, mesh.Count, mesh.DrawElementsType, mesh.IndicesStoreLocation);
         }
-    }
-
-    public void Resize(int width, int height, World world)
-    {
-        GL.Viewport(0, 0, width, height);
-        foreach (ITuple tuple in world.GetComponents(typeof(ShaderComponent), typeof(PerspectiveCameraComponent)))
+        
+        foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent), typeof(BoundingBoxComponent), typeof(ShaderComponent)))
         {
-            ShaderComponent shader = (ShaderComponent)tuple[0]!;
-            PerspectiveCameraComponent camera = (PerspectiveCameraComponent)tuple[1]!;
+            TransformComponent transform = (TransformComponent)tuple[0]!;
+            BoundingBoxComponent boundingBox = (BoundingBoxComponent)tuple[1]!;
+            ShaderComponent shader = (ShaderComponent)tuple[2]!;
             
             shader.Use();
-            shader.SetMatrix4("view", camera.ViewMatrix);
-            shader.SetMatrix4("projection", camera.ProjectionMatrix);
+            shader.SetMatrix4("model", transform.ModelMatrix);
+            GL.BindVertexArray(boundingBox.Vao);
+            GL.DrawElements(
+                boundingBox.PrimitiveType,
+                boundingBox.Count,
+                boundingBox.DrawElementsType,
+                boundingBox.IndicesStoreLocation
+            );
         }
-    }
-
-    public void Dispose()
-    {
-        
     }
 }
