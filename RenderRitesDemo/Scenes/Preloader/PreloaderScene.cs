@@ -20,7 +20,7 @@ public class PreloaderScene(string name) : Scene(name)
         ShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));
         TransformComponent transform = new(
             position: Vector3.Zero,
-            rotation: new RotationInfo { Axis = new Vector3(0.0f, 1.0f, 0.0f) }
+            rotation: new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) }
         );
 
         Entity cow = World.CreateEntity();
@@ -32,13 +32,14 @@ public class PreloaderScene(string name) : Scene(name)
         foreach (MeshComponent cubeMesh in cubeMeshes)
         {
             World.AddComponent(cow, cubeMesh);
-            
+            #if DEBUG
             Entity boundingBox = World.CreateEntity();
             World.AddComponent(boundingBox, BoundingBoxCreator.CreateForEntity(World, cow));
             World.AddComponent(boundingBox, texture);
             World.AddComponent(boundingBox, camera);
             World.AddComponent(boundingBox, boundingShader);
             World.AddComponent(boundingBox, new TransformComponent(Vector3.Zero));
+            #endif
         }
         
         World.AddSystem(new UpdateSystem());

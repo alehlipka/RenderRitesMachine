@@ -24,6 +24,7 @@ public class UpdateSystem : IUpdateSystem
             transform.Rotation.Rotate(1.5f, deltaTime);
         }
         
+        #if DEBUG
         foreach (ITuple tuple in world.GetComponents(typeof(BoundingBoxComponent)))
         {
             BoundingBoxComponent boundingBox = (BoundingBoxComponent)tuple[0]!;
@@ -31,5 +32,6 @@ public class UpdateSystem : IUpdateSystem
             TransformComponent transform = world.GetComponent<TransformComponent>(boundingBox.Parent);
             boundingBox.Transform(transform.ModelMatrix, boundingBox.OriginalMinimum, boundingBox.OriginalMaximum);
         }
+        #endif
     }
 }

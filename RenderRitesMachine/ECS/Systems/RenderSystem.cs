@@ -23,6 +23,7 @@ public class RenderSystem : IRenderSystem
             GL.DrawElements(mesh.PrimitiveType, mesh.Count, mesh.DrawElementsType, mesh.IndicesStoreLocation);
         }
         
+        #if DEBUG
         foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent), typeof(BoundingBoxComponent), typeof(ShaderComponent)))
         {
             TransformComponent transform = (TransformComponent)tuple[0]!;
@@ -39,5 +40,6 @@ public class RenderSystem : IRenderSystem
                 boundingBox.IndicesStoreLocation
             );
         }
+        #endif
     }
 }
