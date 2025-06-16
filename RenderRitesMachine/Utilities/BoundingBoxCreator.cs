@@ -64,7 +64,7 @@ public static class BoundingBoxCreator
     
     public static BoundingBoxComponent CreateForEntity(World world, Entity entity)
     {
-        MeshComponent meshComponent = world.GetComponent<MeshComponent>(entity);
+        MeshComponent meshComponent = world.GetEntityComponent<MeshComponent>(entity);
         
         return Create(entity, meshComponent.Minimum, meshComponent.Maximum);
     }

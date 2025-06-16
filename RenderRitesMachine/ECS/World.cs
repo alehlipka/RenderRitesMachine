@@ -7,9 +7,9 @@ namespace RenderRitesMachine.ECS;
 public class World
 {
     private readonly List<Entity> _entities = [];
+    private readonly List<ISystem> _systems = [];
     private readonly Dictionary<Type, Dictionary<Entity, IComponent>> _components = new();
     private static readonly Dictionary<Type[], Func<IComponent[], ITuple>> TupleFactories = new();
-    private readonly List<ISystem> _systems = [];
     private readonly Dictionary<Type, List<ISystem>> _systemsByInterface = new();
 
     public Entity CreateEntity()
@@ -30,7 +30,7 @@ public class World
         _components[typeof(T)][entity] = component;
     }
 
-    public T GetComponent<T>(Entity entity) where T : IComponent
+    public T GetEntityComponent<T>(Entity entity) where T : IComponent
     {
         return (T)_components[typeof(T)][entity];
     }
@@ -51,11 +51,13 @@ public class World
         var tupleFactory = GetTupleFactory(componentTypes);
         var components = new IComponent[componentTypes.Length];
 
-        foreach (bool hasAllComponents in _entities
-                     .Select(entity => !dictionaries
-                         .Where((t, i) => !t.TryGetValue(entity, out components[i]!))
-                         .Any())
-                     .Where(hasAllComponents => hasAllComponents))
+        foreach (bool unused
+             in _entities
+                 .Select(entity => !dictionaries
+                     .Where((t, i) => !t.TryGetValue(entity, out components[i]!))
+                     .Any())
+                 .Where(hasAllComponents => hasAllComponents)
+        )
         {
             yield return tupleFactory(components);
         }
@@ -75,26 +77,17 @@ public class World
 
     public void Resize(int width, int height)
     {
-        foreach (IResizeSystem resizeSystem in GetSystemsByInterface<IResizeSystem>())
-        {
-            resizeSystem.Resize(width, height, this);
-        }
+        GetSystemsByInterface<IResizeSystem>().ForEach(system => system.Resize(width, height, this));
     }
 
     public void Update(float deltaTime)
     {
-        foreach (IUpdateSystem updateSystem in GetSystemsByInterface<IUpdateSystem>())
-        {
-            updateSystem.Update(deltaTime, this);
-        }
+        GetSystemsByInterface<IUpdateSystem>().ForEach(system => system.Update(deltaTime, this));
     }
 
     public void Render(float deltaTime)
     {
-        foreach (IRenderSystem renderSystem in GetSystemsByInterface<IRenderSystem>())
-        {
-            renderSystem.Render(deltaTime, this);
-        }
+        GetSystemsByInterface<IRenderSystem>().ForEach(system => system.Render(deltaTime, this));
     }
     
     private static Func<IComponent[], ITuple> GetTupleFactory(Type[] componentTypes)
@@ -135,10 +128,10 @@ public class World
         };
     }
 
-    private IEnumerable<T> GetSystemsByInterface<T>() where T : class, ISystem
+    private List<T> GetSystemsByInterface<T>() where T : class, ISystem
     {
         return _systemsByInterface.TryGetValue(typeof(T), out var systems)
-            ? systems.Cast<T>()
+            ? [..systems.Cast<T>()]
             : [];
     }
     
@@ -157,7 +150,9 @@ public class World
     
     private static IEnumerable<Type> GetSupportedInterfaces(ISystem system)
     {
-        return system.GetType().GetInterfaces()
+        return system
+            .GetType()
+            .GetInterfaces()
             .Where(type => type != typeof(ISystem) && typeof(ISystem).IsAssignableFrom(type));
     }
     
