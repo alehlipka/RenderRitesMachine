@@ -22,9 +22,6 @@ public class PreloaderScene(string name) : Scene(name)
             position: Vector3.Zero,
             rotation: new RotationInfo { Axis = new Vector3(0.0f, 1.0f, 0.0f) }
         );
-        
-        // GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
-        // GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
 
         Entity cow = World.CreateEntity();
         World.AddComponent(cow, texture);
@@ -44,12 +41,10 @@ public class PreloaderScene(string name) : Scene(name)
             World.AddComponent(boundingBox, new TransformComponent(Vector3.Zero));
         }
         
+        World.AddSystem(new UpdateSystem());
+        World.AddSystem(new ResizeSystem());
         World.AddSystem(new RenderSystem());
-        World.AddSystem(new BoundingBoxRenderSystem());
     }
 
-    protected override void Unload()
-    {
-        World.Dispose();
-    }
+    protected override void Unload() { }
 }
