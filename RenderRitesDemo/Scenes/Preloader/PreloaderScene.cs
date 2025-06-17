@@ -18,15 +18,17 @@ public class PreloaderScene(string name) : Scene(name)
         PerspectiveCameraComponent perspectiveCamera = new() { Position = new Vector3(0, 0, 25) };
         TransformComponent cowTransform = new(
             position: new Vector3(-5, 0, 0),
-            rotation: new RotationInfo { Axis = new Vector3(0.0f, 1.0f, 0.0f) }
+            rotation: new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) }
         );
         ShaderComponent defaultShader = new(Path.Combine("Assets", "Shaders", "Default"));
+        ShaderComponent celShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
+        ShaderComponent outlineShader = new(Path.Combine("Assets", "Shaders", "Outline"));
         ShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));
 
         Entity cow = World.CreateEntity();
         World.AddComponent(cow, debugTexture);
         World.AddComponent(cow, perspectiveCamera);
-        World.AddComponent(cow, defaultShader);
+        World.AddComponent(cow, celShader);
         World.AddComponent(cow, cowTransform);
         var cowMeshes = ModelLoader.Load(Path.Combine("Assets", "Objects", "cow.obj"));
         foreach (MeshComponent cowMesh in cowMeshes)
@@ -64,8 +66,8 @@ public class PreloaderScene(string name) : Scene(name)
         #endif
         
         World.AddSystem(new UpdateSystem());
-        World.AddSystem(new ResizeSystem());
-        World.AddSystem(new RenderSystem());
+        World.AddSystem(new ResizeSystem(outlineShader));
+        World.AddSystem(new RenderSystem(outlineShader));
         
         #if DEBUG
         World.AddSystem(new BoundingRenderSystem());

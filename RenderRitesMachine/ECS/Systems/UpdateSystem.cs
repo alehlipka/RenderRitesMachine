@@ -21,7 +21,7 @@ public class UpdateSystem : IUpdateSystem
         foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent)))
         {
             TransformComponent transform = (TransformComponent)tuple[0]!;
-            transform.Rotation.Rotate(1.5f, deltaTime);
+            transform.Rotation.Rotate(.3f, deltaTime);
         }
     }
 }
