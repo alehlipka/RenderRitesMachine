@@ -1,24 +1,22 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
-using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Components;
 
 namespace RenderRitesMachine.Utilities;
 
 public static class BoundingBoxCreator
 {
-    public static BoundingBoxComponent Create(Entity parent, Vector3 min, Vector3 max)
+    public static BoundingBoxComponent Create(MeshComponent meshComponent)
     {
         float[] vertices =
         [
-            min.X, min.Y, min.Z,
-            max.X, min.Y, min.Z,
-            max.X, max.Y, min.Z,
-            min.X, max.Y, min.Z,
-            min.X, min.Y, max.Z,
-            max.X, min.Y, max.Z,
-            max.X, max.Y, max.Z,
-            min.X, max.Y, max.Z
+            meshComponent.Minimum.X, meshComponent.Minimum.Y, meshComponent.Minimum.Z,
+            meshComponent.Maximum.X, meshComponent.Minimum.Y, meshComponent.Minimum.Z,
+            meshComponent.Maximum.X, meshComponent.Maximum.Y, meshComponent.Minimum.Z,
+            meshComponent.Minimum.X, meshComponent.Maximum.Y, meshComponent.Minimum.Z,
+            meshComponent.Minimum.X, meshComponent.Minimum.Y, meshComponent.Maximum.Z,
+            meshComponent.Maximum.X, meshComponent.Minimum.Y, meshComponent.Maximum.Z,
+            meshComponent.Maximum.X, meshComponent.Maximum.Y, meshComponent.Maximum.Z,
+            meshComponent.Minimum.X, meshComponent.Maximum.Y, meshComponent.Maximum.Z
         ];
         
         uint[] indices =
@@ -46,26 +44,16 @@ public static class BoundingBoxCreator
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+        GL.DeleteBuffer(vbo);
         GL.DeleteBuffer(ebo);
         
-        return new BoundingBoxComponent()
+        return new BoundingBoxComponent
         {
-            Parent = parent,
             Vao = vao,
-            Vbo = vbo,
             PrimitiveType = PrimitiveType.Lines,
             Count = indices.Length,
             DrawElementsType = DrawElementsType.UnsignedInt,
-            IndicesStoreLocation = 0,
-            OriginalMinimum = min,
-            OriginalMaximum = max
+            IndicesStoreLocation = 0
         };
-    }
-    
-    public static BoundingBoxComponent CreateForEntity(World world, Entity entity)
-    {
-        MeshComponent meshComponent = world.GetEntityComponent<MeshComponent>(entity);
-        
-        return Create(entity, meshComponent.Minimum, meshComponent.Maximum);
     }
 }
