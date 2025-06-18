@@ -17,6 +17,7 @@ public class OutlineResizeSystem : IResizeSystem
             shader.Use();
             shader.SetMatrix4("view", camera.ViewMatrix);
             shader.SetMatrix4("projection", camera.ProjectionMatrix);
+            shader.SetVector3("cameraPosition", camera.Position);
         }
     }
 }

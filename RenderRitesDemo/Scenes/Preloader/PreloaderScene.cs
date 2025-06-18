@@ -25,11 +25,11 @@ public class PreloaderScene(string name) : Scene(name)
     {
         RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
 
-        PerspectiveCameraComponent perspectiveCamera = new() { Position = new Vector3(0, 0, 5) };
+        PerspectiveCameraComponent perspectiveCamera = new() { Position = new Vector3(0, 0, 16) };
         TextureComponent debugTexture = new(Path.Combine("Assets", "Textures", "debug.jpg"));
         OutlineShaderComponent outlineShader = new(Path.Combine("Assets", "Shaders", "Outline"));
         CelShaderComponent celCelShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
-        MeshComponent sphereMesh = ModelCreator.CreateSphere(1, 20, 20);
+        MeshComponent sphereMesh = ModelCreator.Create(Path.Combine("Assets", "Objects", "capsule.obj")).First();
         TransformComponent sphereTransform = new(new Vector3(0, 0, 0), new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) });
 
         Entity sphere = World.CreateEntity();

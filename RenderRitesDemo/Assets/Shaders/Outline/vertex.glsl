@@ -7,9 +7,15 @@ layout (location = 2) in vec3 aTexture;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform vec3 cameraPosition;
+uniform float outlineThickness = 0.2;
 
 void main()
 {
-    vec3 pos = aPosition + aNormal * 0.02;
-    gl_Position = vec4(pos, 1.0) * model * view * projection;
+    vec3 worldPosition = vec3(vec4(aPosition, 1.0) * model);
+    float distanceToCamera = distance(cameraPosition, worldPosition);
+    float adjustedThickness = outlineThickness * (distanceToCamera * outlineThickness / 10);
+
+    vec3 outlinePosition = aPosition + aNormal * adjustedThickness;
+    gl_Position = vec4(outlinePosition, 1.0) * model * view * projection;
 }
