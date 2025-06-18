@@ -29,7 +29,7 @@ public class PreloaderScene(string name) : Scene(name)
         TextureComponent debugTexture = new(Path.Combine("Assets", "Textures", "debug.jpg"));
         OutlineShaderComponent outlineShader = new(Path.Combine("Assets", "Shaders", "Outline"));
         CelShaderComponent celCelShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
-        MeshComponent sphereMesh = ModelCreator.Create(Path.Combine("Assets", "Objects", "test.obj")).First();
+        MeshComponent sphereMesh = ModelCreator.CreateSphere(1, 40, 40);
         TransformComponent sphereTransform = new(new Vector3(0, 0, 0), new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) });
 
         Entity sphere = World.CreateEntity();
