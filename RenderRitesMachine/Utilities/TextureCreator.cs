@@ -1,13 +1,11 @@
-﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 using StbImageSharp;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.Utilities;
 
-public readonly struct TextureComponent(string path) : IComponent
+public static class TextureCreator
 {
-    public int Handle { get; } = LoadTexture(path);
-
-    private static int LoadTexture(string imagePath)
+    public static int Create(string imagePath)
     {
         StbImage.stbi_set_flip_vertically_on_load(1);
         ImageResult? image = ImageResult.FromStream(
@@ -37,16 +35,5 @@ public readonly struct TextureComponent(string path) : IComponent
         GL.BindTexture(TextureTarget.Texture2D, 0);
 
         return handle;
-    }
-    
-    public void Bind()
-    {
-        GL.BindTexture(TextureTarget.Texture2D, Handle);
-    }
-
-    public void Dispose()
-    {
-        GL.BindTexture(TextureTarget.Texture2D, 0);
-        GL.DeleteTexture(Handle);
     }
 }

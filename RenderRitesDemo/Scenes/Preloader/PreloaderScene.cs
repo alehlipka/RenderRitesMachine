@@ -5,6 +5,7 @@ using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Systems;
 using RenderRitesMachine.ECS.Features.PerspectiveCamera.Components;
+using RenderRitesMachine.ECS.Features.Texture.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Utilities;

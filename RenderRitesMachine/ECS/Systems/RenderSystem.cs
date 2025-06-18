@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Features.Texture.Components;
 
 namespace RenderRitesMachine.ECS.Systems;
 
