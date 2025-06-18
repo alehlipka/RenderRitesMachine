@@ -18,11 +18,11 @@ public sealed class RenderRites
         Scenes = new SceneManager();
     }
 
-    public void RunWindow(string title, double updateFrequency = 60, VSyncMode vSync = VSyncMode.Adaptive, int samples = 4)
+    public void RunWindow(string title, VSyncMode vSync = VSyncMode.Adaptive, int samples = 4)
     {
         GameWindowSettings gws = new()
         {
-            UpdateFrequency = updateFrequency
+            UpdateFrequency = 0.0
         };
 
         NativeWindowSettings nws = new()

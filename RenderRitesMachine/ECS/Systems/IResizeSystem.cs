@@ -1,4 +1,4 @@
-namespace RenderRitesMachine.ECS.Systems.Contracts;
+namespace RenderRitesMachine.ECS.Systems;
 
 public interface IResizeSystem : ISystem
 {

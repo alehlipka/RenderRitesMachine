@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using RenderRitesMachine.ECS.Components;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.ECS.Features.BoundingBox.Components;
 
 public class BoundingBoxComponent : IComponent
 {

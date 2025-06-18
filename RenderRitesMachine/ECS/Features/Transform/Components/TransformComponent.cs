@@ -1,7 +1,8 @@
 ﻿using OpenTK.Mathematics;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Utilities;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.ECS.Features.Transform.Components;
 
 public struct TransformComponent(Vector3 position, RotationInfo? rotation = null, Vector3? scale = null)
     : IComponent
