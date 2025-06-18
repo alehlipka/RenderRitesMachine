@@ -1,10 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Utilities;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.ECS.Features.CelShader.Components;
 
-public readonly struct ShaderComponent(string path) : IComponent
+public readonly struct CelShaderComponent(string path) : IComponent
 {
     private readonly int _handle = ShaderCreator.Create(path);
 

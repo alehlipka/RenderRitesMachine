@@ -1,7 +1,7 @@
 using Assimp;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Features.Mesh.Components;
 using PrimitiveType = OpenTK.Graphics.OpenGL4.PrimitiveType;
 
 namespace RenderRitesMachine.Utilities;

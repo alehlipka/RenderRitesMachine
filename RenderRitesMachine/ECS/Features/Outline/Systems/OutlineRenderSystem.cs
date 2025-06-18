@@ -1,7 +1,8 @@
 using System.Runtime.CompilerServices;
 using OpenTK.Graphics.OpenGL4;
-using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Features.Mesh.Components;
 using RenderRitesMachine.ECS.Features.Outline.Components;
+using RenderRitesMachine.ECS.Features.Transform.Components;
 using RenderRitesMachine.ECS.Systems;
 
 namespace RenderRitesMachine.ECS.Features.Outline.Systems;

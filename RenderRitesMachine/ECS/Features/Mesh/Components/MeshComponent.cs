@@ -1,7 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using RenderRitesMachine.ECS.Components;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.ECS.Features.Mesh.Components;
 
 public struct MeshComponent : IComponent
 {

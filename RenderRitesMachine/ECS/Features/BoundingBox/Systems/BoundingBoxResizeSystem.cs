@@ -6,7 +6,7 @@ using RenderRitesMachine.ECS.Systems;
 
 namespace RenderRitesMachine.ECS.Features.BoundingBox.Systems;
 
-public class BoundingBoxResizeSystem() : IResizeSystem
+public class BoundingBoxResizeSystem : IResizeSystem
 {
     public void Resize(int width, int height, World world)
     {

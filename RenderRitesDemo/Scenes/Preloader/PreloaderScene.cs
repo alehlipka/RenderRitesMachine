@@ -1,14 +1,19 @@
 ﻿using OpenTK.Mathematics;
 using RenderRitesMachine;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Systems;
+using RenderRitesMachine.ECS.Features.CelShader.Components;
+using RenderRitesMachine.ECS.Features.CelShader.Systems;
+using RenderRitesMachine.ECS.Features.Mesh.Components;
 using RenderRitesMachine.ECS.Features.Outline.Components;
 using RenderRitesMachine.ECS.Features.Outline.Systems;
 using RenderRitesMachine.ECS.Features.PerspectiveCamera.Components;
 using RenderRitesMachine.ECS.Features.Texture.Components;
-using RenderRitesMachine.ECS.Systems;
+using RenderRitesMachine.ECS.Features.Transform.Components;
+using RenderRitesMachine.ECS.Features.Transform.Systems;
+using RenderRitesMachine.ECS.Features.Window.Systems;
+using RenderRitesMachine.ECS.Features.Wireframe.System;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Utilities;
 
@@ -23,7 +28,7 @@ public class PreloaderScene(string name) : Scene(name)
         PerspectiveCameraComponent perspectiveCamera = new() { Position = new Vector3(0, 0, 5) };
         TextureComponent debugTexture = new(Path.Combine("Assets", "Textures", "debug.jpg"));
         OutlineShaderComponent outlineShader = new(Path.Combine("Assets", "Shaders", "Outline"));
-        ShaderComponent celShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
+        CelShaderComponent celCelShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
         MeshComponent sphereMesh = ModelCreator.CreateSphere(1, 20, 20);
         TransformComponent sphereTransform = new(new Vector3(0, 0, 0), new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) });
 
@@ -32,15 +37,17 @@ public class PreloaderScene(string name) : Scene(name)
         World.AddComponent(sphere, sphereMesh);
         World.AddComponent(sphere, debugTexture);
         World.AddComponent(sphere, perspectiveCamera);
-        World.AddComponent(sphere, celShader);
+        World.AddComponent(sphere, celCelShader);
         World.AddComponent(sphere, outlineShader);
         World.AddComponent(sphere, sphereTransform);
         
-        World.AddSystem(new ResizeSystem());
+        World.AddSystem(new WindowResizeSystem());
+        World.AddSystem(new WireFrameUpdateSystem());
+        World.AddSystem(new TransformUpdateSystem());
         World.AddSystem(new OutlineResizeSystem());
         World.AddSystem(new OutlineRenderSystem());
-        World.AddSystem(new UpdateSystem());
-        World.AddSystem(new RenderSystem());
+        World.AddSystem(new CelShaderResizeSystem());
+        World.AddSystem(new CelShaderRenderSystem());
         
         #if DEBUG
         BoundingBoxShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));

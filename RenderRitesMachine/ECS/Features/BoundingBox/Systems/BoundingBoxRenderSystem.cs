@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using OpenTK.Graphics.OpenGL4;
-using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Components;
+using RenderRitesMachine.ECS.Features.Transform.Components;
 using RenderRitesMachine.ECS.Systems;
 
 namespace RenderRitesMachine.ECS.Features.BoundingBox.Systems;

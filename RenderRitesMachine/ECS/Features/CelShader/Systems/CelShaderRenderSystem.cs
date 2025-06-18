@@ -1,19 +1,22 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using OpenTK.Graphics.OpenGL4;
-using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Features.CelShader.Components;
+using RenderRitesMachine.ECS.Features.Mesh.Components;
 using RenderRitesMachine.ECS.Features.Texture.Components;
+using RenderRitesMachine.ECS.Features.Transform.Components;
+using RenderRitesMachine.ECS.Systems;
 
-namespace RenderRitesMachine.ECS.Systems;
+namespace RenderRitesMachine.ECS.Features.CelShader.Systems;
 
-public class RenderSystem() : IRenderSystem
+public class CelShaderRenderSystem : IRenderSystem
 {
     public void Render(float deltaTime, World world)
     {
-        foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent), typeof(MeshComponent), typeof(ShaderComponent), typeof(TextureComponent)))
+        foreach (ITuple tuple in world.GetComponents(typeof(TransformComponent), typeof(MeshComponent), typeof(CelShaderComponent), typeof(TextureComponent)))
         {
             TransformComponent transform = (TransformComponent)tuple[0]!;
             MeshComponent mesh = (MeshComponent)tuple[1]!;
-            ShaderComponent shader = (ShaderComponent)tuple[2]!;
+            CelShaderComponent shader = (CelShaderComponent)tuple[2]!;
             TextureComponent texture = (TextureComponent)tuple[3]!;
             
             texture.Bind();
