@@ -6,7 +6,7 @@ using PrimitiveType = OpenTK.Graphics.OpenGL4.PrimitiveType;
 
 namespace RenderRitesMachine.Utilities;
 
-public static class ModelLoader
+public static class ModelCreator
 {
     public static MeshComponent CreateSphere(float radius, int sectors, int stacks)
     {
@@ -82,7 +82,7 @@ public static class ModelLoader
         };
     }
     
-    public static IEnumerable<MeshComponent> Load(string path)
+    public static IEnumerable<MeshComponent> Create(string path)
     {
         AssimpContext importer = new();
         Scene? scene = importer.ImportFile(path,
