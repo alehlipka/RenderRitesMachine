@@ -4,6 +4,7 @@ using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.ECS.Features.BoundingBox.Systems;
+using RenderRitesMachine.ECS.Features.PerspectiveCamera.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Utilities;
@@ -15,13 +16,12 @@ public class PreloaderScene(string name) : Scene(name)
     protected override void Load()
     {
         RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
+
+        PerspectiveCameraComponent perspectiveCamera = new() { Position = new Vector3(0, 0, 25) };
         
         TextureComponent debugTexture = new(Path.Combine("Assets", "Textures", "debug.jpg"));
-        PerspectiveCameraComponent perspectiveCamera = new() { Position = new Vector3(0, 0, 25) };
-        TransformComponent cowTransform = new(
-            position: new Vector3(-5, 0, 0),
-            rotation: new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) }
-        );
+        TransformComponent cowTransform = new(new Vector3(-5, 0, 0), new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) });
+        
         ShaderComponent defaultShader = new(Path.Combine("Assets", "Shaders", "Default"));
         ShaderComponent celShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
         ShaderComponent outlineShader = new(Path.Combine("Assets", "Shaders", "Outline"));
@@ -31,14 +31,14 @@ public class PreloaderScene(string name) : Scene(name)
         World.AddComponent(cow, perspectiveCamera);
         World.AddComponent(cow, celShader);
         World.AddComponent(cow, cowTransform);
-        var cowMeshes = ModelLoader.Load(Path.Combine("Assets", "Objects", "cow.obj"));
+        var cowMeshes = ModelCreator.Create(Path.Combine("Assets", "Objects", "cow.obj"));
         foreach (MeshComponent cowMesh in cowMeshes)
         {
             World.AddComponent(cow, cowMesh);
         }
         
         Entity sphere = World.CreateEntity();
-        MeshComponent sphereMesh = ModelLoader.CreateSphere(2.5f, 20, 20);
+        MeshComponent sphereMesh = ModelCreator.CreateSphere(2.5f, 20, 20);
         TransformComponent sphereTransform = new(
             position: new Vector3(5, 0, 0),
             rotation: new RotationInfo { Axis = new Vector3(1.0f, 1.0f, 1.0f) }

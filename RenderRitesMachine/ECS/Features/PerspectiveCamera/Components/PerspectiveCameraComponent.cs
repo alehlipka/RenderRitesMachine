@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
+using RenderRitesMachine.ECS.Components;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.ECS.Features.PerspectiveCamera.Components;
 
 public struct PerspectiveCameraComponent() : IComponent
 {
