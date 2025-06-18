@@ -18,7 +18,6 @@ public class OutlineRenderSystem : IRenderSystem
             OutlineShaderComponent shader = (OutlineShaderComponent)tuple[2]!;
             
             GL.Disable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
             GL.CullFace(TriangleFace.Front);
             shader.Use();
             shader.SetMatrix4("model", transform.ModelMatrix);
