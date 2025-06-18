@@ -2,7 +2,6 @@
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine.ECS.Components;
-using RenderRitesMachine.ECS.Systems.Contracts;
 
 namespace RenderRitesMachine.ECS.Systems;
 

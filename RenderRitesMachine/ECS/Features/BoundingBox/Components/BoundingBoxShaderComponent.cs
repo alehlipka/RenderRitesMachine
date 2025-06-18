@@ -1,10 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Output;
 
-namespace RenderRitesMachine.ECS.Components;
+namespace RenderRitesMachine.ECS.Features.BoundingBox.Components;
 
-public readonly struct ShaderComponent(string path) : IComponent
+public readonly struct BoundingBoxShaderComponent(string path) : IComponent
 {
     private readonly int _handle = LoadShaders(path);
 

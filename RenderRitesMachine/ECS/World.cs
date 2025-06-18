@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 using RenderRitesMachine.ECS.Components;
-using RenderRitesMachine.ECS.Systems.Contracts;
+using RenderRitesMachine.ECS.Systems;
 
 namespace RenderRitesMachine.ECS;
 

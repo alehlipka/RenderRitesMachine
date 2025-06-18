@@ -2,6 +2,8 @@
 using RenderRitesMachine;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Features.BoundingBox.Components;
+using RenderRitesMachine.ECS.Features.BoundingBox.Systems;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Utilities;
@@ -23,7 +25,6 @@ public class PreloaderScene(string name) : Scene(name)
         ShaderComponent defaultShader = new(Path.Combine("Assets", "Shaders", "Default"));
         ShaderComponent celShader = new(Path.Combine("Assets", "Shaders", "CelShading"));
         ShaderComponent outlineShader = new(Path.Combine("Assets", "Shaders", "Outline"));
-        ShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));
 
         Entity cow = World.CreateEntity();
         World.AddComponent(cow, debugTexture);
@@ -34,14 +35,6 @@ public class PreloaderScene(string name) : Scene(name)
         foreach (MeshComponent cowMesh in cowMeshes)
         {
             World.AddComponent(cow, cowMesh);
-            #if DEBUG
-            Entity boundingBox = World.CreateEntity();
-            World.AddComponent(boundingBox, BoundingBoxCreator.Create(cowMesh));
-            World.AddComponent(boundingBox, debugTexture);
-            World.AddComponent(boundingBox, perspectiveCamera);
-            World.AddComponent(boundingBox, boundingShader);
-            World.AddComponent(boundingBox, cowTransform);
-            #endif
         }
         
         Entity sphere = World.CreateEntity();
@@ -56,21 +49,30 @@ public class PreloaderScene(string name) : Scene(name)
         World.AddComponent(sphere, defaultShader);
         World.AddComponent(sphere, sphereTransform);
         
-        #if DEBUG
-        Entity sphereBoundingBox = World.CreateEntity();
-        World.AddComponent(sphereBoundingBox, BoundingBoxCreator.Create(sphereMesh));
-        World.AddComponent(sphereBoundingBox, debugTexture);
-        World.AddComponent(sphereBoundingBox, perspectiveCamera);
-        World.AddComponent(sphereBoundingBox, boundingShader);
-        World.AddComponent(sphereBoundingBox, sphereTransform);
-        #endif
-        
         World.AddSystem(new UpdateSystem());
         World.AddSystem(new ResizeSystem(outlineShader));
         World.AddSystem(new RenderSystem(outlineShader));
         
         #if DEBUG
-        World.AddSystem(new BoundingRenderSystem());
+        BoundingBoxShaderComponent boundingShader = new(Path.Combine("Assets", "Shaders", "Bounding"));
+        
+        foreach (MeshComponent cowMesh in cowMeshes)
+        {
+            Entity boundingBox = World.CreateEntity();
+            World.AddComponent(boundingBox, BoundingBoxCreator.Create(cowMesh));
+            World.AddComponent(boundingBox, perspectiveCamera);
+            World.AddComponent(boundingBox, boundingShader);
+            World.AddComponent(boundingBox, cowTransform);
+        }
+        
+        Entity sphereBoundingBox = World.CreateEntity();
+        World.AddComponent(sphereBoundingBox, BoundingBoxCreator.Create(sphereMesh));
+        World.AddComponent(sphereBoundingBox, perspectiveCamera);
+        World.AddComponent(sphereBoundingBox, boundingShader);
+        World.AddComponent(sphereBoundingBox, sphereTransform);
+        
+        World.AddSystem(new BoundingBoxResizeSystem());
+        World.AddSystem(new BoundingBoxRenderSystem());
         #endif
     }
 }
