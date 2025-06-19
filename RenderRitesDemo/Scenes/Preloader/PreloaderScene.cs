@@ -11,7 +11,7 @@ public class PreloaderScene(string name) : Scene(name)
     protected override void OnLoad()
     {
         RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
-        AssetsService.AddSphere("demo_sphere", 1.0f, 20, 20);
+        AssetsService.AddSphere("demo_sphere", 1.0f, 50, 50);
         AssetsService.AddShader("cel_shader", Path.Combine("Assets", "Shaders", "CelShading"));
         AssetsService.AddTexture("demo_texture", Path.Combine("Assets", "Textures", "debug.jpg"));
 
@@ -30,9 +30,11 @@ public class PreloaderScene(string name) : Scene(name)
         texture.Name = "demo_texture";
         
         ref PerspectiveCameraComponent camera = ref World.GetPool<PerspectiveCameraComponent>().Add(sphere);
-        camera.Position = new Vector3(0.0f, 0.0f, 5.0f);
-
-        RenderSystems.Add(new RenderSystem());
+        camera.Position = new Vector3(0.0f, 0.0f, 0.0f);
+        camera.Target = transform.Position;
+        
         ResizeSystems.Add(new ResizeSystem());
+        UpdateSystems.Add(new UpdateSystem());
+        RenderSystems.Add(new RenderSystem());
     }
 }

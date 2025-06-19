@@ -1,5 +1,8 @@
 using Leopotam.EcsLite;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
+using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Services;
 
@@ -7,6 +10,8 @@ namespace RenderRitesDemo.ECS;
 
 public class RenderSystem : IEcsRunSystem
 {
+    private bool _isWireFrame;
+    
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
@@ -42,6 +47,11 @@ public class RenderSystem : IEcsRunSystem
                 Matrix4.CreateTranslation(transform.Position);
 
             RenderService.Render(meshAsset, textureAsset, shaderAsset, meshModelMatrix);
+            
+            if (!RenderRites.Machine.Window!.IsKeyPressed(Keys.W)) return;
+        
+            _isWireFrame = !_isWireFrame;
+            GL.PolygonMode(TriangleFace.FrontAndBack, _isWireFrame ? PolygonMode.Line : PolygonMode.Fill);
         }
     }
 }
