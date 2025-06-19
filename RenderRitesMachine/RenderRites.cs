@@ -2,6 +2,7 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using RenderRitesMachine.Output;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine;
 
@@ -12,10 +13,14 @@ public sealed class RenderRites
 
     public Window? Window;
     public readonly SceneManager Scenes;
+    public readonly AssetsService Assets;
+    public readonly RenderService Renderer;
 
     private RenderRites()
     {
         Scenes = new SceneManager();
+        Assets = new AssetsService();
+        Renderer = new RenderService();
     }
 
     public void RunWindow(string title, VSyncMode vSync = VSyncMode.Adaptive, int samples = 4)
@@ -45,6 +50,8 @@ public sealed class RenderRites
         Window = new Window(gws, nws);
         Window.Run();
 
+        Renderer.Dispose();
+        Assets.Dispose();
         Scenes.Dispose();
     }
 }
