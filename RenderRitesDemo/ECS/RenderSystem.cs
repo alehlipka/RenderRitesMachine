@@ -1,7 +1,7 @@
 using Leopotam.EcsLite;
 using OpenTK.Mathematics;
-using RenderRitesMachine;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS;
 
@@ -10,26 +10,38 @@ public class RenderSystem : IEcsRunSystem
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
-        EcsFilter filter = world.Filter<TransformComponent>().Inc<MeshComponent>().End();
-
+        
         var transforms = world.GetPool<TransformComponent>();
         var meshes = world.GetPool<MeshComponent>();
+        var shaders = world.GetPool<ShaderComponent>();
+        var textures = world.GetPool<TextureComponent>();
+        
+        EcsFilter filter = world
+            .Filter<TransformComponent>()
+            .Inc<MeshComponent>()
+            .Inc<ShaderComponent>()
+            .Inc<TextureComponent>()
+            .End();
 
         foreach (int entity in filter)
         {
-            ref TransformComponent transform = ref transforms.Get(entity);
-            ref MeshComponent mesh = ref meshes.Get(entity);
+            TransformComponent transform = transforms.Get(entity);
+            MeshComponent mesh = meshes.Get(entity);
+            ShaderComponent shader = shaders.Get(entity);
+            TextureComponent texture = textures.Get(entity);
 
-            if (mesh.IsVisible)
-            {
-                Matrix4 meshModelMatrix =
-                    Matrix4.CreateScale(transform.Scale) *
-                    Matrix4.CreateFromQuaternion(transform.Quaternion) *
-                    Matrix4.CreateTranslation(transform.Position);
+            if (!mesh.IsVisible) continue;
 
-                MeshAsset meshAsset = RenderRites.Machine.Assets.GetMesh(mesh.Name);
-                RenderRites.Machine.Renderer.Render(meshAsset, meshModelMatrix);
-            }
+            MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
+            ShaderAsset shaderAsset = AssetsService.GetShader(shader.Name);
+            TextureAsset textureAsset = AssetsService.GetTexture(texture.Name);
+            
+            Matrix4 meshModelMatrix =
+                Matrix4.CreateScale(transform.Scale) *
+                Matrix4.CreateFromQuaternion(transform.Quaternion) *
+                Matrix4.CreateTranslation(transform.Position);
+
+            RenderService.Render(meshAsset, textureAsset, shaderAsset, meshModelMatrix);
         }
     }
 }

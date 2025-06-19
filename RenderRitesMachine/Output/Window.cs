@@ -24,7 +24,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.CullFace(TriangleFace.Back);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         GL.ClearColor(Color4.Black);
-        GL.ActiveTexture(TextureUnit.Texture0);
         
         RenderRites.Machine.Scenes.Current?.Initialize();
     }

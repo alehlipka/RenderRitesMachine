@@ -1,17 +1,17 @@
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 
 namespace RenderRitesMachine.Services;
 
-public class RenderService : IDisposable
+public static class RenderService
 {
-    public void Render(MeshAsset meshAsset, Matrix4 meshModelMatrix)
+    public static void Render(MeshAsset mesh, TextureAsset texture, ShaderAsset shader, Matrix4 meshModelMatrix)
     {
-
-    }
-
-    public void Dispose()
-    {
-        
+        texture.Bind();
+        shader.Use();
+        shader.SetMatrix4("model", meshModelMatrix);
+        GL.BindVertexArray(mesh.Vao);
+        GL.DrawElements(PrimitiveType.Triangles, mesh.IndicesCount, DrawElementsType.UnsignedInt, 0);
     }
 }
