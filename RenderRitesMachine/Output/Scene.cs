@@ -1,50 +1,70 @@
-﻿using OpenTK.Windowing.Common;
-using RenderRitesMachine.ECS;
+﻿using Leopotam.EcsLite;
+using OpenTK.Windowing.Common;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.Output;
 
-public abstract class Scene(string name) : IDisposable
+public abstract class Scene : IDisposable
 {
-    public string Name { get; } = name;
-
-    protected readonly World World = new();
+    public string Name { get; }
+    
+    protected readonly EcsWorld World;
+    protected readonly EcsSystems UpdateSystems;
+    protected readonly EcsSystems RenderSystems;
+    protected readonly EcsSystems ResizeSystems;
     
     private bool _isLoaded;
-    
+    private TimeService _timeService;
+
+    protected Scene(string name)
+    {
+        _timeService = new TimeService();
+        
+        Name = name;
+        World = new EcsWorld();
+        UpdateSystems = new EcsSystems(World, _timeService);
+        RenderSystems = new EcsSystems(World, _timeService);
+        ResizeSystems = new EcsSystems(World);
+    }
+
     public void Initialize()
     {
         if (_isLoaded) return;
         _isLoaded = true;
-        Load();
+        OnLoad();
+        UpdateSystems.Init();
     }
-    
+
     public void UpdateScene(FrameEventArgs args)
     {
         if (!_isLoaded) return;
-        
-        World.Update((float)args.Time);
+        _timeService.UpdateDeltaTime = (float)args.Time;
+        UpdateSystems.Run();
     }
-    
+
     public void RenderScene(FrameEventArgs args)
     {
         if (!_isLoaded) return;
-        
-        World.Render((float)args.Time);
+        _timeService.RenderDeltaTime = (float)args.Time;
+        RenderSystems.Run();
     }
-    
+
     public void ResizeScene(ResizeEventArgs e)
     {
         if (!_isLoaded) return;
-        
-        World.Resize(e.Width, e.Height);
+        ResizeSystems.Run();
     }
 
     public void Dispose()
     {
         if (!_isLoaded) return;
         _isLoaded = false;
+        ResizeSystems.Destroy();
+        UpdateSystems.Destroy();
+        RenderSystems.Destroy();
+        World.Destroy();
         GC.SuppressFinalize(this);
     }
 
-    protected abstract void Load();
+    protected abstract void OnLoad();
 }
