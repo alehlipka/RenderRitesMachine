@@ -14,7 +14,7 @@ public abstract class Scene : IDisposable
     protected readonly EcsSystems ResizeSystems;
     
     private bool _isLoaded;
-    private TimeService _timeService;
+    private readonly TimeService _timeService;
 
     protected Scene(string name)
     {

@@ -18,6 +18,7 @@ using TextureMagFilter = OpenTK.Graphics.OpenGL4.TextureMagFilter;
 using TextureMinFilter = OpenTK.Graphics.OpenGL4.TextureMinFilter;
 using TextureParameterName = OpenTK.Graphics.OpenGL4.TextureParameterName;
 using TextureTarget = OpenTK.Graphics.OpenGL4.TextureTarget;
+using TextureType = RenderRitesMachine.Assets.TextureType;
 using TextureWrapMode = OpenTK.Graphics.OpenGL.TextureWrapMode;
 using VertexAttribPointerType = OpenTK.Graphics.OpenGL4.VertexAttribPointerType;
 
@@ -28,6 +29,7 @@ public static class AssetsService
     private static readonly Dictionary<string, MeshAsset> Meshes = [];
     private static readonly Dictionary<string, ShaderAsset> Shaders = [];
     private static readonly Dictionary<string, TextureAsset> Textures = [];
+    private static readonly Dictionary<string, BoundingBoxAsset> BoundingBoxes = [];
 
     public static MeshAsset GetMesh(string name)
     {
@@ -58,8 +60,50 @@ public static class AssetsService
         
         throw new KeyNotFoundException($"No texture found with the name: {name}");
     }
+    
+    public static BoundingBoxAsset GetBoundingBox(string name)
+    {
+        if (BoundingBoxes.TryGetValue(name, out BoundingBoxAsset value))
+        {
+            return value;
+        }
+        
+        throw new KeyNotFoundException($"No bounding box found with the name: {name}");
+    }
 
-    public static void AddTexture(string name, string path)
+    public static void AddBoundingBox(string name)
+    {
+        MeshAsset meshAsset = GetMesh(name);
+        
+        float[] vertices =
+        [
+            meshAsset.Minimum.X, meshAsset.Minimum.Y, meshAsset.Minimum.Z,
+            meshAsset.Maximum.X, meshAsset.Minimum.Y, meshAsset.Minimum.Z,
+            meshAsset.Maximum.X, meshAsset.Maximum.Y, meshAsset.Minimum.Z,
+            meshAsset.Minimum.X, meshAsset.Maximum.Y, meshAsset.Minimum.Z,
+            meshAsset.Minimum.X, meshAsset.Minimum.Y, meshAsset.Maximum.Z,
+            meshAsset.Maximum.X, meshAsset.Minimum.Y, meshAsset.Maximum.Z,
+            meshAsset.Maximum.X, meshAsset.Maximum.Y, meshAsset.Maximum.Z,
+            meshAsset.Minimum.X, meshAsset.Maximum.Y, meshAsset.Maximum.Z
+        ];
+        
+        uint[] indices =
+        [
+            0, 1, 1, 2, 2, 3, 3, 0,
+            4, 5, 5, 6, 6, 7, 7, 4,
+            0, 4, 1, 5, 2, 6, 3, 7
+        ];
+
+        BoundingBoxAsset asset = new()
+        {
+            Vao = GetPositionVao(vertices.ToArray(), indices.ToArray()),
+            IndicesCount = indices.Length
+        };
+        
+        BoundingBoxes.Add(name, asset);
+    }
+
+    public static void AddTexture(string name, TextureType type, string path)
     {
         StbImage.stbi_set_flip_vertically_on_load(1);
         ImageResult? image = ImageResult.FromStream(
@@ -88,7 +132,7 @@ public static class AssetsService
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         GL.BindTexture(TextureTarget.Texture2D, 0);
 
-        TextureAsset asset = new() { Id = handle };
+        TextureAsset asset = new() { Id = handle, Type = type };
         
         Textures.Add(name, asset);
     }
@@ -177,7 +221,7 @@ public static class AssetsService
 
         MeshAsset asset = new()
         {
-            Vao = GetVao(vertices, indices),
+            Vao = GetPositionNormalTextureVao(vertices, indices),
             IndicesCount = indices.Length,
             Minimum = min,
             Maximum = max
@@ -248,7 +292,7 @@ public static class AssetsService
         
         MeshAsset asset = new()
         {
-            Vao = GetVao(vertices.ToArray(), indices.ToArray()),
+            Vao = GetPositionNormalTextureVao(vertices.ToArray(), indices.ToArray()),
             IndicesCount = indices.Count,
             Minimum = min,
             Maximum = max
@@ -257,7 +301,7 @@ public static class AssetsService
         Meshes.Add(name, asset);
     }
     
-    private static int GetVao(float[] vertices, uint[] indices)
+    private static int GetPositionNormalTextureVao(float[] vertices, uint[] indices)
     {
         int vao = GL.GenVertexArray();
         int vbo = GL.GenBuffer();
@@ -279,6 +323,32 @@ public static class AssetsService
         
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
         GL.EnableVertexAttribArray(2);
+
+        GL.BindVertexArray(0);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+        GL.DeleteBuffer(vbo);
+        GL.DeleteBuffer(ebo);
+
+        return vao;
+    }
+    
+    private static int GetPositionVao(float[] vertices, uint[] indices)
+    {
+        int vbo = GL.GenBuffer();
+        int ebo = GL.GenBuffer();
+        int vao = GL.GenVertexArray();
+        
+        GL.BindVertexArray(vao);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+        GL.EnableVertexAttribArray(0);
 
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);

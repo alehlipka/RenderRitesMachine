@@ -13,24 +13,40 @@ public class ResizeSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         
-        var shaders = world.GetPool<ShaderComponent>();
-        var cameras = world.GetPool<PerspectiveCameraComponent>();
+        var shaders = world.GetPool<Shader>();
+        var cameras = world.GetPool<PerspectiveCamera>();
 
-        EcsFilter filter = world.Filter<ShaderComponent>().Inc<PerspectiveCameraComponent>().End();
+        EcsFilter filter = world.Filter<Shader>().Inc<PerspectiveCamera>().End();
         Vector2i clientSize = RenderRites.Machine.Window!.ClientSize;
         
         GL.Viewport(0, 0, clientSize.X, clientSize.Y);
 
         foreach (int entity in filter)
         {
-            ShaderComponent shader = shaders.Get(entity);
-            ref PerspectiveCameraComponent camera = ref cameras.Get(entity);
+            Shader shader = shaders.Get(entity);
+            ref PerspectiveCamera camera = ref cameras.Get(entity);
             
             camera.AspectRatio = clientSize.X / (float)clientSize.Y;
             ShaderAsset shaderAsset = AssetsService.GetShader(shader.Name);
             shaderAsset.Use();
             shaderAsset.SetMatrix4("view", camera.ViewMatrix);
             shaderAsset.SetMatrix4("projection", camera.ProjectionMatrix);
+
+            if (world.GetPool<OutlineTag>().Has(entity))
+            {
+                ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
+                outlineShaderAsset.Use();
+                outlineShaderAsset.SetMatrix4("view", camera.ViewMatrix);
+                outlineShaderAsset.SetMatrix4("projection", camera.ProjectionMatrix);
+            }
+
+            if (world.GetPool<BoundingBoxTag>().Has(entity))
+            {
+                ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");
+                boundingShaderAsset.Use();
+                boundingShaderAsset.SetMatrix4("view", camera.ViewMatrix);
+                boundingShaderAsset.SetMatrix4("projection", camera.ProjectionMatrix);
+            }
         }
     }
 }

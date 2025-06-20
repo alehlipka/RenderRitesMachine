@@ -5,9 +5,10 @@ namespace RenderRitesMachine.Assets;
 public struct TextureAsset
 {
     public int Id;
+    public TextureType Type;
     
     public void Bind()
     {
-        GL.BindTextureUnit(0, Id);
+        GL.BindTextureUnit((int)Type, Id);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace RenderRitesDemo.ECS;
 
-public struct ShaderComponent
+public struct Shader
 {
     public string Name;
 }

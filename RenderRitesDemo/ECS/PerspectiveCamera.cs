@@ -4,7 +4,7 @@ using RenderRitesMachine;
 
 namespace RenderRitesDemo.ECS;
 
-public struct PerspectiveCameraComponent : IEcsAutoReset<PerspectiveCameraComponent>
+public struct PerspectiveCamera : IEcsAutoReset<PerspectiveCamera>
 {
     public Vector3 Position;
     public Vector3 Target;
@@ -17,7 +17,7 @@ public struct PerspectiveCameraComponent : IEcsAutoReset<PerspectiveCameraCompon
     public Matrix4 ViewMatrix => Matrix4.LookAt(Position, Target, Up);
     public Matrix4 ProjectionMatrix => Matrix4.CreatePerspectiveFieldOfView(FieldOfView, AspectRatio, NearPlane, FarPlane);
     
-    public void AutoReset(ref PerspectiveCameraComponent component)
+    public void AutoReset(ref PerspectiveCamera component)
     {
         component.Position = Vector3.Zero;
         component.Target = Vector3.Zero;

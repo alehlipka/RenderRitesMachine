@@ -1,6 +1,6 @@
 ﻿namespace RenderRitesDemo.ECS;
 
-public struct TextureComponent
+public struct ColorTexture
 {
     public string Name;
 }
