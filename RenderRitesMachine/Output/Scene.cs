@@ -1,5 +1,6 @@
 ﻿using Leopotam.EcsLite;
 using OpenTK.Windowing.Common;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.Output;
@@ -12,19 +13,23 @@ public abstract class Scene : IDisposable
     protected readonly EcsSystems UpdateSystems;
     protected readonly EcsSystems RenderSystems;
     protected readonly EcsSystems ResizeSystems;
+    protected readonly PerspectiveCamera Camera;
     
     private bool _isLoaded;
     private readonly TimeService _timeService;
+    private readonly SystemSharedObject _shared;
 
     protected Scene(string name)
     {
         _timeService = new TimeService();
-        
+        Camera = new PerspectiveCamera();
+        _shared = new SystemSharedObject(Camera, _timeService);
+
         Name = name;
         World = new EcsWorld();
-        UpdateSystems = new EcsSystems(World, _timeService);
-        RenderSystems = new EcsSystems(World, _timeService);
-        ResizeSystems = new EcsSystems(World);
+        UpdateSystems = new EcsSystems(World, _shared);
+        RenderSystems = new EcsSystems(World, _shared);
+        ResizeSystems = new EcsSystems(World, _shared);
     }
 
     public void Initialize()

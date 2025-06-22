@@ -1,6 +1,7 @@
 using Leopotam.EcsLite;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS;
@@ -11,11 +12,12 @@ public class RenderSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         
+        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+        
         var transforms = world.GetPool<Transform>();
         var meshes = world.GetPool<Mesh>();
         var shaders = world.GetPool<Shader>();
         var textures = world.GetPool<ColorTexture>();
-        var cameras = world.GetPool<PerspectiveCamera>();
         var outlines = world.GetPool<OutlineTag>();
         var boundings = world.GetPool<BoundingBoxTag>();
         
@@ -24,7 +26,6 @@ public class RenderSystem : IEcsRunSystem
             .Inc<Mesh>()
             .Inc<Shader>()
             .Inc<ColorTexture>()
-            .Inc<PerspectiveCamera>()
             .End();
 
         foreach (int entity in filter)
@@ -36,7 +37,6 @@ public class RenderSystem : IEcsRunSystem
             Transform transform = transforms.Get(entity);
             Shader shader = shaders.Get(entity);
             ColorTexture colorTexture = textures.Get(entity);
-            PerspectiveCamera perspectiveCamera = cameras.Get(entity);
 
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
             ShaderAsset shaderAsset = AssetsService.GetShader(shader.Name);
@@ -50,7 +50,7 @@ public class RenderSystem : IEcsRunSystem
             if (outlines.Has(entity) && outlines.Get(entity).IsVisible)
             {
                 ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
-                RenderService.RenderOutline(meshAsset, outlineShaderAsset, meshModelMatrix, perspectiveCamera.Position);
+                RenderService.RenderOutline(meshAsset, outlineShaderAsset, meshModelMatrix, shared.Camera.Position);
             }
 
             RenderService.Render(meshAsset, shaderAsset, meshModelMatrix, textureAsset);

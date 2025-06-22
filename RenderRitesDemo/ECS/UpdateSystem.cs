@@ -4,6 +4,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 using RenderRitesMachine.Utilities;
 
@@ -16,34 +17,30 @@ public class UpdateSystem : IEcsRunSystem
         MouseState mouse = RenderRites.Machine.Window!.MouseState;
 
         EcsWorld world = systems.GetWorld();
-
-        TimeService time = systems.GetShared<TimeService>();
+        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
         var transforms = world.GetPool<Transform>();
-        var cameras = world.GetPool<PerspectiveCamera>();
         var meshes = world.GetPool<Mesh>();
 
         EcsFilter filter = world
             .Filter<Transform>()
             .Inc<Mesh>()
-            .Inc<PerspectiveCamera>()
             .End();
 
         foreach (int entity in filter)
         {
             ref Transform transform = ref transforms.Get(entity);
-            transform.RotationAngle += 1.0f * time.UpdateDeltaTime;
+            transform.RotationAngle += 1.0f * shared.Time.UpdateDeltaTime;
             Matrix4 modelMatrix =
                 Matrix4.CreateScale(transform.Scale) *
                 Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(transform.RotationAxis, transform.RotationAngle)) *
                 Matrix4.CreateTranslation(transform.Position);
 
-            PerspectiveCamera camera = cameras.Get(entity);
             Mesh mesh = meshes.Get(entity);
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
 
             float? hitDistance = Ray
-                .GetFromScreen(mouse.X, mouse.Y, camera.Position, camera.ProjectionMatrix, camera.ViewMatrix)
+                .GetFromScreen(mouse.X, mouse.Y, shared.Camera.Position, shared.Camera.ProjectionMatrix, shared.Camera.ViewMatrix)
                 .TransformToLocalSpace(modelMatrix)
                 .IntersectsAABB(meshAsset.Minimum, meshAsset.Maximum);
 

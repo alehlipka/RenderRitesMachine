@@ -65,12 +65,7 @@ public class PreloaderScene(string name) : Scene(name)
         cowShader.Name = "cel";
         sphereShader.Name = "cel";
 
-        var cameras = World.GetPool<PerspectiveCamera>();
-        ref PerspectiveCamera cowCamera = ref cameras.Add(cow);
-        ref PerspectiveCamera sphereCamera = ref cameras.Add(sphere);
-        Vector3 cameraPosition = new(0.0f, 0.0f, 25.0f);
-        cowCamera.Position = cameraPosition;
-        sphereCamera.Position = cameraPosition;
+        Camera.Position = new(0.0f, 0.0f, 25.0f);
 
         ResizeSystems.Add(new ResizeSystem());
         UpdateSystems.Add(new UpdateSystem());
