@@ -9,6 +9,6 @@ internal static class Program
     private static void Main()
     {
         RenderRites.Machine.Scenes.Add(new PreloaderScene("preloader")).SetCurrent("preloader");
-        RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.On, 8);
+        RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.Off, 8);
     }
 }

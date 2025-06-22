@@ -1,8 +1,5 @@
 using Leopotam.EcsLite;
-using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Services;
 
@@ -10,8 +7,6 @@ namespace RenderRitesDemo.ECS;
 
 public class RenderSystem : IEcsRunSystem
 {
-    private bool _isWireFrame;
-    
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
@@ -21,6 +16,8 @@ public class RenderSystem : IEcsRunSystem
         var shaders = world.GetPool<Shader>();
         var textures = world.GetPool<ColorTexture>();
         var cameras = world.GetPool<PerspectiveCamera>();
+        var outlines = world.GetPool<OutlineTag>();
+        var boundings = world.GetPool<BoundingBoxTag>();
         
         EcsFilter filter = world
             .Filter<Transform>()
@@ -47,10 +44,10 @@ public class RenderSystem : IEcsRunSystem
             
             Matrix4 meshModelMatrix =
                 Matrix4.CreateScale(transform.Scale) *
-                Matrix4.CreateFromQuaternion(transform.Quaternion) *
+                Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(transform.RotationAxis, transform.RotationAngle)) *
                 Matrix4.CreateTranslation(transform.Position);
-            
-            if (world.GetPool<OutlineTag>().Has(entity))
+
+            if (outlines.Has(entity) && outlines.Get(entity).IsVisible)
             {
                 ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
                 RenderService.RenderOutline(meshAsset, outlineShaderAsset, meshModelMatrix, perspectiveCamera.Position);
@@ -58,17 +55,12 @@ public class RenderSystem : IEcsRunSystem
 
             RenderService.Render(meshAsset, shaderAsset, meshModelMatrix, textureAsset);
             
-            if (world.GetPool<BoundingBoxTag>().Has(entity))
+            if (boundings.Has(entity) && boundings.Get(entity).IsVisible)
             {
                 ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");
                 BoundingBoxAsset boundingBoxAsset = AssetsService.GetBoundingBox(mesh.Name);
                 RenderService.Render(boundingBoxAsset, boundingShaderAsset, meshModelMatrix);
             }
-            
-            if (!RenderRites.Machine.Window!.IsKeyPressed(Keys.W)) return;
-        
-            _isWireFrame = !_isWireFrame;
-            GL.PolygonMode(TriangleFace.FrontAndBack, _isWireFrame ? PolygonMode.Line : PolygonMode.Fill);
         }
     }
 }
