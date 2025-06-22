@@ -1,6 +1,7 @@
 using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine;
 using RenderRitesMachine.Assets;
@@ -14,7 +15,8 @@ public class UpdateSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
-        MouseState mouse = RenderRites.Machine.Window!.MouseState;
+        RenderRitesMachine.Output.Window window = RenderRites.Machine.Window!;
+        MouseState mouse = window.MouseState;
 
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
@@ -54,22 +56,19 @@ public class UpdateSystem : IEcsRunSystem
             }
         }
 
-        if (RenderRites.Machine.Window!.IsKeyPressed(Keys.W))
+        if (window.IsKeyPressed(Keys.W))
         {
             PolygonMode currentMode = (PolygonMode)GL.GetInteger(GetPName.PolygonMode);
-            GL.PolygonMode(TriangleFace.FrontAndBack, (currentMode == PolygonMode.Fill) ? PolygonMode.Line : PolygonMode.Fill);
+            GL.PolygonMode(TriangleFace.FrontAndBack,
+                (currentMode == PolygonMode.Fill) ? PolygonMode.Line : PolygonMode.Fill
+            );
         }
 
-        if (RenderRites.Machine.Window!.IsKeyPressed(Keys.F))
+        if (window.IsKeyPressed(Keys.F))
         {
-            if (RenderRites.Machine.Window!.WindowState != OpenTK.Windowing.Common.WindowState.Fullscreen)
-            {
-                RenderRites.Machine.Window!.WindowState = OpenTK.Windowing.Common.WindowState.Fullscreen;
-            }
-            else
-            {
-                RenderRites.Machine.Window!.WindowState = OpenTK.Windowing.Common.WindowState.Normal;
-            }
+            window.WindowState = (window.WindowState != WindowState.Fullscreen)
+                ? WindowState.Fullscreen
+                : WindowState.Normal;
         }
     }
 }
