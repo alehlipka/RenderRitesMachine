@@ -30,14 +30,14 @@ public class PreloaderScene(string name) : Scene(name)
         var outlines = World.GetPool<OutlineTag>();
         ref OutlineTag cowOutline = ref outlines.Add(cow);
         ref OutlineTag sphereOutline = ref outlines.Add(sphere);
-        cowOutline.IsVisible = true;
-        sphereOutline.IsVisible = true;
 
         var boundingBoxes = World.GetPool<BoundingBoxTag>();
         ref BoundingBoxTag cowBoundingBox = ref boundingBoxes.Add(cow);
         ref BoundingBoxTag sphereBoundingBox = ref boundingBoxes.Add(sphere);
+        #if DEBUG
         cowBoundingBox.IsVisible = true;
         sphereBoundingBox.IsVisible = true;
+        #endif
 
         var transforms = World.GetPool<Transform>();
         ref Transform cowTransform = ref transforms.Add(cow);
