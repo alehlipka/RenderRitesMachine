@@ -14,13 +14,11 @@ public static class FpsCounter
         Stopwatch = new Stopwatch();
     }
     
-    [Conditional("DEBUG")]
     public static void Initialize()
     {
         Stopwatch.Start();
     }
 
-    [Conditional("DEBUG")]
     public static void Update()
     {
         _frameCount++;

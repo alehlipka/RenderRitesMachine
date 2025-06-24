@@ -11,9 +11,9 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
 {
     protected override void OnLoad()
     {
+        FpsCounter.Initialize();
         #if DEBUG
         GlDebugWatchdog.Initialize();
-        FpsCounter.Initialize();
         #endif
         
         GL.Enable(EnableCap.CullFace);
@@ -35,9 +35,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
-        #if DEBUG
         RenderRites.Machine.Window!.Title = $"RenderRates Machine FPS: {FpsCounter.GetFps():F0}";
-        #endif
         
         RenderRites.Machine.Scenes.Current?.UpdateScene(args);
         
@@ -49,9 +47,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
 
     protected override void OnRenderFrame(FrameEventArgs args)
     {
-        #if DEBUG
         FpsCounter.Update();
-        #endif
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         RenderRites.Machine.Scenes.Current?.RenderScene(args);

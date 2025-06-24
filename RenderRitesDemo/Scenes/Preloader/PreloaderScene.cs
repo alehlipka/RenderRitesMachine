@@ -20,7 +20,9 @@ public class PreloaderScene(string name) : Scene(name)
 
         AssetsService.AddShader("cel", Path.Combine("Assets", "Shaders", "CelShading"));
         AssetsService.AddShader("outline", Path.Combine("Assets", "Shaders", "Outline"));
+        #if DEBUG
         AssetsService.AddShader("bounding", Path.Combine("Assets", "Shaders", "Bounding"));
+        #endif
 
         AssetsService.AddTexture("debug", TextureType.ColorMap, Path.Combine("Assets", "Textures", "debug.jpg"));
 
@@ -65,10 +67,13 @@ public class PreloaderScene(string name) : Scene(name)
         cowShader.Name = "cel";
         sphereShader.Name = "cel";
 
-        Camera.Position = new(0.0f, 0.0f, 25.0f);
+        Camera.Position = new Vector3(0.0f, 0.0f, 25.0f);
 
         ResizeSystems.Add(new ResizeSystem());
+        
         UpdateSystems.Add(new UpdateSystem());
+        UpdateSystems.Add(new IntersectDetectSystem());
+        
         RenderSystems.Add(new RenderSystem());
     }
 }

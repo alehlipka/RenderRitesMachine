@@ -1,22 +1,25 @@
 using Leopotam.EcsLite;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine;
+using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
+using RenderRitesMachine.Services;
+using RenderRitesMachine.Utilities;
 
 namespace RenderRitesDemo.ECS;
 
-public class UpdateSystem : IEcsRunSystem
+public class IntersectDetectSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
         RenderRitesMachine.Output.Window window = RenderRites.Machine.Window!;
+        MouseState mouse = window.MouseState;
 
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
         var transforms = world.GetPool<Transform>();
+        var meshes = world.GetPool<Mesh>();
 
         EcsFilter filter = world
             .Filter<Transform>()
@@ -27,21 +30,15 @@ public class UpdateSystem : IEcsRunSystem
         {
             ref Transform transform = ref transforms.Get(entity);
             transform.RotationAngle += 1.0f * shared.Time.UpdateDeltaTime;
-        }
 
-        if (window.IsKeyPressed(Keys.W))
-        {
-            PolygonMode currentMode = (PolygonMode)GL.GetInteger(GetPName.PolygonMode);
-            GL.PolygonMode(TriangleFace.FrontAndBack,
-                (currentMode == PolygonMode.Fill) ? PolygonMode.Line : PolygonMode.Fill
-            );
-        }
+            MeshAsset meshAsset = AssetsService.GetMesh(meshes.Get(entity).Name);
 
-        if (window.IsKeyPressed(Keys.F))
-        {
-            window.WindowState = (window.WindowState != WindowState.Fullscreen)
-                ? WindowState.Fullscreen
-                : WindowState.Normal;
+            float? hitDistance = Ray
+                .GetFromScreen(mouse.X, mouse.Y, shared.Camera.Position, shared.Camera.ProjectionMatrix, shared.Camera.ViewMatrix)
+                .TransformToLocalSpace(transform.ModelMatrix)
+                .IntersectsAABB(meshAsset.Minimum, meshAsset.Maximum);
+
+            world.GetPool<OutlineTag>().Get(entity).IsVisible = hitDistance != null;
         }
     }
 }

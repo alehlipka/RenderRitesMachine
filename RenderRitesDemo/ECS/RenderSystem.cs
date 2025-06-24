@@ -1,5 +1,4 @@
 using Leopotam.EcsLite;
-using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
@@ -41,25 +40,20 @@ public class RenderSystem : IEcsRunSystem
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
             ShaderAsset shaderAsset = AssetsService.GetShader(shader.Name);
             TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
-            
-            Matrix4 meshModelMatrix =
-                Matrix4.CreateScale(transform.Scale) *
-                Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(transform.RotationAxis, transform.RotationAngle)) *
-                Matrix4.CreateTranslation(transform.Position);
 
             if (outlines.Has(entity) && outlines.Get(entity).IsVisible)
             {
                 ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
-                RenderService.RenderOutline(meshAsset, outlineShaderAsset, meshModelMatrix, shared.Camera.Position);
+                RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
             }
 
-            RenderService.Render(meshAsset, shaderAsset, meshModelMatrix, textureAsset);
+            RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
             
             if (boundings.Has(entity) && boundings.Get(entity).IsVisible)
             {
                 ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");
                 BoundingBoxAsset boundingBoxAsset = AssetsService.GetBoundingBox(mesh.Name);
-                RenderService.Render(boundingBoxAsset, boundingShaderAsset, meshModelMatrix);
+                RenderService.Render(boundingBoxAsset, boundingShaderAsset, transform.ModelMatrix);
             }
         }
     }

@@ -42,6 +42,7 @@ public class ResizeSystem : IEcsRunSystem
                 outlineShaderAsset.SetMatrix4("projection", projectionMatrix);
             }
 
+            #if DEBUG
             if (world.GetPool<BoundingBoxTag>().Has(entity))
             {
                 ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");
@@ -49,6 +50,7 @@ public class ResizeSystem : IEcsRunSystem
                 boundingShaderAsset.SetMatrix4("view", viewMatrix);
                 boundingShaderAsset.SetMatrix4("projection", projectionMatrix);
             }
+            #endif
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL4;
 
 namespace RenderRitesMachine.Debug;
 
 internal static class GlDebugWatchdog
 {
-    [Conditional("DEBUG")]
     internal static void Initialize()
     {
         GL.Enable(EnableCap.DebugOutput);

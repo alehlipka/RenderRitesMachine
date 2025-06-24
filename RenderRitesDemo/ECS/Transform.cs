@@ -10,6 +10,11 @@ public struct Transform : IEcsAutoReset<Transform>
     public Vector3 RotationAxis;
     public float RotationAngle;
 
+    public Matrix4 ModelMatrix => 
+        Matrix4.CreateScale(Scale) *
+        Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(RotationAxis, RotationAngle)) *
+        Matrix4.CreateTranslation(Position);
+
     public void AutoReset(ref Transform component)
     {
         component.Position = Vector3.Zero;
