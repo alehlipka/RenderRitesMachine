@@ -12,9 +12,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     protected override void OnLoad()
     {
         FpsCounter.Initialize();
-        #if DEBUG
         GlDebugWatchdog.Initialize();
-        #endif
         
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Multisample);

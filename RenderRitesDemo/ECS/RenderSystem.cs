@@ -1,4 +1,5 @@
 using Leopotam.EcsLite;
+using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
@@ -15,15 +16,13 @@ public class RenderSystem : IEcsRunSystem
         
         var transforms = world.GetPool<Transform>();
         var meshes = world.GetPool<Mesh>();
-        var shaders = world.GetPool<Shader>();
         var textures = world.GetPool<ColorTexture>();
-        var outlines = world.GetPool<OutlineTag>();
+        var outlines = world.GetPool<Outline>();
         var boundings = world.GetPool<BoundingBoxTag>();
         
         EcsFilter filter = world
             .Filter<Transform>()
             .Inc<Mesh>()
-            .Inc<Shader>()
             .Inc<ColorTexture>()
             .End();
 
@@ -34,11 +33,10 @@ public class RenderSystem : IEcsRunSystem
             if (!mesh.IsVisible) continue;
             
             Transform transform = transforms.Get(entity);
-            Shader shader = shaders.Get(entity);
             ColorTexture colorTexture = textures.Get(entity);
 
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
-            ShaderAsset shaderAsset = AssetsService.GetShader(shader.Name);
+            ShaderAsset shaderAsset = AssetsService.GetShader("cel");
             TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
 
             if (outlines.Has(entity) && outlines.Get(entity).IsVisible)

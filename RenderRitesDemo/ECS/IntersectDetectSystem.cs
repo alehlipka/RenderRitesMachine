@@ -1,5 +1,6 @@
 using Leopotam.EcsLite;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
@@ -12,8 +13,7 @@ public class IntersectDetectSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
-        RenderRitesMachine.Output.Window window = RenderRites.Machine.Window!;
-        MouseState mouse = window.MouseState;
+        MouseState mouse = RenderRites.Machine.Window!.MouseState;
 
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
@@ -28,8 +28,7 @@ public class IntersectDetectSystem : IEcsRunSystem
 
         foreach (int entity in filter)
         {
-            ref Transform transform = ref transforms.Get(entity);
-            transform.RotationAngle += 1.0f * shared.Time.UpdateDeltaTime;
+            Transform transform = transforms.Get(entity);
 
             MeshAsset meshAsset = AssetsService.GetMesh(meshes.Get(entity).Name);
 
@@ -38,7 +37,7 @@ public class IntersectDetectSystem : IEcsRunSystem
                 .TransformToLocalSpace(transform.ModelMatrix)
                 .IntersectsAABB(meshAsset.Minimum, meshAsset.Maximum);
 
-            world.GetPool<OutlineTag>().Get(entity).IsVisible = hitDistance != null;
+            world.GetPool<Outline>().Get(entity).IsVisible = hitDistance != null;
         }
     }
 }

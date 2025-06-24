@@ -38,9 +38,7 @@ public sealed class RenderRites
             MinimumClientSize = new Vector2i(800, 600)
         };
 
-        #if DEBUG
         nws.Flags |= ContextFlags.Debug;
-        #endif
         
         Window = new Window(gws, nws);
         Window.Run();
