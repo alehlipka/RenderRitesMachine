@@ -1,6 +1,6 @@
 namespace RenderRitesDemo.ECS.Features.Outline.Components;
 
-public struct Outline
+public struct OutlineTag
 {
     public bool IsVisible;
 }

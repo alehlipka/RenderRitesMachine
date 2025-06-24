@@ -1,16 +1,16 @@
-using Leopotam.EcsLite;
+﻿using Leopotam.EcsLite;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
-namespace RenderRitesDemo.ECS.Features.Outline.Systems;
+namespace RenderRitesDemo.ECS.Features.BoundingBox.Systems;
 
-public class OutlineResizeSystem : IEcsRunSystem
+public class BoundingBoxResizeSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        ShaderAsset shader = AssetsService.GetShader("outline");
+        ShaderAsset shader = AssetsService.GetShader("bounding");
 
         shader.Use();
         shader.SetMatrix4("view", shared.Camera.ViewMatrix);

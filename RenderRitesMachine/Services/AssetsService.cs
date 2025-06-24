@@ -71,9 +71,9 @@ public static class AssetsService
         throw new KeyNotFoundException($"No bounding box found with the name: {name}");
     }
 
-    public static void AddBoundingBox(string name)
+    public static void AddBoundingBox(string meshName)
     {
-        MeshAsset meshAsset = GetMesh(name);
+        MeshAsset meshAsset = GetMesh(meshName);
         
         float[] vertices =
         [
@@ -100,7 +100,7 @@ public static class AssetsService
             IndicesCount = indices.Length
         };
         
-        BoundingBoxes.Add(name, asset);
+        BoundingBoxes.Add(meshName, asset);
     }
 
     public static void AddTexture(string name, TextureType type, string path)

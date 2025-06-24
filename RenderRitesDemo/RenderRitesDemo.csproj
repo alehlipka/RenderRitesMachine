@@ -42,4 +42,8 @@
         </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="ECS\BoundingBoxTag.cs" />
+    </ItemGroup>
+
 </Project>

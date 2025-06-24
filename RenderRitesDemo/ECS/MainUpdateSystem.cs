@@ -7,7 +7,7 @@ using RenderRitesMachine.ECS;
 
 namespace RenderRitesDemo.ECS;
 
-public class UpdateSystem : IEcsRunSystem
+public class MainUpdateSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
@@ -33,7 +33,7 @@ public class UpdateSystem : IEcsRunSystem
         {
             PolygonMode currentMode = (PolygonMode)GL.GetInteger(GetPName.PolygonMode);
             GL.PolygonMode(TriangleFace.FrontAndBack,
-                (currentMode == PolygonMode.Fill) ? PolygonMode.Line : PolygonMode.Fill
+                currentMode == PolygonMode.Fill ? PolygonMode.Line : PolygonMode.Fill
             );
         }
 

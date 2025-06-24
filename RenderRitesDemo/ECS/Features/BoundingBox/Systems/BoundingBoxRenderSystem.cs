@@ -1,12 +1,12 @@
-using Leopotam.EcsLite;
-using RenderRitesDemo.ECS.Features.Outline.Components;
+﻿using Leopotam.EcsLite;
+using RenderRitesDemo.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
-namespace RenderRitesDemo.ECS.Features.Outline.Systems;
+namespace RenderRitesDemo.ECS.Features.BoundingBox.Systems;
 
-public class OutlineRenderSystem : IEcsRunSystem
+public class BoundingBoxRenderSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
@@ -15,12 +15,11 @@ public class OutlineRenderSystem : IEcsRunSystem
         
         var transforms = world.GetPool<Transform>();
         var meshes = world.GetPool<Mesh>();
-        var outlines = world.GetPool<OutlineTag>();
         
         EcsFilter filter = world
             .Filter<Transform>()
             .Inc<Mesh>()
-            .Inc<OutlineTag>()
+            .Inc<BoundingBoxTag>()
             .End();
 
         foreach (int entity in filter)
@@ -28,14 +27,11 @@ public class OutlineRenderSystem : IEcsRunSystem
             Mesh mesh = meshes.Get(entity);
             if (!mesh.IsVisible) continue;
             
-            OutlineTag outline = outlines.Get(entity);
-            if (!outline.IsVisible) continue;
-            
             Transform transform = transforms.Get(entity);
-            MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
-            ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
+            ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");
+            BoundingBoxAsset boundingBoxAsset = AssetsService.GetBoundingBox(mesh.Name);
             
-            RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
+            RenderService.Render(boundingBoxAsset, boundingShaderAsset, transform.ModelMatrix);
         }
     }
 }

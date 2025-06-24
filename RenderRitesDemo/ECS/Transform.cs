@@ -15,11 +15,11 @@ public struct Transform : IEcsAutoReset<Transform>
         Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(RotationAxis, RotationAngle)) *
         Matrix4.CreateTranslation(Position);
 
-    public void AutoReset(ref Transform component)
+    public void AutoReset(ref Transform c)
     {
-        component.Position = Vector3.Zero;
-        component.Scale = Vector3.One;
-        component.RotationAxis = Vector3.Zero;
-        component.RotationAngle = 0.0f;
+        c.Position = Vector3.Zero;
+        c.Scale = Vector3.One;
+        c.RotationAxis = Vector3.Zero;
+        c.RotationAngle = 0.0f;
     }
 }

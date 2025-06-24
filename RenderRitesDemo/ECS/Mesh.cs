@@ -7,8 +7,8 @@ public struct Mesh : IEcsAutoReset<Mesh>
     public string Name;
     public bool IsVisible;
 
-    public void AutoReset(ref Mesh component)
+    public void AutoReset(ref Mesh c)
     {
-        component.IsVisible = true;
+        c.IsVisible = true;
     }
 }
