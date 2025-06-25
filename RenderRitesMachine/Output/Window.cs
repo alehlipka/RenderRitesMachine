@@ -14,6 +14,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         FpsCounter.Initialize();
         GlDebugWatchdog.Initialize();
         
+        GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Multisample);
         GL.Enable(EnableCap.Blend);

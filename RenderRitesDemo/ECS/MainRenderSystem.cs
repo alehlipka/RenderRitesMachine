@@ -24,7 +24,7 @@ public class MainRenderSystem : IEcsRunSystem
         
         GL.Enable(EnableCap.StencilTest);
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-        GL.StencilMask(1);
+        GL.StencilMask(0xFF);
         
         foreach (int entity in filter)
         {
@@ -39,10 +39,11 @@ public class MainRenderSystem : IEcsRunSystem
             TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
             
             int stencilId = (entity % 255) + 1;
-            Console.WriteLine(stencilId);
-            GL.StencilFunc(StencilFunction.Always, stencilId, 1);
+            GL.StencilFunc(StencilFunction.Gequal, 1, 0xFF);
             
             RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
+            
+            break;
         }
         
         GL.Disable(EnableCap.StencilTest);

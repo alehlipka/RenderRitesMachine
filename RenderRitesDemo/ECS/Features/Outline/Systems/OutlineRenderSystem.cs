@@ -25,7 +25,7 @@ public class OutlineRenderSystem : IEcsRunSystem
             .End();
         
         GL.Enable(EnableCap.StencilTest);
-        GL.StencilMask(0);
+        GL.StencilMask(0x00);
         
         foreach (int entity in filter)
         {
@@ -40,9 +40,11 @@ public class OutlineRenderSystem : IEcsRunSystem
             ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
             
             int stencilId = (entity % 255) + 1;
-            GL.StencilFunc(StencilFunction.Notequal, stencilId, 1);
+            GL.StencilFunc(StencilFunction.Notequal, 1, 0xFF);
             
             RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
+            
+            break;
         }
         
         GL.Disable(EnableCap.StencilTest);
