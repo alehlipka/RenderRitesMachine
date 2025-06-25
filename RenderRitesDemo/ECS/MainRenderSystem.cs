@@ -12,8 +12,6 @@ public class MainRenderSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         
-        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        
         var transforms = world.GetPool<Transform>();
         var meshes = world.GetPool<Mesh>();
         var textures = world.GetPool<ColorTexture>();
@@ -26,9 +24,8 @@ public class MainRenderSystem : IEcsRunSystem
         
         GL.Enable(EnableCap.StencilTest);
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-        GL.StencilFunc(StencilFunction.Always, 1, 1);
         GL.StencilMask(1);
-
+        
         foreach (int entity in filter)
         {
             Mesh mesh = meshes.Get(entity);
@@ -41,7 +38,13 @@ public class MainRenderSystem : IEcsRunSystem
             ShaderAsset shaderAsset = AssetsService.GetShader("cel");
             TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
             
+            int stencilId = (entity % 255) + 1;
+            Console.WriteLine(stencilId);
+            GL.StencilFunc(StencilFunction.Always, stencilId, 1);
+            
             RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
         }
+        
+        GL.Disable(EnableCap.StencilTest);
     }
 }

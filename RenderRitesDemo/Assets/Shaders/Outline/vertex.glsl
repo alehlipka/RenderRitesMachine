@@ -8,13 +8,15 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPosition;
-uniform float outlineThickness = 0.2;
+uniform float time;
+uniform float outlineThickness = 0.1;
 
 void main()
 {
     vec3 worldPosition = vec3(vec4(aPosition, 1.0) * model);
-    float distanceToCamera = distance(cameraPosition, worldPosition);
-    float adjustedThickness = outlineThickness * (distanceToCamera * outlineThickness / 10);
+    float distanceToCamera = length(cameraPosition - worldPosition);
+    float adjustedThickness = outlineThickness * (1.0 + distanceToCamera * 0.01);
+    adjustedThickness *= (1.0 + 0.1 * sin(time * 2.0));
 
     vec3 outlinePosition = aPosition + aNormal * adjustedThickness;
     gl_Position = vec4(outlinePosition, 1.0) * model * view * projection;
