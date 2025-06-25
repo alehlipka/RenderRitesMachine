@@ -1,4 +1,5 @@
 using Leopotam.EcsLite;
+using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
@@ -22,6 +23,11 @@ public class MainRenderSystem : IEcsRunSystem
             .Inc<Mesh>()
             .Inc<ColorTexture>()
             .End();
+        
+        GL.Enable(EnableCap.StencilTest);
+        GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
+        GL.StencilFunc(StencilFunction.Always, 1, 1);
+        GL.StencilMask(1);
 
         foreach (int entity in filter)
         {
@@ -34,7 +40,7 @@ public class MainRenderSystem : IEcsRunSystem
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
             ShaderAsset shaderAsset = AssetsService.GetShader("cel");
             TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
-
+            
             RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
         }
     }

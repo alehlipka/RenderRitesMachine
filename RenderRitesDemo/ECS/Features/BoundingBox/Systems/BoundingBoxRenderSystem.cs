@@ -11,10 +11,10 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
-        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
         
         var transforms = world.GetPool<Transform>();
         var meshes = world.GetPool<Mesh>();
+        var boundingBoxes = world.GetPool<BoundingBoxTag>();
         
         EcsFilter filter = world
             .Filter<Transform>()
@@ -26,6 +26,9 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
         {
             Mesh mesh = meshes.Get(entity);
             if (!mesh.IsVisible) continue;
+            
+            BoundingBoxTag box = boundingBoxes.Get(entity);
+            if (!box.IsVisible) continue;
             
             Transform transform = transforms.Get(entity);
             ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");

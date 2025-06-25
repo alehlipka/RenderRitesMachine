@@ -1,4 +1,5 @@
 using Leopotam.EcsLite;
+using OpenTK.Graphics.OpenGL4;
 using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
@@ -22,6 +23,9 @@ public class OutlineRenderSystem : IEcsRunSystem
             .Inc<Mesh>()
             .Inc<OutlineTag>()
             .End();
+        
+        GL.StencilFunc(StencilFunction.Notequal, 1, 1);
+        GL.StencilMask(0);
 
         foreach (int entity in filter)
         {
@@ -37,5 +41,7 @@ public class OutlineRenderSystem : IEcsRunSystem
             
             RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
         }
+        
+        // GL.Disable(EnableCap.StencilTest);
     }
 }

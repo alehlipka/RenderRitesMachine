@@ -47,7 +47,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     {
         FpsCounter.Update();
         
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         RenderRites.Machine.Scenes.Current?.RenderScene(args);
         SwapBuffers();
     }
