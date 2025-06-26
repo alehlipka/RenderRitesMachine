@@ -44,7 +44,7 @@ public class PreloaderScene(string name) : Scene(name)
         outlines.Add(cow);
         boundingBoxes.Add(cow);
         ref Transform cowTransform = ref transforms.Add(cow);
-        cowTransform.Position = new Vector3(-1.0f, 0.0f, 0.0f);
+        cowTransform.Position = new Vector3(-5.0f, 0.0f, 0.0f);
         cowTransform.RotationAxis = Vector3.One;
         ref ColorTexture cowColorTexture = ref colorTextures.Add(cow);
         cowColorTexture.Name = "debug";
@@ -67,7 +67,7 @@ public class PreloaderScene(string name) : Scene(name)
         outlines.Add(sphere);
         boundingBoxes.Add(sphere);
         ref Transform sphereTransform = ref transforms.Add(sphere);
-        sphereTransform.Position = new Vector3(1.0f, 0.0f, 0.0f);
+        sphereTransform.Position = new Vector3(5.0f, 0.0f, 0.0f);
         sphereTransform.RotationAxis = Vector3.One;
         ref ColorTexture sphereColorTexture = ref colorTextures.Add(sphere);
         sphereColorTexture.Name = "debug";
