@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using RenderRitesDemo.ECS;
 using RenderRitesDemo.ECS.Features.BoundingBox.Components;
 using RenderRitesDemo.ECS.Features.BoundingBox.Systems;
+using RenderRitesDemo.ECS.Features.Input.Systems;
 using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesDemo.ECS.Features.Outline.Systems;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
@@ -95,10 +96,8 @@ public class PreloaderScene(string name) : Scene(name)
         Camera.Position = new Vector3(0.0f, 0.0f, 25.0f);
 
         ResizeSystems.Add(new MainResizeSystem());
-        ResizeSystems.Add(new OutlineResizeSystem());
-        ResizeSystems.Add(new BoundingBoxResizeSystem());
         
-        UpdateSystems.Add(new MainUpdateSystem());
+        UpdateSystems.Add(new InputUpdateSystem());
         UpdateSystems.Add(new RotationUpdateSystem());
         UpdateSystems.Add(new OutlineUpdateSystem());
         

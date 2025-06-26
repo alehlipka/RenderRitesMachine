@@ -17,9 +17,12 @@ public class MainResizeSystem : IEcsRunSystem
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
         shared.Camera.AspectRatio = clientSize.X / (float)clientSize.Y;
 
-        ShaderAsset shaderAsset = AssetsService.GetShader("cel");
-        shaderAsset.Use();
-        shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
-        shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+        var shaders = AssetsService.GetAllShaders();
+        foreach (ShaderAsset shaderAsset in shaders)
+        {
+            shaderAsset.Use();
+            shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+            shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+        }
     }
 }

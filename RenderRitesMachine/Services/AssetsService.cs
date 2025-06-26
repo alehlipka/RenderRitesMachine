@@ -50,6 +50,11 @@ public static class AssetsService
         
         throw new KeyNotFoundException($"No shader found with the name: {name}");
     }
+
+    public static ShaderAsset[] GetAllShaders()
+    {
+        return Shaders.Values.ToArray();
+    }
     
     public static TextureAsset GetTexture(string name)
     {
