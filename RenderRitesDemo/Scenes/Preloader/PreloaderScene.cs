@@ -5,6 +5,8 @@ using RenderRitesDemo.ECS.Features.BoundingBox.Components;
 using RenderRitesDemo.ECS.Features.BoundingBox.Systems;
 using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesDemo.ECS.Features.Outline.Systems;
+using RenderRitesDemo.ECS.Features.Rotation.Components;
+using RenderRitesDemo.ECS.Features.Rotation.Systems;
 using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Output;
@@ -33,7 +35,8 @@ public class PreloaderScene(string name) : Scene(name)
         EcsPool<BoundingBoxTag> boundingBoxes,
         EcsPool<Transform> transforms,
         EcsPool<ColorTexture> colorTextures,
-        EcsPool<Mesh> meshes
+        EcsPool<Mesh> meshes,
+        EcsPool<RotationTag> rotations
     )
     {
         int cow = World.NewEntity();
@@ -46,6 +49,8 @@ public class PreloaderScene(string name) : Scene(name)
         cowColorTexture.Name = "debug";
         ref Mesh cowMesh = ref meshes.Add(cow);
         cowMesh.Name = "cow";
+        ref RotationTag cowRotation = ref rotations.Add(cow);
+        cowRotation.Speed = 1.0f;
     }
 
     private void CreateSphere(
@@ -53,7 +58,8 @@ public class PreloaderScene(string name) : Scene(name)
         EcsPool<BoundingBoxTag> boundingBoxes,
         EcsPool<Transform> transforms,
         EcsPool<ColorTexture> colorTextures,
-        EcsPool<Mesh> meshes
+        EcsPool<Mesh> meshes,
+        EcsPool<RotationTag> rotations
     )
     {
         int sphere = World.NewEntity();
@@ -66,6 +72,8 @@ public class PreloaderScene(string name) : Scene(name)
         sphereColorTexture.Name = "debug";
         ref Mesh sphereMesh = ref meshes.Add(sphere);
         sphereMesh.Name = "sphere";
+        ref RotationTag sphereRotation = ref rotations.Add(sphere);
+        sphereRotation.Speed = 1.0f;
     }
     
     protected override void OnLoad()
@@ -79,9 +87,10 @@ public class PreloaderScene(string name) : Scene(name)
         var transforms = World.GetPool<Transform>();
         var colorTextures = World.GetPool<ColorTexture>();
         var meshes = World.GetPool<Mesh>();
+        var rotations = World.GetPool<RotationTag>();
         
-        CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes);
-        CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes);
+        CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
+        CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
 
         Camera.Position = new Vector3(0.0f, 0.0f, 25.0f);
 
@@ -90,8 +99,9 @@ public class PreloaderScene(string name) : Scene(name)
         ResizeSystems.Add(new BoundingBoxResizeSystem());
         
         UpdateSystems.Add(new MainUpdateSystem());
+        UpdateSystems.Add(new RotationUpdateSystem());
         UpdateSystems.Add(new OutlineUpdateSystem());
-
+        
         RenderSystems.Add(new MainRenderSystem());
         RenderSystems.Add(new OutlineRenderSystem());
         RenderSystems.Add(new BoundingBoxRenderSystem());
