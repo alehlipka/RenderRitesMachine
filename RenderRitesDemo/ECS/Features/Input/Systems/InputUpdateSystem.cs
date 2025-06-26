@@ -19,7 +19,7 @@ public class InputUpdateSystem : IEcsRunSystem
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
         RenderRitesMachine.Output.Window window = RenderRites.Machine.Window!;
 
-        if (window.IsKeyPressed(Keys.W))
+        if (window.IsKeyPressed(Keys.P))
         {
             PolygonMode currentMode = (PolygonMode)GL.GetInteger(GetPName.PolygonMode);
             GL.PolygonMode(TriangleFace.FrontAndBack,
@@ -48,7 +48,7 @@ public class InputUpdateSystem : IEcsRunSystem
 
         if (window.IsKeyDown(Keys.Up))
         {
-            shared.Camera.Position -= Vector3.UnitZ * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position += shared.Camera.Front * 10 * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -59,7 +59,99 @@ public class InputUpdateSystem : IEcsRunSystem
         }
         else if (window.IsKeyDown(Keys.Down))
         {
-            shared.Camera.Position += Vector3.UnitZ * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position -= shared.Camera.Front * 10 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        
+        if (window.IsKeyDown(Keys.Left))
+        {
+            shared.Camera.Position -= shared.Camera.Right * 10 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        else if (window.IsKeyDown(Keys.Right))
+        {
+            shared.Camera.Position += shared.Camera.Right * 10 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        
+        if (window.IsKeyDown(Keys.A))
+        {
+            shared.Camera.Position += shared.Camera.Up * 10 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        else if (window.IsKeyDown(Keys.D))
+        {
+            shared.Camera.Position -= shared.Camera.Up * 10 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        
+        if (window.IsKeyDown(Keys.Q))
+        {
+            shared.Camera.Yaw -= 20 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        else if (window.IsKeyDown(Keys.E))
+        {
+            shared.Camera.Yaw += 20 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        
+        if (window.IsKeyDown(Keys.W))
+        {
+            shared.Camera.Pitch -= 20 * shared.Time.UpdateDeltaTime;
+            var shaders = AssetsService.GetAllShaders();
+            foreach (ShaderAsset shaderAsset in shaders)
+            {
+                shaderAsset.Use();
+                shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
+                shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            }
+        }
+        else if (window.IsKeyDown(Keys.S))
+        {
+            shared.Camera.Pitch += 20 * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
