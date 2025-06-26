@@ -94,6 +94,6 @@ public class PreloaderScene(string name) : Scene(name)
 
         RenderSystems.Add(new MainRenderSystem());
         RenderSystems.Add(new OutlineRenderSystem());
-        // RenderSystems.Add(new BoundingBoxRenderSystem());
+        RenderSystems.Add(new BoundingBoxRenderSystem());
     }
 }

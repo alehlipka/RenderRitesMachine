@@ -39,14 +39,13 @@ public class OutlineRenderSystem : IEcsRunSystem
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
             ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
             
-            int stencilId = (entity % 255) + 1;
-            GL.StencilFunc(StencilFunction.Notequal, 1, 0xFF);
+            int stencilId = entity % 255 + 1;
+            GL.StencilFunc(StencilFunction.Notequal, stencilId, 0xFF);
             
             RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
-            
-            break;
         }
         
+        GL.StencilMask(0xFF);
         GL.Disable(EnableCap.StencilTest);
     }
 }

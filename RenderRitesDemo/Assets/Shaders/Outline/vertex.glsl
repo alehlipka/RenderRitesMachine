@@ -9,7 +9,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform vec3 cameraPosition;
 uniform float time;
-uniform float outlineThickness = 2.1;
+uniform float outlineThickness = 0.1;
 
 void main()
 {

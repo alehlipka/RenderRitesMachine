@@ -18,10 +18,10 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Multisample);
         GL.Enable(EnableCap.Blend);
-        GL.Enable(EnableCap.StencilTest);
         GL.FrontFace(FrontFaceDirection.Ccw);
         GL.CullFace(TriangleFace.Back);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+        GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         GL.ClearColor(Color4.Black);
         
         RenderRites.Machine.Scenes.Current?.Initialize();

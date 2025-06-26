@@ -53,8 +53,8 @@ public class Ray(Vector3 origin, Vector3 direction)
         Vector2i windowSize = RenderRites.Machine.Window!.Size;
         
         // Нормализованные координаты устройства (NDC)
-        float x = (2.0f * mouseX) / windowSize.X - 1.0f;
-        float y = 1.0f - (2.0f * mouseY) / windowSize.Y;
+        float x = 2.0f * mouseX / windowSize.X - 1.0f;
+        float y = 1.0f - 2.0f * mouseY / windowSize.Y;
         Vector3 rayNormalizedDeviceCoords = new(x, y, -1.0f); // Z = -1 (направление вглубь экрана)
 
         // Преобразование в мировые координаты

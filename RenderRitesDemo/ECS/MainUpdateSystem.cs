@@ -39,7 +39,7 @@ public class MainUpdateSystem : IEcsRunSystem
 
         if (window.IsKeyPressed(Keys.F))
         {
-            window.WindowState = (window.WindowState != WindowState.Fullscreen)
+            window.WindowState = window.WindowState != WindowState.Fullscreen
                 ? WindowState.Fullscreen
                 : WindowState.Normal;
         }
