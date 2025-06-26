@@ -1,7 +1,9 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using RenderRitesMachine.Output;
+using StbImageSharp;
 
 namespace RenderRitesMachine;
 
@@ -18,7 +20,7 @@ public sealed class RenderRites
         Scenes = new SceneManager();
     }
 
-    public void RunWindow(string title, VSyncMode vSync = VSyncMode.Adaptive, int samples = 4)
+    public void RunWindow(string title, VSyncMode vSync = VSyncMode.Adaptive, int samples = 4, string? iconPath = null)
     {
         GameWindowSettings gws = new()
         {
@@ -39,6 +41,15 @@ public sealed class RenderRites
         };
 
         nws.Flags |= ContextFlags.Debug;
+        
+        if (iconPath != null)
+        {
+            FileStream iconStream = File.OpenRead(iconPath);
+            ImageResult? image = ImageResult.FromStream(iconStream, ColorComponents.RedGreenBlueAlpha);
+
+            WindowIcon icon = new(new Image(image.Width, image.Height, image.Data));
+            // nws.Icon = icon;
+        }
         
         Window = new Window(gws, nws);
         Window.Run();

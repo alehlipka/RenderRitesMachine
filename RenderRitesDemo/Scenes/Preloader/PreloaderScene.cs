@@ -93,7 +93,7 @@ public class PreloaderScene(string name) : Scene(name)
         CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
         CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
 
-        Camera.Position = new Vector3(0.0f, 0.0f, 25.0f);
+        Camera.Position = new Vector3(0.0f, 0.0f, 10.0f);
 
         ResizeSystems.Add(new MainResizeSystem());
         
