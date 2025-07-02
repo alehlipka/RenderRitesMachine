@@ -9,6 +9,8 @@ public class PerspectiveCamera
     public Vector3 Front => _front;
     public Vector3 Up => _up;
     public Vector3 Right => _right;
+    public float Speed = 30.0f;
+    public float AngularSpeed = 90.0f;
     
     private Vector3 _front = -Vector3.UnitZ;
     private Vector3 _up = Vector3.UnitY;

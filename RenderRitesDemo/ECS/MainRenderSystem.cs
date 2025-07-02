@@ -1,7 +1,6 @@
 using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.Assets;
-using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS;

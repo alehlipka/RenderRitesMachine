@@ -1,6 +1,5 @@
 using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
@@ -48,7 +47,7 @@ public class InputUpdateSystem : IEcsRunSystem
 
         if (window.IsKeyDown(Keys.Up))
         {
-            shared.Camera.Position += shared.Camera.Front * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position += shared.Camera.Front * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -59,7 +58,7 @@ public class InputUpdateSystem : IEcsRunSystem
         }
         else if (window.IsKeyDown(Keys.Down))
         {
-            shared.Camera.Position -= shared.Camera.Front * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position -= shared.Camera.Front * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -71,7 +70,7 @@ public class InputUpdateSystem : IEcsRunSystem
         
         if (window.IsKeyDown(Keys.Left))
         {
-            shared.Camera.Position -= shared.Camera.Right * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position -= shared.Camera.Right * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -82,7 +81,7 @@ public class InputUpdateSystem : IEcsRunSystem
         }
         else if (window.IsKeyDown(Keys.Right))
         {
-            shared.Camera.Position += shared.Camera.Right * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position += shared.Camera.Right * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -94,7 +93,7 @@ public class InputUpdateSystem : IEcsRunSystem
         
         if (window.IsKeyDown(Keys.A))
         {
-            shared.Camera.Position += shared.Camera.Up * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position += shared.Camera.Up * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -105,7 +104,7 @@ public class InputUpdateSystem : IEcsRunSystem
         }
         else if (window.IsKeyDown(Keys.D))
         {
-            shared.Camera.Position -= shared.Camera.Up * 10 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Position -= shared.Camera.Up * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -117,7 +116,7 @@ public class InputUpdateSystem : IEcsRunSystem
         
         if (window.IsKeyDown(Keys.Q))
         {
-            shared.Camera.Yaw -= 20 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Yaw -= shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -128,7 +127,7 @@ public class InputUpdateSystem : IEcsRunSystem
         }
         else if (window.IsKeyDown(Keys.E))
         {
-            shared.Camera.Yaw += 20 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Yaw += shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -140,7 +139,7 @@ public class InputUpdateSystem : IEcsRunSystem
         
         if (window.IsKeyDown(Keys.W))
         {
-            shared.Camera.Pitch -= 20 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Pitch -= shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
@@ -151,7 +150,7 @@ public class InputUpdateSystem : IEcsRunSystem
         }
         else if (window.IsKeyDown(Keys.S))
         {
-            shared.Camera.Pitch += 20 * shared.Time.UpdateDeltaTime;
+            shared.Camera.Pitch += shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
             var shaders = AssetsService.GetAllShaders();
             foreach (ShaderAsset shaderAsset in shaders)
             {
