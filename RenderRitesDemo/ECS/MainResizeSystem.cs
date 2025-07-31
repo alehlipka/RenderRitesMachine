@@ -25,12 +25,5 @@ public class MainResizeSystem : IEcsRunSystem
             shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
             shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
         }
-
-        Matrix4 view = Matrix4.LookAt(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY);
-        Matrix4 projection = Matrix4.CreateOrthographicOffCenter(0, clientSize.X, 0, clientSize.Y, -1, 1);
-        ShaderAsset shader = AssetsService.GetShader("text");
-        shader.Use();
-        shader.SetMatrix4("view", view);
-        shader.SetMatrix4("projection", projection);
     }
 }

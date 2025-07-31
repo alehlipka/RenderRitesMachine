@@ -22,7 +22,6 @@ public class PreloaderScene(string name) : Scene(name)
         AssetsService.AddShader("cel", Path.Combine("Assets", "Shaders", "CelShading"));
         AssetsService.AddShader("outline", Path.Combine("Assets", "Shaders", "Outline"));
         AssetsService.AddShader("bounding", Path.Combine("Assets", "Shaders", "Bounding"));
-        AssetsService.AddShader("text", Path.Combine("Assets", "Shaders", "SDFText"));
 
         AssetsService.AddMeshFromFile("cow", Path.Combine("Assets", "Objects", "cow.obj"));
         AssetsService.AddSphere("sphere", 2, 20, 20);
@@ -91,8 +90,8 @@ public class PreloaderScene(string name) : Scene(name)
         var meshes = World.GetPool<Mesh>();
         var rotations = World.GetPool<RotationTag>();
         
-        // CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
-        // CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
+        CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
+        CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
 
         Camera.Position = new Vector3(0.0f, 0.0f, 10.0f);
 
