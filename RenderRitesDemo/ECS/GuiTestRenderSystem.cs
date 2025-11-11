@@ -38,11 +38,11 @@ public class GuiTestRenderSystem : IEcsRunSystem
 
                 if (ImGui.MenuItem("Главная сцена", "F1", isPreloader))
                 {
-                    RenderRites.Machine.Scenes.SetCurrent("preloader");
+                    RenderRites.Machine.Scenes.SwitchTo("preloader");
                 }
                 if (ImGui.MenuItem("GUI Тест", "F2", isGuiTest))
                 {
-                    RenderRites.Machine.Scenes.SetCurrent("guitest");
+                    RenderRites.Machine.Scenes.SwitchTo("guitest");
                 }
                 ImGui.EndMenu();
             }

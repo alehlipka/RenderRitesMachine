@@ -50,6 +50,7 @@ indent_size = 4
 # Organize usings
 dotnet_sort_system_directives_first = true
 dotnet_separate_import_directive_groups = false
+dotnet_remove_unused_using_directives = true
 
 # this. preferences
 dotnet_style_qualification_for_field = false:warning
@@ -187,6 +188,9 @@ csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
 
 #### .NET Code Quality Rules ####
+
+# IDE0005: Remove unnecessary using
+dotnet_diagnostic.IDE0005.severity = warning
 
 # Design rules
 dotnet_design_parameter_names_should_match_declaration = true:warning

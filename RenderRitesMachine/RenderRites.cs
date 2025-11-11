@@ -64,6 +64,9 @@ public sealed class RenderRites
             throw new ArgumentOutOfRangeException(nameof(samples), samples, "Samples must be between 1 and 16.");
         }
 
+        // Инициализируем менеджер сцен (автоматически добавляет сцену логотипа)
+        Scenes.Initialize();
+
         GameWindowSettings gws = new()
         {
             UpdateFrequency = 0.0

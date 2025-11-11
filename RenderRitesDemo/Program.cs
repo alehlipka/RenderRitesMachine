@@ -2,7 +2,6 @@ using OpenTK.Windowing.Common;
 using RenderRitesDemo.Scenes.Demo;
 using RenderRitesDemo.Scenes.GuiTest;
 using RenderRitesMachine;
-using RenderRitesMachine.Output;
 
 namespace RenderRitesDemo;
 
@@ -10,12 +9,11 @@ internal static class Program
 {
     private static void Main()
     {
-        // Добавляем сцены (логотип должен быть первым)
+        // Добавляем пользовательские сцены
+        // Сцена логотипа автоматически добавляется движком и запускается первой
         RenderRites.Machine.Scenes
-            .Add(new LogoScene("logo"))
             .Add(new DemoScene("demo"))
-            .Add(new GuiTestScene("guitest"))
-            .SetCurrent("logo"); // Начинаем со сцены с логотипом
+            .Add(new GuiTestScene("guitest"));
 
         RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.Off, 8);
     }

@@ -10,15 +10,24 @@ namespace RenderRitesMachine.Output;
 
 /// <summary>
 /// Сцена с логотипом движка, которая отображается при запуске приложения.
+/// Внутренняя сцена, автоматически добавляемая движком. Пользователь не должен создавать её вручную.
 /// </summary>
-public class LogoScene(string name) : Scene(name)
+internal class LogoScene : Scene
 {
     private const float DisplayDuration = 3.0f; // Длительность отображения в секундах
+    private const string LogoSceneName = "logo"; // Имя сцены логотипа
     private float _elapsedTime;
     private string? _nextSceneName;
     private int _logoTextureId;
     private Vector2 _logoSize = new(400, 400); // Размер логотипа
     private bool _logoLoaded;
+
+    /// <summary>
+    /// Создает новую сцену логотипа. Используется только внутри движка.
+    /// </summary>
+    internal LogoScene() : base(LogoSceneName)
+    {
+    }
 
     protected override void OnLoad()
     {
@@ -76,12 +85,12 @@ public class LogoScene(string name) : Scene(name)
     {
         // Находим первую сцену, которая не является логотипом
         var allScenes = RenderRites.Machine.Scenes.Select(s => s.Name).ToList();
-        _nextSceneName = allScenes.FirstOrDefault(s => s != "logo" && s != Name);
+        _nextSceneName = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
 
-        // Если не нашли, используем "demo" по умолчанию
+        // Если не нашли, используем первую доступную сцену (кроме логотипа)
         if (string.IsNullOrEmpty(_nextSceneName))
         {
-            _nextSceneName = "demo";
+            _nextSceneName = allScenes.FirstOrDefault(s => s != LogoSceneName);
         }
     }
 
@@ -117,19 +126,26 @@ public class LogoScene(string name) : Scene(name)
 
         if (!string.IsNullOrEmpty(_nextSceneName))
         {
-            // Проверяем, что сцена существует
-            var allScenes = RenderRites.Machine.Scenes.Select(s => s.Name).ToList();
-            if (allScenes.Contains(_nextSceneName))
+            try
             {
-                RenderRites.Machine.Scenes.SetCurrent(_nextSceneName);
+                // Пытаемся переключиться на следующую сцену
+                RenderRites.Machine.Scenes.SwitchTo(_nextSceneName);
             }
-            else
+            catch (ArgumentException)
             {
-                // Если сцена не найдена, пробуем найти любую другую сцену
-                var fallbackScene = allScenes.FirstOrDefault(s => s != "logo" && s != Name);
+                // Если сцена не найдена, пробуем найти любую другую сцену (кроме логотипа)
+                var allScenes = RenderRites.Machine.Scenes.Select(s => s.Name).ToList();
+                var fallbackScene = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
                 if (!string.IsNullOrEmpty(fallbackScene))
                 {
-                    RenderRites.Machine.Scenes.SetCurrent(fallbackScene);
+                    try
+                    {
+                        RenderRites.Machine.Scenes.SwitchTo(fallbackScene);
+                    }
+                    catch
+                    {
+                        // Если не удалось переключиться, просто остаемся на логотипе
+                    }
                 }
             }
         }

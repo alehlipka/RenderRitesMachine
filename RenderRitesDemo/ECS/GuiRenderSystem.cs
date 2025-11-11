@@ -37,11 +37,11 @@ public class GuiRenderSystem : IEcsRunSystem
 
                 if (ImGui.MenuItem("Главная сцена", "F1", isDemo))
                 {
-                    RenderRites.Machine.Scenes.SetCurrent("demo");
+                    RenderRites.Machine.Scenes.SwitchTo("demo");
                 }
                 if (ImGui.MenuItem("GUI Тест", "F2", isGuiTest))
                 {
-                    RenderRites.Machine.Scenes.SetCurrent("guitest");
+                    RenderRites.Machine.Scenes.SwitchTo("guitest");
                 }
                 ImGui.EndMenu();
             }
