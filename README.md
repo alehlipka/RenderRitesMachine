@@ -99,7 +99,7 @@ RenderRites.Machine.RunWindow("My Game", VSyncMode.Adaptive, 4);
 
 - `MainRenderSystem` - Основной рендеринг объектов
 - `OutlineRenderSystem` - Рендеринг контуров объектов
-- `BoundingBoxRenderSystem` - Визуализация bounding boxes
+- `BoundingBoxRenderSystem` - Визуализация bounding box
 
 ### Системы обновления
 
@@ -115,9 +115,6 @@ RenderRites.Machine.RunWindow("My Game", VSyncMode.Adaptive, 4);
 
 ## Лицензия
 
-Этот проект является демонстрационным и может использоваться в образовательных целях.
+Этот проект распространяется под лицензией GNU General Public License v3.0 (GPL-3.0).
 
-## Авторы
-
-RenderRites Machine - Современный игровой движок на C#
-
+См. файл [LICENSE](LICENSE) для полного текста лицензии.
