@@ -73,11 +73,11 @@ public static class RenderConstants
     /// <summary>
     /// Размер окна по умолчанию (ширина).
     /// </summary>
-    public const int DefaultWindowWidth = 1024;
+    public const int DefaultWindowWidth = 1920;
 
     /// <summary>
     /// Размер окна по умолчанию (высота).
     /// </summary>
-    public const int DefaultWindowHeight = 768;
+    public const int DefaultWindowHeight = 1080;
 }
 

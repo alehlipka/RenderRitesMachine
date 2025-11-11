@@ -64,7 +64,6 @@ public sealed class RenderRites
             throw new ArgumentOutOfRangeException(nameof(samples), samples, "Samples must be between 1 and 16.");
         }
 
-        // Инициализируем менеджер сцен (автоматически добавляет сцену логотипа)
         Scenes.Initialize();
 
         GameWindowSettings gws = new()
@@ -82,7 +81,8 @@ public sealed class RenderRites
             Vsync = vSync,
             NumberOfSamples = samples,
             IsEventDriven = false,
-            MinimumClientSize = new Vector2i(RenderConstants.MinWindowWidth, RenderConstants.MinWindowHeight)
+            MinimumClientSize = new Vector2i(RenderConstants.MinWindowWidth, RenderConstants.MinWindowHeight),
+            WindowState = WindowState.Fullscreen
         };
 
         nws.Flags |= ContextFlags.Debug;

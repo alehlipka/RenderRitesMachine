@@ -82,6 +82,7 @@ public abstract class Scene : IDisposable
         _isLoaded = true;
         OnLoad();
         UpdateSystems.Init();
+        ResizeSystems.Init();
     }
 
     /// <summary>

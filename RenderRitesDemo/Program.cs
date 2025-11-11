@@ -15,6 +15,6 @@ internal static class Program
             .Add(new DemoScene("demo"))
             .Add(new GuiTestScene("guitest"));
 
-        RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.Off, 8);
+        RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.On, 8);
     }
 }

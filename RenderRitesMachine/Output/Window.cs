@@ -25,7 +25,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         GL.ClearColor(Color4.Black);
 
-        // Инициализация GUI
         RenderRites.Machine.Gui.Initialize(this);
         RenderRitesMachine.UI.UI.Initialize(RenderRites.Machine.Gui);
 
@@ -34,6 +33,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         {
             currentScene.SetWindow(this);
             currentScene.Initialize();
+            currentScene.ResizeScene(new ResizeEventArgs(ClientSize));
         }
     }
 
@@ -48,19 +48,17 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     {
         RenderRites.Machine.Window!.Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
 
-        // Проверяем, изменилась ли сцена
         var currentScene = RenderRites.Machine.Scenes.Current;
         string? currentSceneName = currentScene?.Name;
 
         if (currentSceneName != _lastSceneName && currentScene != null)
         {
-            // Новая сцена была установлена - нужно её инициализировать
             currentScene.SetWindow(this);
             currentScene.Initialize();
+            currentScene.ResizeScene(new ResizeEventArgs(ClientSize));
             _lastSceneName = currentSceneName;
         }
 
-        // Обновление GUI
         RenderRites.Machine.Gui.Update((float)args.Time);
 
         currentScene?.UpdateScene(args);
@@ -78,7 +76,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         RenderRites.Machine.Scenes.Current?.RenderScene(args);
 
-        // Рендеринг GUI поверх всего
         RenderRites.Machine.Gui.Render();
 
         SwapBuffers();
@@ -88,7 +85,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     {
         base.OnTextInput(e);
 
-        // Передача текстового ввода в ImGui
         if (RenderRites.Machine.Gui != null)
         {
             IntPtr context = RenderRites.Machine.Gui.GetContext();
