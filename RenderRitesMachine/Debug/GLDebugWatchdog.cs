@@ -19,4 +19,19 @@ internal static class GlDebugWatchdog
         string messageString = Marshal.PtrToStringAnsi(message, length);
         Console.WriteLine($"[OPENGL DEBUG MESSAGE] {messageString}");
     }
+    
+    /// <summary>
+    /// Проверяет наличие ошибок OpenGL и выбрасывает исключение, если ошибка обнаружена.
+    /// Используется для проверки критических операций OpenGL.
+    /// </summary>
+    /// <param name="operation">Название операции для сообщения об ошибке.</param>
+    /// <exception cref="InvalidOperationException">Выбрасывается, если обнаружена ошибка OpenGL.</exception>
+    internal static void CheckGLError(string operation)
+    {
+        ErrorCode error = GL.GetError();
+        if (error != ErrorCode.NoError)
+        {
+            throw new InvalidOperationException($"OpenGL error during {operation}: {error}");
+        }
+    }
 }

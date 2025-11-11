@@ -3,11 +3,16 @@ using OpenTK.Mathematics;
 
 namespace RenderRitesMachine.Assets;
 
-public struct ShaderAsset()
+/// <summary>
+/// Ресурс шейдерной программы. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// </summary>
+public class ShaderAsset : IDisposable
 {
     private readonly Dictionary<string, int> _uniformLocations = [];
     
-    public int Id;
+    public int Id { get; set; }
+    
+    private bool _disposed;
     
     public void Use()
     {
@@ -45,5 +50,14 @@ public struct ShaderAsset()
         _uniformLocations[name] = location;
         
         return location;
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        
+        GL.DeleteProgram(Id);
+        
+        _disposed = true;
     }
 }

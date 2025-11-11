@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
+using RenderRitesMachine.Debug;
 using RenderRitesMachine.Output;
 using StbImageSharp;
 using BufferTarget = OpenTK.Graphics.OpenGL4.BufferTarget;
@@ -29,12 +30,13 @@ namespace RenderRitesMachine.Services;
 /// Сервис для управления ресурсами (меши, шейдеры, текстуры, bounding boxes).
 /// Предоставляет методы для загрузки и получения ресурсов OpenGL.
 /// </summary>
-public class AssetsService
+public class AssetsService : IDisposable
 {
     private readonly Dictionary<string, MeshAsset> _meshes = [];
     private readonly Dictionary<string, ShaderAsset> _shaders = [];
     private readonly Dictionary<string, TextureAsset> _textures = [];
     private readonly Dictionary<string, BoundingBoxAsset> _boundingBoxes = [];
+    private bool _disposed;
 
     /// <summary>
     /// Получает меш по имени.
@@ -50,7 +52,7 @@ public class AssetsService
             throw new ArgumentNullException(nameof(name), "Mesh name cannot be null or empty.");
         }
 
-        if (_meshes.TryGetValue(name, out MeshAsset value))
+        if (_meshes.TryGetValue(name, out MeshAsset? value) && value != null)
         {
             return value;
         }
@@ -72,7 +74,7 @@ public class AssetsService
             throw new ArgumentNullException(nameof(name), "Shader name cannot be null or empty.");
         }
 
-        if (_shaders.TryGetValue(name, out ShaderAsset value))
+        if (_shaders.TryGetValue(name, out ShaderAsset? value) && value != null)
         {
             return value;
         }
@@ -103,7 +105,7 @@ public class AssetsService
             throw new ArgumentNullException(nameof(name), "Texture name cannot be null or empty.");
         }
 
-        if (_textures.TryGetValue(name, out TextureAsset value))
+        if (_textures.TryGetValue(name, out TextureAsset? value) && value != null)
         {
             return value;
         }
@@ -125,7 +127,7 @@ public class AssetsService
             throw new ArgumentNullException(nameof(name), "Bounding box name cannot be null or empty.");
         }
 
-        if (_boundingBoxes.TryGetValue(name, out BoundingBoxAsset value))
+        if (_boundingBoxes.TryGetValue(name, out BoundingBoxAsset? value) && value != null)
         {
             return value;
         }
@@ -167,9 +169,12 @@ public class AssetsService
             0, 4, 1, 5, 2, 6, 3, 7
         ];
 
+        var (vao, vbo, ebo) = GetPositionVao(vertices.ToArray(), indices.ToArray());
         BoundingBoxAsset asset = new()
         {
-            Vao = GetPositionVao(vertices.ToArray(), indices.ToArray()),
+            Vao = vao,
+            Vbo = vbo,
+            Ebo = ebo,
             IndicesCount = indices.Length
         };
         
@@ -214,22 +219,27 @@ public class AssetsService
                 throw new InvalidDataException($"Failed to load texture image from {path}.");
             }
             
-            int handle = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, handle);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 
-                image.Width, image.Height, 0, PixelFormat.Rgba, 
-                PixelType.UnsignedByte, image.Data);
-            
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+        int handle = GL.GenTexture();
+        GlDebugWatchdog.CheckGLError("texture generation");
+        
+        GL.BindTexture(TextureTarget.Texture2D, handle);
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 
+            image.Width, image.Height, 0, PixelFormat.Rgba, 
+            PixelType.UnsignedByte, image.Data);
+        GlDebugWatchdog.CheckGLError("texture data upload");
+        
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            
-            GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, RenderConstants.AnisotropicFilteringLevel);
-            
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+        
+        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, RenderConstants.AnisotropicFilteringLevel);
+        
+        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+        GlDebugWatchdog.CheckGLError("texture mipmap generation");
+        
+        GL.BindTexture(TextureTarget.Texture2D, 0);
 
             TextureAsset asset = new() { Id = handle, Type = type };
             
@@ -375,9 +385,12 @@ public class AssetsService
         Vector3 min = new(aabb.Min.X, aabb.Min.Y, aabb.Min.Z);
         Vector3 max = new(aabb.Max.X, aabb.Max.Y, aabb.Max.Z);
 
+        var (vao, vbo, ebo) = GetPositionNormalTextureVao(vertices, indices);
         MeshAsset asset = new()
         {
-            Vao = GetPositionNormalTextureVao(vertices, indices),
+            Vao = vao,
+            Vbo = vbo,
+            Ebo = ebo,
             IndicesCount = indices.Length,
             Minimum = min,
             Maximum = max
@@ -475,9 +488,12 @@ public class AssetsService
             }
         }
         
+        var (vao, vbo, ebo) = GetPositionNormalTextureVao(vertices.ToArray(), indices.ToArray());
         MeshAsset asset = new()
         {
-            Vao = GetPositionNormalTextureVao(vertices.ToArray(), indices.ToArray()),
+            Vao = vao,
+            Vbo = vbo,
+            Ebo = ebo,
             IndicesCount = indices.Count,
             Minimum = min,
             Maximum = max
@@ -486,19 +502,22 @@ public class AssetsService
         _meshes.Add(name, asset);
     }
     
-    private int GetPositionNormalTextureVao(float[] vertices, uint[] indices)
+    private (int vao, int vbo, int ebo) GetPositionNormalTextureVao(float[] vertices, uint[] indices)
     {
         int vao = GL.GenVertexArray();
         int vbo = GL.GenBuffer();
         int ebo = GL.GenBuffer();
+        GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
         
         GL.BindVertexArray(vao);
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        GlDebugWatchdog.CheckGLError("VBO data upload");
 
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+        GlDebugWatchdog.CheckGLError("EBO data upload");
 
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
@@ -512,26 +531,26 @@ public class AssetsService
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        
-        // Note: VBO and EBO are not deleted here as they are referenced by the VAO
-        // They will be cleaned up when the OpenGL context is destroyed
 
-        return vao;
+        return (vao, vbo, ebo);
     }
     
-    private int GetPositionVao(float[] vertices, uint[] indices)
+    private (int vao, int vbo, int ebo) GetPositionVao(float[] vertices, uint[] indices)
     {
         int vbo = GL.GenBuffer();
         int ebo = GL.GenBuffer();
         int vao = GL.GenVertexArray();
+        GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
         
         GL.BindVertexArray(vao);
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+        GlDebugWatchdog.CheckGLError("VBO data upload");
 
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+        GlDebugWatchdog.CheckGLError("EBO data upload");
 
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.PositionAttributeSize * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
@@ -539,10 +558,42 @@ public class AssetsService
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        
-        // Note: VBO and EBO are not deleted here as they are referenced by the VAO
-        // They will be cleaned up when the OpenGL context is destroyed
 
-        return vao;
+        return (vao, vbo, ebo);
+    }
+
+    /// <summary>
+    /// Освобождает все загруженные ресурсы OpenGL.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_disposed) return;
+        
+        foreach (var mesh in _meshes.Values)
+        {
+            mesh.Dispose();
+        }
+        
+        foreach (var shader in _shaders.Values)
+        {
+            shader.Dispose();
+        }
+        
+        foreach (var texture in _textures.Values)
+        {
+            texture.Dispose();
+        }
+        
+        foreach (var boundingBox in _boundingBoxes.Values)
+        {
+            boundingBox.Dispose();
+        }
+        
+        _meshes.Clear();
+        _shaders.Clear();
+        _textures.Clear();
+        _boundingBoxes.Clear();
+        
+        _disposed = true;
     }
 }

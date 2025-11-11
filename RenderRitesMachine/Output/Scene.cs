@@ -127,6 +127,7 @@ public abstract class Scene : IDisposable
         UpdateSystems.Destroy();
         RenderSystems.Destroy();
         World.Destroy();
+        Assets.Dispose();
         GC.SuppressFinalize(this);
     }
 

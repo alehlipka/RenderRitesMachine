@@ -45,66 +45,52 @@ public class InputUpdateSystem : IEcsRunSystem
             }
         }
 
-        bool cameraMoved = false;
-
         if (window.IsKeyDown(Keys.Up))
         {
             shared.Camera.Position += shared.Camera.Front * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         else if (window.IsKeyDown(Keys.Down))
         {
             shared.Camera.Position -= shared.Camera.Front * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         
         if (window.IsKeyDown(Keys.Left))
         {
             shared.Camera.Position -= shared.Camera.Right * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         else if (window.IsKeyDown(Keys.Right))
         {
             shared.Camera.Position += shared.Camera.Right * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         
         if (window.IsKeyDown(Keys.A))
         {
             shared.Camera.Position += shared.Camera.Up * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         else if (window.IsKeyDown(Keys.D))
         {
             shared.Camera.Position -= shared.Camera.Up * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         
         if (window.IsKeyDown(Keys.Q))
         {
             shared.Camera.Yaw -= shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         else if (window.IsKeyDown(Keys.E))
         {
             shared.Camera.Yaw += shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         
         if (window.IsKeyDown(Keys.W))
         {
             shared.Camera.Pitch -= shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
         else if (window.IsKeyDown(Keys.S))
         {
             shared.Camera.Pitch += shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
-            cameraMoved = true;
         }
 
-        if (cameraMoved)
-        {
-            shared.UpdateActiveShaders();
-        }
+        // Матрицы камеры обновляются лениво, а шейдеры обновляются автоматически
+        // в конце рендеринга через SystemSharedObject.UpdateActiveShaders()
     }
 }

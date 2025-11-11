@@ -2,13 +2,27 @@
 
 namespace RenderRitesMachine.Assets;
 
-public struct TextureAsset
+/// <summary>
+/// Ресурс текстуры. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// </summary>
+public class TextureAsset : IDisposable
 {
-    public int Id;
-    public TextureType Type;
+    public int Id { get; set; }
+    public TextureType Type { get; set; }
+    
+    private bool _disposed;
     
     public void Bind()
     {
         GL.BindTextureUnit((int)Type, Id);
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        
+        GL.DeleteTexture(Id);
+        
+        _disposed = true;
     }
 }

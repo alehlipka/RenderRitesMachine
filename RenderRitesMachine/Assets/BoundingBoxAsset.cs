@@ -1,7 +1,27 @@
-﻿namespace RenderRitesMachine.Assets;
+﻿using OpenTK.Graphics.OpenGL4;
 
-public struct BoundingBoxAsset
+namespace RenderRitesMachine.Assets;
+
+/// <summary>
+/// Ресурс bounding box, содержащий VAO, VBO, EBO. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// </summary>
+public class BoundingBoxAsset : IDisposable
 {
-    public int Vao;
-    public int IndicesCount;
+    public int Vao { get; set; }
+    public int Vbo { get; set; }
+    public int Ebo { get; set; }
+    public int IndicesCount { get; set; }
+    
+    private bool _disposed;
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        
+        GL.DeleteBuffer(Vbo);
+        GL.DeleteBuffer(Ebo);
+        GL.DeleteVertexArray(Vao);
+        
+        _disposed = true;
+    }
 }
