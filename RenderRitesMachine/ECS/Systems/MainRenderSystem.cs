@@ -2,15 +2,13 @@ using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
-using RenderRitesMachine.ECS;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Services;
 
-namespace RenderRitesDemo.ECS;
+namespace RenderRitesMachine.ECS.Systems;
 
 public class MainRenderSystem : IEcsRunSystem
 {
-    // MaxStencilValue moved to RenderConstants
-    
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
@@ -52,3 +50,4 @@ public class MainRenderSystem : IEcsRunSystem
         GL.Disable(EnableCap.StencilTest);
     }
 }
+

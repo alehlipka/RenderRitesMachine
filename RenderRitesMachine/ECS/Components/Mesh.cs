@@ -1,6 +1,6 @@
 using Leopotam.EcsLite;
 
-namespace RenderRitesDemo.ECS;
+namespace RenderRitesMachine.ECS.Components;
 
 public struct Mesh : IEcsAutoReset<Mesh>
 {
@@ -12,3 +12,4 @@ public struct Mesh : IEcsAutoReset<Mesh>
         c.IsVisible = true;
     }
 }
+

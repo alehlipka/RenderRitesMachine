@@ -4,6 +4,7 @@ using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.ECS;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS.Features.Outline.Systems;

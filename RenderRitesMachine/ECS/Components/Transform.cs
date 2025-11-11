@@ -2,7 +2,7 @@ using Leopotam.EcsLite;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Configuration;
 
-namespace RenderRitesDemo.ECS;
+namespace RenderRitesMachine.ECS.Components;
 
 public struct Transform : IEcsAutoReset<Transform>
 {
@@ -92,3 +92,4 @@ public struct Transform : IEcsAutoReset<Transform>
         c._cachedModelMatrix = Matrix4.Identity;
     }
 }
+

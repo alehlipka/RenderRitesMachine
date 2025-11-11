@@ -1,6 +1,7 @@
 using Leopotam.EcsLite;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
 using RenderRitesMachine.ECS;
+using RenderRitesMachine.ECS.Components;
 
 namespace RenderRitesDemo.ECS.Features.Rotation.Systems;
 

@@ -2,6 +2,7 @@
 using RenderRitesDemo.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS.Features.BoundingBox.Systems;

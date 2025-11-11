@@ -8,8 +8,11 @@ using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesDemo.ECS.Features.Outline.Systems;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
 using RenderRitesDemo.ECS.Features.Rotation.Systems;
+using RenderRitesDemo.ECS.Features.SceneSwitch;
 using RenderRitesMachine;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 
 namespace RenderRitesDemo.Scenes.Preloader;
@@ -99,7 +102,7 @@ public class PreloaderScene(string name) : Scene(name)
         UpdateSystems.Add(new InputUpdateSystem());
         UpdateSystems.Add(new RotationUpdateSystem());
         UpdateSystems.Add(new OutlineUpdateSystem());
-        UpdateSystems.Add(new ECS.Features.SceneSwitch.SceneSwitchSystem());
+        UpdateSystems.Add(new SceneSwitchSystem());
         
         RenderSystems.Add(new MainRenderSystem());
         RenderSystems.Add(new OutlineRenderSystem());

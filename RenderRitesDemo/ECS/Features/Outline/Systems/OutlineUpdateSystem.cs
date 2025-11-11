@@ -3,6 +3,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
+using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.Utilities;
 
 namespace RenderRitesDemo.ECS.Features.Outline.Systems;

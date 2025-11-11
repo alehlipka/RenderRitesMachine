@@ -1,10 +1,9 @@
-﻿using Leopotam.EcsLite;
+using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
-using RenderRitesMachine.ECS;
 
-namespace RenderRitesDemo.ECS;
+namespace RenderRitesMachine.ECS.Systems;
 
 public class MainResizeSystem : IEcsRunSystem
 {
@@ -26,3 +25,4 @@ public class MainResizeSystem : IEcsRunSystem
         }
     }
 }
+

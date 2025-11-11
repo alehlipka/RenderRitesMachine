@@ -28,12 +28,15 @@ RenderRites/
 │   ├── Configuration/       # Константы и конфигурация
 │   ├── Debug/              # Инструменты отладки (FPS, OpenGL debug)
 │   ├── ECS/                # ECS компоненты и системы
+│   │   ├── Components/     # Базовые компоненты (Transform, Mesh, ColorTexture)
+│   │   └── Systems/        # Базовые системы (MainRenderSystem, MainResizeSystem)
 │   ├── Output/             # Окно, сцены, камера
 │   ├── Services/           # Сервисы (Assets, Render, Time)
 │   └── Utilities/          # Утилиты (Ray, и т.д.)
 └── RenderRitesDemo/        # Демо-приложение
     ├── Assets/             # Ресурсы (шейдеры, модели, текстуры)
     ├── ECS/                # Демо-системы и компоненты
+    │   └── Features/       # Демо-фичи (Outline, Rotation, Input, и т.д.)
     └── Scenes/             # Демо-сцены
 ```
 
@@ -54,11 +57,12 @@ public class MyScene : Scene
         
         // Создание сущностей
         int entity = World.NewEntity();
-        var transforms = World.GetPool<Transform>();
-        ref Transform transform = ref transforms.Add(entity);
+        var transforms = World.GetPool<RenderRitesMachine.ECS.Components.Transform>();
+        ref RenderRitesMachine.ECS.Components.Transform transform = ref transforms.Add(entity);
         transform.Position = new Vector3(0, 0, 0);
         
         // Добавление систем
+        RenderSystems.Add(new RenderRitesMachine.ECS.Systems.MainRenderSystem());
         RenderSystems.Add(new MyRenderSystem());
         UpdateSystems.Add(new MyUpdateSystem());
     }
