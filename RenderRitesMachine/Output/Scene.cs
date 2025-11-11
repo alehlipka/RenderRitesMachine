@@ -1,7 +1,6 @@
 ﻿using Leopotam.EcsLite;
 using OpenTK.Windowing.Common;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.Output;

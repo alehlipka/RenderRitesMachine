@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using ImGuiNET;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -24,6 +25,10 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         GL.ClearColor(Color4.Black);
         
+        // Инициализация GUI
+        RenderRites.Machine.Gui.Initialize(this);
+        
+        
         var currentScene = RenderRites.Machine.Scenes.Current;
         if (currentScene != null)
         {
@@ -37,11 +42,28 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         RenderRites.Machine.Scenes.Current?.ResizeScene(e);
     }
 
+    private string? _lastSceneName;
+    
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
         RenderRites.Machine.Window!.Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
         
-        RenderRites.Machine.Scenes.Current?.UpdateScene(args);
+        // Проверяем, изменилась ли сцена
+        var currentScene = RenderRites.Machine.Scenes.Current;
+        string? currentSceneName = currentScene?.Name;
+        
+        if (currentSceneName != _lastSceneName && currentScene != null)
+        {
+            // Новая сцена была установлена - нужно её инициализировать
+            currentScene.SetWindow(this);
+            currentScene.Initialize();
+            _lastSceneName = currentSceneName;
+        }
+        
+        // Обновление GUI
+        RenderRites.Machine.Gui.Update((float)args.Time);
+        
+        currentScene?.UpdateScene(args);
         
         if (KeyboardState.IsKeyPressed(Keys.Escape))
         {
@@ -55,6 +77,30 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         RenderRites.Machine.Scenes.Current?.RenderScene(args);
+        
+        // Рендеринг GUI поверх всего
+        RenderRites.Machine.Gui.Render();
+        
         SwapBuffers();
+    }
+    
+    protected override void OnTextInput(TextInputEventArgs e)
+    {
+        base.OnTextInput(e);
+        
+        // Передача текстового ввода в ImGui
+        if (RenderRites.Machine.Gui != null)
+        {
+            IntPtr context = RenderRites.Machine.Gui.GetContext();
+            if (context != IntPtr.Zero)
+            {
+                ImGui.SetCurrentContext(context);
+                ImGuiIOPtr io = ImGui.GetIO();
+                if (e.Unicode > 0 && e.Unicode < 0x10000)
+                {
+                    io.AddInputCharacter((uint)e.Unicode);
+                }
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.Output;
+using RenderRitesMachine.Services;
 using StbImageSharp;
 
 namespace RenderRitesMachine;
@@ -29,10 +30,16 @@ public sealed class RenderRites
     /// Менеджер сцен для управления различными сценами приложения.
     /// </summary>
     public readonly SceneManager Scenes;
+    
+    /// <summary>
+    /// Сервис GUI для управления интерфейсом через ImGui.
+    /// </summary>
+    public readonly GuiService Gui;
 
     private RenderRites()
     {
         Scenes = new SceneManager();
+        Gui = new GuiService();
     }
 
     /// <summary>
@@ -105,6 +112,7 @@ public sealed class RenderRites
         
         Window = new Window(gws, nws);
         Window.Run();
+        Gui.Dispose();
         Scenes.Dispose();
     }
 }
