@@ -1,6 +1,6 @@
 using OpenTK.Windowing.Common;
 using RenderRitesDemo.Scenes.GuiTest;
-using RenderRitesDemo.Scenes.Preloader;
+using RenderRitesDemo.Scenes.Demo;
 using RenderRitesMachine;
 
 namespace RenderRitesDemo;
@@ -9,11 +9,11 @@ internal static class Program
 {
     private static void Main()
     {
-        // Добавляем обе сцены
+        // Добавляем сцены
         RenderRites.Machine.Scenes
-            .Add(new PreloaderScene("preloader"))
+            .Add(new DemoScene("demo"))
             .Add(new GuiTestScene("guitest"))
-            .SetCurrent("preloader"); // Начинаем с главной сцены
+            .SetCurrent("demo");
 
         RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.Off, 8);
     }

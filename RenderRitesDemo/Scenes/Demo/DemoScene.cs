@@ -15,9 +15,9 @@ using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 
-namespace RenderRitesDemo.Scenes.Preloader;
+namespace RenderRitesDemo.Scenes.Demo;
 
-public class PreloaderScene(string name) : Scene(name)
+public class DemoScene(string name) : Scene(name)
 {
     private void LoadAssets()
     {
