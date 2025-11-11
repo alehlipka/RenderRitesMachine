@@ -108,7 +108,7 @@ public class GuiService : IDisposable
 
     private void SetupStyle()
     {
-        ImGui.StyleColorsDark();
+        ImGuiTheme.Apply();
     }
 
     private void UpdateInput(ImGuiIOPtr io)
