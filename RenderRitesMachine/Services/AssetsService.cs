@@ -132,7 +132,8 @@ public static class AssetsService
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
         
-        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, 8.0f);
+        const float AnisotropicFilteringLevel = 8.0f;
+        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, AnisotropicFilteringLevel);
         
         GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
         GL.BindTexture(TextureTarget.Texture2D, 0);
@@ -332,8 +333,9 @@ public static class AssetsService
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        GL.DeleteBuffer(vbo);
-        GL.DeleteBuffer(ebo);
+        
+        // Note: VBO and EBO are not deleted here as they are referenced by the VAO
+        // They will be cleaned up when the OpenGL context is destroyed
 
         return vao;
     }
@@ -358,8 +360,9 @@ public static class AssetsService
         GL.BindVertexArray(0);
         GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-        GL.DeleteBuffer(vbo);
-        GL.DeleteBuffer(ebo);
+        
+        // Note: VBO and EBO are not deleted here as they are referenced by the VAO
+        // They will be cleaned up when the OpenGL context is destroyed
 
         return vao;
     }

@@ -34,7 +34,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
-        RenderRites.Machine.Window!.Title = $"RenderRates Machine FPS: {FpsCounter.GetFps():F0}";
+        RenderRites.Machine.Window!.Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
         
         RenderRites.Machine.Scenes.Current?.UpdateScene(args);
         

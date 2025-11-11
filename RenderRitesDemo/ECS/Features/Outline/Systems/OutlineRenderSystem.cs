@@ -9,6 +9,8 @@ namespace RenderRitesDemo.ECS.Features.Outline.Systems;
 
 public class OutlineRenderSystem : IEcsRunSystem
 {
+    private const int MaxStencilValue = 255;
+    
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
@@ -39,7 +41,7 @@ public class OutlineRenderSystem : IEcsRunSystem
             MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
             ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
             
-            int stencilId = entity % 255 + 1;
+            int stencilId = entity % MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Notequal, stencilId, 0xFF);
             
             RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);

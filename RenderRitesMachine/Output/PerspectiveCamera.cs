@@ -4,6 +4,9 @@ namespace RenderRitesMachine.Output;
 
 public class PerspectiveCamera
 {
+    private const float NearPlane = 0.01f;
+    private const float FarPlane = 1000.0f;
+    
     public Vector3 Position = Vector3.Zero;
     public float AspectRatio = 1.0f;
     public Vector3 Front => _front;
@@ -20,7 +23,7 @@ public class PerspectiveCamera
     private float _fov = MathHelper.PiOver2;
     
     public Matrix4 ViewMatrix => Matrix4.LookAt(Position, Position + _front, _up);
-    public Matrix4 ProjectionMatrix => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, 0.01f, 1000f);
+    public Matrix4 ProjectionMatrix => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, NearPlane, FarPlane);
     
     public float Pitch
     {

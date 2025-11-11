@@ -48,7 +48,7 @@ public sealed class RenderRites
             ImageResult? image = ImageResult.FromStream(iconStream, ColorComponents.RedGreenBlueAlpha);
 
             WindowIcon icon = new(new Image(image.Width, image.Height, image.Data));
-            // nws.Icon = icon;
+            nws.Icon = icon;
         }
         
         Window = new Window(gws, nws);

@@ -7,6 +7,8 @@ namespace RenderRitesDemo.ECS;
 
 public class MainRenderSystem : IEcsRunSystem
 {
+    private const int MaxStencilValue = 255;
+    
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
@@ -36,7 +38,7 @@ public class MainRenderSystem : IEcsRunSystem
             ShaderAsset shaderAsset = AssetsService.GetShader("cel");
             TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
             
-            int stencilId = entity % 255 + 1;
+            int stencilId = entity % MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Gequal, stencilId, 0xFF);
             
             RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
