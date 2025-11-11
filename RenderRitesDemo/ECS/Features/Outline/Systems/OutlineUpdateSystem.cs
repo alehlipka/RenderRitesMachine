@@ -1,10 +1,8 @@
 using Leopotam.EcsLite;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesDemo.ECS.Features.Outline.Components;
-using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.Services;
 using RenderRitesMachine.Utilities;
 
 namespace RenderRitesDemo.ECS.Features.Outline.Systems;
@@ -13,10 +11,12 @@ public class OutlineUpdateSystem : IEcsRunSystem
 {
     public void Run(IEcsSystems systems)
     {
-        MouseState mouse = RenderRites.Machine.Window!.MouseState;
-
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+        
+        if (shared.Window == null) return;
+        
+        MouseState mouse = shared.Window.MouseState;
 
         var transforms = world.GetPool<Transform>();
         var meshes = world.GetPool<Mesh>();
@@ -32,7 +32,7 @@ public class OutlineUpdateSystem : IEcsRunSystem
             if (!mesh.IsVisible) continue;
             
             Transform transform = transforms.Get(entity);
-            MeshAsset meshAsset = AssetsService.GetMesh(meshes.Get(entity).Name);
+            MeshAsset meshAsset = shared.Assets.GetMesh(meshes.Get(entity).Name);
 
             float? hitDistance = Ray
                 .GetFromScreen(mouse.X, mouse.Y, shared.Camera.Position, shared.Camera.ProjectionMatrix, shared.Camera.ViewMatrix)

@@ -1,6 +1,7 @@
 ﻿using Leopotam.EcsLite;
 using RenderRitesDemo.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS.Features.BoundingBox.Systems;
@@ -30,8 +31,11 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
             if (!box.IsVisible) continue;
             
             Transform transform = transforms.Get(entity);
-            ShaderAsset boundingShaderAsset = AssetsService.GetShader("bounding");
-            BoundingBoxAsset boundingBoxAsset = AssetsService.GetBoundingBox(mesh.Name);
+            SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+            ShaderAsset boundingShaderAsset = shared.Assets.GetShader("bounding");
+            BoundingBoxAsset boundingBoxAsset = shared.Assets.GetBoundingBox(mesh.Name);
+            
+            shared.MarkShaderActive(boundingShaderAsset.Id);
             
             RenderService.Render(boundingBoxAsset, boundingShaderAsset, transform.ModelMatrix);
         }

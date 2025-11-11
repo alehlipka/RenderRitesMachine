@@ -3,10 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
-using RenderRitesMachine;
-using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS.Features.Input.Systems;
 
@@ -16,7 +13,10 @@ public class InputUpdateSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        RenderRitesMachine.Output.Window window = RenderRites.Machine.Window!;
+        
+        if (shared.Window == null) return;
+        
+        var window = shared.Window;
 
         if (window.IsKeyPressed(Keys.P))
         {
@@ -104,18 +104,7 @@ public class InputUpdateSystem : IEcsRunSystem
 
         if (cameraMoved)
         {
-            UpdateCameraMatrices(shared);
-        }
-    }
-
-    private static void UpdateCameraMatrices(SystemSharedObject shared)
-    {
-        var shaders = AssetsService.GetAllShaders();
-        foreach (ShaderAsset shaderAsset in shaders)
-        {
-            shaderAsset.Use();
-            shaderAsset.SetMatrix4("view", shared.Camera.ViewMatrix);
-            shaderAsset.SetMatrix4("projection", shared.Camera.ProjectionMatrix);
+            shared.UpdateActiveShaders();
         }
     }
 }

@@ -24,7 +24,12 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         GL.ClearColor(Color4.Black);
         
-        RenderRites.Machine.Scenes.Current?.Initialize();
+        var currentScene = RenderRites.Machine.Scenes.Current;
+        if (currentScene != null)
+        {
+            currentScene.SetWindow(this);
+            currentScene.Initialize();
+        }
     }
 
     protected override void OnResize(ResizeEventArgs e)

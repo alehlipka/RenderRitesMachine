@@ -17,18 +17,18 @@ namespace RenderRitesDemo.Scenes.Preloader;
 
 public class PreloaderScene(string name) : Scene(name)
 {
-    private static void LoadAssets()
+    private void LoadAssets()
     {
-        AssetsService.AddShader("cel", Path.Combine("Assets", "Shaders", "CelShading"));
-        AssetsService.AddShader("outline", Path.Combine("Assets", "Shaders", "Outline"));
-        AssetsService.AddShader("bounding", Path.Combine("Assets", "Shaders", "Bounding"));
+        Assets.AddShader("cel", Path.Combine("Assets", "Shaders", "CelShading"));
+        Assets.AddShader("outline", Path.Combine("Assets", "Shaders", "Outline"));
+        Assets.AddShader("bounding", Path.Combine("Assets", "Shaders", "Bounding"));
 
-        AssetsService.AddMeshFromFile("cow", Path.Combine("Assets", "Objects", "cow.obj"));
-        AssetsService.AddSphere("sphere", 2, 20, 20);
-        AssetsService.AddBoundingBox("cow");
-        AssetsService.AddBoundingBox("sphere");
+        Assets.AddMeshFromFile("cow", Path.Combine("Assets", "Objects", "cow.obj"));
+        Assets.AddSphere("sphere", 2, 20, 20);
+        Assets.AddBoundingBox("cow");
+        Assets.AddBoundingBox("sphere");
 
-        AssetsService.AddTexture("debug", TextureType.ColorMap, Path.Combine("Assets", "Textures", "debug.jpg"));
+        Assets.AddTexture("debug", TextureType.ColorMap, Path.Combine("Assets", "Textures", "debug.jpg"));
     }
     
     private void CreateCow(

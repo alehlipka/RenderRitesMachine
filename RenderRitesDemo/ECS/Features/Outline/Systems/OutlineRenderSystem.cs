@@ -2,6 +2,7 @@ using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.Configuration;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
@@ -9,7 +10,7 @@ namespace RenderRitesDemo.ECS.Features.Outline.Systems;
 
 public class OutlineRenderSystem : IEcsRunSystem
 {
-    private const int MaxStencilValue = 255;
+    // MaxStencilValue moved to RenderConstants
     
     public void Run(IEcsSystems systems)
     {
@@ -38,10 +39,12 @@ public class OutlineRenderSystem : IEcsRunSystem
             if (!outline.IsVisible) continue;
             
             Transform transform = transforms.Get(entity);
-            MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
-            ShaderAsset outlineShaderAsset = AssetsService.GetShader("outline");
+            MeshAsset meshAsset = shared.Assets.GetMesh(mesh.Name);
+            ShaderAsset outlineShaderAsset = shared.Assets.GetShader("outline");
             
-            int stencilId = entity % MaxStencilValue + 1;
+            shared.MarkShaderActive(outlineShaderAsset.Id);
+            
+            int stencilId = entity % RenderConstants.MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Notequal, stencilId, 0xFF);
             
             RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);

@@ -1,13 +1,15 @@
 using Leopotam.EcsLite;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.Configuration;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS;
 
 public class MainRenderSystem : IEcsRunSystem
 {
-    private const int MaxStencilValue = 255;
+    // MaxStencilValue moved to RenderConstants
     
     public void Run(IEcsSystems systems)
     {
@@ -34,11 +36,14 @@ public class MainRenderSystem : IEcsRunSystem
             
             Transform transform = transforms.Get(entity);
             ColorTexture colorTexture = textures.Get(entity);
-            MeshAsset meshAsset = AssetsService.GetMesh(mesh.Name);
-            ShaderAsset shaderAsset = AssetsService.GetShader("cel");
-            TextureAsset textureAsset = AssetsService.GetTexture(colorTexture.Name);
+            SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+            MeshAsset meshAsset = shared.Assets.GetMesh(mesh.Name);
+            ShaderAsset shaderAsset = shared.Assets.GetShader("cel");
+            TextureAsset textureAsset = shared.Assets.GetTexture(colorTexture.Name);
             
-            int stencilId = entity % MaxStencilValue + 1;
+            shared.MarkShaderActive(shaderAsset.Id);
+            
+            int stencilId = entity % RenderConstants.MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Gequal, stencilId, 0xFF);
             
             RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);

@@ -2,6 +2,7 @@ using Assimp;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
+using RenderRitesMachine.Configuration;
 using RenderRitesMachine.Output;
 using StbImageSharp;
 using BufferTarget = OpenTK.Graphics.OpenGL4.BufferTarget;
@@ -24,16 +25,32 @@ using VertexAttribPointerType = OpenTK.Graphics.OpenGL4.VertexAttribPointerType;
 
 namespace RenderRitesMachine.Services;
 
-public static class AssetsService
+/// <summary>
+/// Сервис для управления ресурсами (меши, шейдеры, текстуры, bounding boxes).
+/// Предоставляет методы для загрузки и получения ресурсов OpenGL.
+/// </summary>
+public class AssetsService
 {
-    private static readonly Dictionary<string, MeshAsset> Meshes = [];
-    private static readonly Dictionary<string, ShaderAsset> Shaders = [];
-    private static readonly Dictionary<string, TextureAsset> Textures = [];
-    private static readonly Dictionary<string, BoundingBoxAsset> BoundingBoxes = [];
+    private readonly Dictionary<string, MeshAsset> _meshes = [];
+    private readonly Dictionary<string, ShaderAsset> _shaders = [];
+    private readonly Dictionary<string, TextureAsset> _textures = [];
+    private readonly Dictionary<string, BoundingBoxAsset> _boundingBoxes = [];
 
-    public static MeshAsset GetMesh(string name)
+    /// <summary>
+    /// Получает меш по имени.
+    /// </summary>
+    /// <param name="name">Имя меша.</param>
+    /// <returns>Меш с указанным именем.</returns>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
+    /// <exception cref="KeyNotFoundException">Выбрасывается, если меш с указанным именем не найден.</exception>
+    public MeshAsset GetMesh(string name)
     {
-        if (Meshes.TryGetValue(name, out MeshAsset value))
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Mesh name cannot be null or empty.");
+        }
+
+        if (_meshes.TryGetValue(name, out MeshAsset value))
         {
             return value;
         }
@@ -41,9 +58,21 @@ public static class AssetsService
         throw new KeyNotFoundException($"No mesh found with the name: {name}");
     }
 
-    public static ShaderAsset GetShader(string name)
+    /// <summary>
+    /// Получает шейдер по имени.
+    /// </summary>
+    /// <param name="name">Имя шейдера.</param>
+    /// <returns>Шейдер с указанным именем.</returns>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
+    /// <exception cref="KeyNotFoundException">Выбрасывается, если шейдер с указанным именем не найден.</exception>
+    public ShaderAsset GetShader(string name)
     {
-        if (Shaders.TryGetValue(name, out ShaderAsset value))
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Shader name cannot be null or empty.");
+        }
+
+        if (_shaders.TryGetValue(name, out ShaderAsset value))
         {
             return value;
         }
@@ -51,14 +80,30 @@ public static class AssetsService
         throw new KeyNotFoundException($"No shader found with the name: {name}");
     }
 
-    public static ShaderAsset[] GetAllShaders()
+    /// <summary>
+    /// Получает коллекцию всех загруженных шейдеров.
+    /// </summary>
+    /// <returns>Неизменяемая коллекция всех шейдеров.</returns>
+    public IReadOnlyCollection<ShaderAsset> GetAllShaders()
     {
-        return Shaders.Values.ToArray();
+        return _shaders.Values;
     }
     
-    public static TextureAsset GetTexture(string name)
+    /// <summary>
+    /// Получает текстуру по имени.
+    /// </summary>
+    /// <param name="name">Имя текстуры.</param>
+    /// <returns>Текстура с указанным именем.</returns>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
+    /// <exception cref="KeyNotFoundException">Выбрасывается, если текстура с указанным именем не найдена.</exception>
+    public TextureAsset GetTexture(string name)
     {
-        if (Textures.TryGetValue(name, out TextureAsset value))
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Texture name cannot be null or empty.");
+        }
+
+        if (_textures.TryGetValue(name, out TextureAsset value))
         {
             return value;
         }
@@ -66,9 +111,21 @@ public static class AssetsService
         throw new KeyNotFoundException($"No texture found with the name: {name}");
     }
     
-    public static BoundingBoxAsset GetBoundingBox(string name)
+    /// <summary>
+    /// Получает bounding box по имени меша.
+    /// </summary>
+    /// <param name="name">Имя меша, для которого создан bounding box.</param>
+    /// <returns>Bounding box для указанного меша.</returns>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
+    /// <exception cref="KeyNotFoundException">Выбрасывается, если bounding box с указанным именем не найден.</exception>
+    public BoundingBoxAsset GetBoundingBox(string name)
     {
-        if (BoundingBoxes.TryGetValue(name, out BoundingBoxAsset value))
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Bounding box name cannot be null or empty.");
+        }
+
+        if (_boundingBoxes.TryGetValue(name, out BoundingBoxAsset value))
         {
             return value;
         }
@@ -76,8 +133,19 @@ public static class AssetsService
         throw new KeyNotFoundException($"No bounding box found with the name: {name}");
     }
 
-    public static void AddBoundingBox(string meshName)
+    /// <summary>
+    /// Создает и добавляет bounding box для указанного меша.
+    /// </summary>
+    /// <param name="meshName">Имя меша, для которого создается bounding box.</param>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если meshName равен null.</exception>
+    /// <exception cref="KeyNotFoundException">Выбрасывается, если меш с указанным именем не найден.</exception>
+    public void AddBoundingBox(string meshName)
     {
+        if (string.IsNullOrWhiteSpace(meshName))
+        {
+            throw new ArgumentNullException(nameof(meshName), "Mesh name cannot be null or empty.");
+        }
+
         MeshAsset meshAsset = GetMesh(meshName);
         
         float[] vertices =
@@ -105,48 +173,106 @@ public static class AssetsService
             IndicesCount = indices.Length
         };
         
-        BoundingBoxes.Add(meshName, asset);
+        _boundingBoxes.Add(meshName, asset);
     }
 
-    public static void AddTexture(string name, TextureType type, string path)
+    /// <summary>
+    /// Загружает и добавляет текстуру из файла.
+    /// </summary>
+    /// <param name="name">Имя текстуры для последующего доступа.</param>
+    /// <param name="type">Тип текстуры.</param>
+    /// <param name="path">Путь к файлу текстуры.</param>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name или path равны null.</exception>
+    /// <exception cref="FileNotFoundException">Выбрасывается, если файл не найден.</exception>
+    /// <exception cref="InvalidDataException">Выбрасывается, если не удалось загрузить изображение.</exception>
+    /// <exception cref="IOException">Выбрасывается при ошибке чтения файла.</exception>
+    public void AddTexture(string name, TextureType type, string path)
     {
-        StbImage.stbi_set_flip_vertically_on_load(1);
-        ImageResult? image = ImageResult.FromStream(
-            File.OpenRead(path),
-            ColorComponents.RedGreenBlueAlpha
-        );
-        if (image == null)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            throw new Exception("Texture resource loading error");
+            throw new ArgumentNullException(nameof(name), "Texture name cannot be null or empty.");
         }
-        
-        int handle = GL.GenTexture();
-        GL.BindTexture(TextureTarget.Texture2D, handle);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 
-            image.Width, image.Height, 0, PixelFormat.Rgba, 
-            PixelType.UnsignedByte, image.Data);
-        
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-        
-        const float AnisotropicFilteringLevel = 8.0f;
-        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, AnisotropicFilteringLevel);
-        
-        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-        GL.BindTexture(TextureTarget.Texture2D, 0);
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new ArgumentNullException(nameof(path), "Texture path cannot be null or empty.");
+        }
 
-        TextureAsset asset = new() { Id = handle, Type = type };
-        
-        Textures.Add(name, asset);
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException("Texture file not found.", path);
+        }
+
+        try
+        {
+            StbImage.stbi_set_flip_vertically_on_load(1);
+            using FileStream stream = File.OpenRead(path);
+            ImageResult? image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
+            
+            if (image == null)
+            {
+                throw new InvalidDataException($"Failed to load texture image from {path}.");
+            }
+            
+            int handle = GL.GenTexture();
+            GL.BindTexture(TextureTarget.Texture2D, handle);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 
+                image.Width, image.Height, 0, PixelFormat.Rgba, 
+                PixelType.UnsignedByte, image.Data);
+            
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            
+            GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, RenderConstants.AnisotropicFilteringLevel);
+            
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+
+            TextureAsset asset = new() { Id = handle, Type = type };
+            
+            _textures.Add(name, asset);
+        }
+        catch (Exception ex) when (ex is not FileNotFoundException and not InvalidDataException)
+        {
+            throw new IOException($"Error reading texture file: {path}", ex);
+        }
     }
 
-    public static void AddShader(string name, string path)
+    /// <summary>
+    /// Загружает и компилирует шейдерную программу из файлов vertex.glsl и fragment.glsl.
+    /// </summary>
+    /// <param name="name">Имя шейдера для последующего доступа.</param>
+    /// <param name="path">Путь к директории, содержащей vertex.glsl и fragment.glsl.</param>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name или path равны null.</exception>
+    /// <exception cref="FileNotFoundException">Выбрасывается, если файлы шейдеров не найдены.</exception>
+    /// <exception cref="InvalidOperationException">Выбрасывается при ошибке компиляции или линковки шейдера.</exception>
+    public void AddShader(string name, string path)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Shader name cannot be null or empty.");
+        }
+
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new ArgumentNullException(nameof(path), "Shader path cannot be null or empty.");
+        }
+
         string vertexShaderPath = Path.Combine(path, "vertex.glsl");
         string fragmentShaderPath = Path.Combine(path, "fragment.glsl");
+
+        if (!File.Exists(vertexShaderPath))
+        {
+            throw new FileNotFoundException("Vertex shader file not found.", vertexShaderPath);
+        }
+
+        if (!File.Exists(fragmentShaderPath))
+        {
+            throw new FileNotFoundException("Fragment shader file not found.", fragmentShaderPath);
+        }
         
         Shader vertexShader = new(vertexShaderPath, ShaderType.VertexShader);
         Shader fragmentShader = new(fragmentShaderPath, ShaderType.FragmentShader);
@@ -165,7 +291,8 @@ public static class AssetsService
         if (linked != 1)
         {
             string infoLog = GL.GetProgramInfoLog(handle);
-            throw new Exception($"Shader link error: {infoLog}");
+            GL.DeleteProgram(handle);
+            throw new InvalidOperationException($"Shader link error for '{name}': {infoLog}");
         }
 
         GL.DetachShader(handle, vertexShader.Handle);
@@ -176,11 +303,34 @@ public static class AssetsService
 
         ShaderAsset shader = new() { Id = handle };
 
-        Shaders.Add(name, shader);
+        _shaders.Add(name, shader);
     }
     
-    public static void AddMeshFromFile(string name, string path)
+    /// <summary>
+    /// Загружает меш из файла 3D-модели (поддерживаются форматы, поддерживаемые Assimp).
+    /// </summary>
+    /// <param name="name">Имя меша для последующего доступа.</param>
+    /// <param name="path">Путь к файлу 3D-модели.</param>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name или path равны null.</exception>
+    /// <exception cref="FileNotFoundException">Выбрасывается, если файл не найден.</exception>
+    /// <exception cref="InvalidOperationException">Выбрасывается при ошибке загрузки модели или отсутствии мешей в файле.</exception>
+    public void AddMeshFromFile(string name, string path)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Mesh name cannot be null or empty.");
+        }
+
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            throw new ArgumentNullException(nameof(path), "Mesh path cannot be null or empty.");
+        }
+
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException("Mesh file not found.", path);
+        }
+
         AssimpContext importer = new();
         Scene? scene = importer.ImportFile(path,
             PostProcessSteps.Triangulate |
@@ -188,12 +338,12 @@ public static class AssetsService
             PostProcessSteps.GenerateBoundingBoxes
         );
 
-        if (scene == null)
+        if (scene == null || scene.MeshCount == 0)
         {
-            throw new Exception("Failed to load model");
+            throw new InvalidOperationException($"Failed to load model from {path} or model contains no meshes.");
         }
 
-        Mesh mesh = scene.Meshes.First();
+        Mesh mesh = scene.Meshes[0];
         
         List<float> floatVertices = [];
         var textures = mesh.TextureCoordinateChannels[0];
@@ -233,11 +383,40 @@ public static class AssetsService
             Maximum = max
         };
         
-        Meshes.Add(name, asset);
+        _meshes.Add(name, asset);
     }
 
-    public static void AddSphere(string name, float radius, int sectors, int stacks)
+    /// <summary>
+    /// Создает и добавляет сферический меш.
+    /// </summary>
+    /// <param name="name">Имя меша для последующего доступа.</param>
+    /// <param name="radius">Радиус сферы.</param>
+    /// <param name="sectors">Количество секторов (сегментов по горизонтали).</param>
+    /// <param name="stacks">Количество стеков (сегментов по вертикали).</param>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Выбрасывается, если radius, sectors или stacks имеют недопустимые значения.</exception>
+    public void AddSphere(string name, float radius, int sectors, int stacks)
     {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Mesh name cannot be null or empty.");
+        }
+
+        if (radius <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(radius), radius, "Radius must be greater than 0.");
+        }
+
+        if (sectors < 3)
+        {
+            throw new ArgumentOutOfRangeException(nameof(sectors), sectors, "Sectors must be at least 3.");
+        }
+
+        if (stacks < 2)
+        {
+            throw new ArgumentOutOfRangeException(nameof(stacks), stacks, "Stacks must be at least 2.");
+        }
+
         List<float> vertices = [];
         List<uint> indices = [];
         Vector3 min = new(-radius);
@@ -304,10 +483,10 @@ public static class AssetsService
             Maximum = max
         };
         
-        Meshes.Add(name, asset);
+        _meshes.Add(name, asset);
     }
     
-    private static int GetPositionNormalTextureVao(float[] vertices, uint[] indices)
+    private int GetPositionNormalTextureVao(float[] vertices, uint[] indices)
     {
         int vao = GL.GenVertexArray();
         int vbo = GL.GenBuffer();
@@ -321,13 +500,13 @@ public static class AssetsService
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 0);
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
         
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 3 * sizeof(float));
+        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 3 * sizeof(float));
         GL.EnableVertexAttribArray(1);
         
-        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
+        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 6 * sizeof(float));
         GL.EnableVertexAttribArray(2);
 
         GL.BindVertexArray(0);
@@ -340,7 +519,7 @@ public static class AssetsService
         return vao;
     }
     
-    private static int GetPositionVao(float[] vertices, uint[] indices)
+    private int GetPositionVao(float[] vertices, uint[] indices)
     {
         int vbo = GL.GenBuffer();
         int ebo = GL.GenBuffer();
@@ -354,7 +533,7 @@ public static class AssetsService
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
         GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.PositionAttributeSize * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
 
         GL.BindVertexArray(0);
