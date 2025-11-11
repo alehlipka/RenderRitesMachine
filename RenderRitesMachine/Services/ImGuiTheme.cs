@@ -1,5 +1,5 @@
-using ImGuiNET;
 using System.Numerics;
+using ImGuiNET;
 
 namespace RenderRitesMachine.Services;
 
@@ -14,7 +14,7 @@ public static class ImGuiTheme
     public static void Apply()
     {
         ImGuiStylePtr style = ImGui.GetStyle();
-        
+
         // Цвета темы - темная тема с акцентами
         style.Colors[(int)ImGuiCol.Text] = new Vector4(0.95f, 0.95f, 0.95f, 1.00f);
         style.Colors[(int)ImGuiCol.TextDisabled] = new Vector4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -67,7 +67,7 @@ public static class ImGuiTheme
         style.Colors[(int)ImGuiCol.NavWindowingHighlight] = new Vector4(1.00f, 1.00f, 1.00f, 0.70f);
         style.Colors[(int)ImGuiCol.NavWindowingDimBg] = new Vector4(0.80f, 0.80f, 0.80f, 0.20f);
         style.Colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0.80f, 0.80f, 0.80f, 0.35f);
-        
+
         // Настройки стиля
         style.WindowPadding = new Vector2(8.0f, 8.0f);
         style.FramePadding = new Vector2(4.0f, 3.0f);
@@ -78,13 +78,13 @@ public static class ImGuiTheme
         style.IndentSpacing = 21.0f;
         style.ScrollbarSize = 14.0f;
         style.GrabMinSize = 10.0f;
-        
+
         style.WindowBorderSize = 1.0f;
         style.ChildBorderSize = 1.0f;
         style.PopupBorderSize = 1.0f;
         style.FrameBorderSize = 0.0f;
         style.TabBorderSize = 0.0f;
-        
+
         style.WindowRounding = 4.0f;
         style.ChildRounding = 4.0f;
         style.FrameRounding = 3.0f;
@@ -93,14 +93,14 @@ public static class ImGuiTheme
         style.GrabRounding = 3.0f;
         style.LogSliderDeadzone = 4.0f;
         style.TabRounding = 4.0f;
-        
+
         style.WindowTitleAlign = new Vector2(0.0f, 0.5f);
         style.WindowMenuButtonPosition = ImGuiDir.Right;
         style.ColorButtonPosition = ImGuiDir.Right;
         style.ButtonTextAlign = new Vector2(0.5f, 0.5f);
         style.SelectableTextAlign = new Vector2(0.0f, 0.0f);
         style.DisplaySafeAreaPadding = new Vector2(3.0f, 3.0f);
-        
+
         style.AntiAliasedLines = true;
         style.AntiAliasedLinesUseTex = true;
         style.AntiAliasedFill = true;

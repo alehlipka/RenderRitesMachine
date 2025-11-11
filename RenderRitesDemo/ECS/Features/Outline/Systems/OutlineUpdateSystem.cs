@@ -14,9 +14,9 @@ public class OutlineUpdateSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        
+
         if (shared.Window == null) return;
-        
+
         MouseState mouse = shared.Window.MouseState;
 
         var transforms = world.GetPool<Transform>();
@@ -31,7 +31,7 @@ public class OutlineUpdateSystem : IEcsRunSystem
         {
             Mesh mesh = meshes.Get(entity);
             if (!mesh.IsVisible) continue;
-            
+
             Transform transform = transforms.Get(entity);
             MeshAsset meshAsset = shared.Assets.GetMesh(meshes.Get(entity).Name);
 

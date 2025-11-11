@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
@@ -15,7 +15,7 @@ namespace RenderRitesMachine;
 public sealed class RenderRites
 {
     private static readonly Lazy<RenderRites> LazyMachine = new(() => new RenderRites());
-    
+
     /// <summary>
     /// Единственный экземпляр движка RenderRites (Singleton).
     /// </summary>
@@ -25,12 +25,12 @@ public sealed class RenderRites
     /// Текущее окно рендеринга. Может быть null до вызова RunWindow.
     /// </summary>
     public Window? Window { get; private set; }
-    
+
     /// <summary>
     /// Менеджер сцен для управления различными сценами приложения.
     /// </summary>
     public readonly SceneManager Scenes;
-    
+
     /// <summary>
     /// Сервис GUI для управления интерфейсом через ImGui.
     /// </summary>
@@ -83,7 +83,7 @@ public sealed class RenderRites
         };
 
         nws.Flags |= ContextFlags.Debug;
-        
+
         if (iconPath != null)
         {
             if (!File.Exists(iconPath))
@@ -109,7 +109,7 @@ public sealed class RenderRites
                 throw new IOException($"Error reading icon file: {iconPath}", ex);
             }
         }
-        
+
         Window = new Window(gws, nws);
         Window.Run();
         Gui.Dispose();

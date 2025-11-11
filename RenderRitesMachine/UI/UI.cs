@@ -1,6 +1,6 @@
+using System.Numerics;
 using ImGuiNET;
 using RenderRitesMachine.Services;
-using System.Numerics;
 
 namespace RenderRitesMachine.UI;
 
@@ -191,13 +191,13 @@ public static class UI
         EnsureContext();
         byte[] buffer = System.Text.Encoding.UTF8.GetBytes(value);
         Array.Resize(ref buffer, (int)maxLength);
-        
+
         bool changed = ImGui.InputText(label, buffer, maxLength);
         if (changed)
         {
             value = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd('\0');
         }
-        
+
         return changed;
     }
 
@@ -414,8 +414,8 @@ public static class UI
     public static bool ColorButton(string label, Vector4 color, ImGuiColorEditFlags flags = ImGuiColorEditFlags.None, Vector2? size = null)
     {
         EnsureContext();
-        return size.HasValue 
-            ? ImGui.ColorButton(label, color, flags, size.Value) 
+        return size.HasValue
+            ? ImGui.ColorButton(label, color, flags, size.Value)
             : ImGui.ColorButton(label, color, flags);
     }
 

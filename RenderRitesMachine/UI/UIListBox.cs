@@ -1,5 +1,5 @@
-using ImGuiNET;
 using System.Numerics;
+using ImGuiNET;
 
 namespace RenderRitesMachine.UI;
 
@@ -40,8 +40,8 @@ public class UIListBox : IDisposable
             return false;
         }
 
-        _isOpen = _size.HasValue 
-            ? ImGui.BeginListBox(_label, _size.Value) 
+        _isOpen = _size.HasValue
+            ? ImGui.BeginListBox(_label, _size.Value)
             : ImGui.BeginListBox(_label);
         return _isOpen;
     }

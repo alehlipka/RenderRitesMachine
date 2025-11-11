@@ -13,9 +13,9 @@ public class InputUpdateSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        
+
         if (shared.Window == null) return;
-        
+
         var window = shared.Window;
 
         if (window.IsKeyPressed(Keys.P))
@@ -37,7 +37,7 @@ public class InputUpdateSystem : IEcsRunSystem
         {
             EcsFilter rotationFilter = world.Filter<RotationTag>().End();
             var rotations = world.GetPool<RotationTag>();
-            
+
             foreach (int entity in rotationFilter)
             {
                 ref RotationTag rotation = ref rotations.Get(entity);
@@ -53,7 +53,7 @@ public class InputUpdateSystem : IEcsRunSystem
         {
             shared.Camera.Position -= shared.Camera.Front * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
         }
-        
+
         if (window.IsKeyDown(Keys.Left))
         {
             shared.Camera.Position -= shared.Camera.Right * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
@@ -62,7 +62,7 @@ public class InputUpdateSystem : IEcsRunSystem
         {
             shared.Camera.Position += shared.Camera.Right * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
         }
-        
+
         if (window.IsKeyDown(Keys.A))
         {
             shared.Camera.Position += shared.Camera.Up * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
@@ -71,7 +71,7 @@ public class InputUpdateSystem : IEcsRunSystem
         {
             shared.Camera.Position -= shared.Camera.Up * shared.Camera.Speed * shared.Time.UpdateDeltaTime;
         }
-        
+
         if (window.IsKeyDown(Keys.Q))
         {
             shared.Camera.Yaw -= shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
@@ -80,7 +80,7 @@ public class InputUpdateSystem : IEcsRunSystem
         {
             shared.Camera.Yaw += shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
         }
-        
+
         if (window.IsKeyDown(Keys.W))
         {
             shared.Camera.Pitch -= shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;

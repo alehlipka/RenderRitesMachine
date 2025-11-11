@@ -13,7 +13,7 @@ public static class FpsCounter
     {
         Stopwatch = new Stopwatch();
     }
-    
+
     public static void Initialize()
     {
         Stopwatch.Start();
@@ -25,11 +25,11 @@ public static class FpsCounter
         _totalTime = Stopwatch.Elapsed.TotalSeconds;
 
         if (!(_totalTime >= .5)) return;
-        
+
         _averageFps = _frameCount / _totalTime;
         _frameCount = 0;
         Stopwatch.Restart();
     }
-    
+
     public static double GetFps() => _averageFps;
 }

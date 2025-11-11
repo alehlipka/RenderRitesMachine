@@ -11,12 +11,12 @@ public class SystemSharedObject(PerspectiveCamera camera, TimeService time, Asse
     public TimeService Time = time;
     public AssetsService Assets = assets;
     public Window? Window { get; set; }
-    
+
     private readonly HashSet<int> _activeShaders = [];
     private Matrix4 _lastViewMatrix;
     private Matrix4 _lastProjectionMatrix;
     private bool _matricesInitialized;
-    
+
     public void MarkShaderActive(int shaderId)
     {
         if (_activeShaders.Add(shaderId))
@@ -24,30 +24,30 @@ public class SystemSharedObject(PerspectiveCamera camera, TimeService time, Asse
             UpdateShaderMatrices(shaderId);
         }
     }
-    
+
     public void UpdateActiveShaders()
     {
         Matrix4 currentView = Camera.ViewMatrix;
         Matrix4 currentProjection = Camera.ProjectionMatrix;
-        
+
         if (!_matricesInitialized || !MatricesEqual(currentView, _lastViewMatrix) || !MatricesEqual(currentProjection, _lastProjectionMatrix))
         {
             _lastViewMatrix = currentView;
             _lastProjectionMatrix = currentProjection;
             _matricesInitialized = true;
-            
+
             foreach (int shaderId in _activeShaders)
             {
                 UpdateShaderMatrices(shaderId);
             }
         }
     }
-    
+
     public void ClearActiveShaders()
     {
         _activeShaders.Clear();
     }
-    
+
     private static bool MatricesEqual(Matrix4 a, Matrix4 b)
     {
         const float epsilon = 0.0001f;
@@ -60,18 +60,18 @@ public class SystemSharedObject(PerspectiveCamera camera, TimeService time, Asse
                Math.Abs(a.M41 - b.M41) < epsilon && Math.Abs(a.M42 - b.M42) < epsilon &&
                Math.Abs(a.M43 - b.M43) < epsilon && Math.Abs(a.M44 - b.M44) < epsilon;
     }
-    
+
     private void UpdateShaderMatrices(int shaderId)
     {
         GL.UseProgram(shaderId);
         int viewLocation = GL.GetUniformLocation(shaderId, "view");
         int projectionLocation = GL.GetUniformLocation(shaderId, "projection");
-        
+
         if (viewLocation != -1)
         {
             GL.UniformMatrix4(viewLocation, true, ref _lastViewMatrix);
         }
-        
+
         if (projectionLocation != -1)
         {
             GL.UniformMatrix4(projectionLocation, true, ref _lastProjectionMatrix);

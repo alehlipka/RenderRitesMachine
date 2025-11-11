@@ -1,4 +1,4 @@
-﻿namespace RenderRitesMachine.Output;
+namespace RenderRitesMachine.Output;
 
 /// <summary>
 /// Менеджер для управления сценами приложения. Позволяет добавлять, переключать и управлять сценами.
@@ -6,12 +6,12 @@
 public class SceneManager : IDisposable
 {
     private readonly Dictionary<string, Scene> _items = new();
-    
+
     /// <summary>
     /// Текущая активная сцена. Может быть null, если сцена не установлена.
     /// </summary>
     public Scene? Current { get; private set; }
-    
+
     /// <summary>
     /// Добавляет сцену в менеджер.
     /// </summary>
@@ -47,10 +47,10 @@ public class SceneManager : IDisposable
         {
             Add(item);
         }
-        
+
         return this;
     }
-    
+
     /// <summary>
     /// Выполняет действие для каждой сцены в менеджере.
     /// </summary>
@@ -68,7 +68,7 @@ public class SceneManager : IDisposable
             action(item);
         }
     }
-    
+
     /// <summary>
     /// Проецирует каждую сцену в результат с помощью указанной функции.
     /// </summary>
@@ -103,7 +103,7 @@ public class SceneManager : IDisposable
             Current = null;
             return;
         }
-        
+
         Current = value;
     }
 

@@ -6,7 +6,7 @@ public class Ray(Vector3 origin, Vector3 direction)
 {
     public Vector3 Origin { get; } = origin;
     public Vector3 Direction { get; } = direction;
-    
+
     public Ray TransformToLocalSpace(Matrix4 modelMatrix)
     {
         Matrix4 inverseModel = modelMatrix.Inverted();
@@ -15,7 +15,7 @@ public class Ray(Vector3 origin, Vector3 direction)
         localDirection.Normalize(); // Важно нормализовать после трансформации!
         return new Ray(localOrigin, localDirection);
     }
-    
+
     public float? IntersectsAABB(Vector3 boxMin, Vector3 boxMax)
     {
         // Алгоритм пересечения луча и AABB (Slab Method)
@@ -51,7 +51,7 @@ public class Ray(Vector3 origin, Vector3 direction)
     public static Ray GetFromScreen(float mouseX, float mouseY, Vector3 cameraPosition, Matrix4 projection, Matrix4 view)
     {
         Vector2i windowSize = RenderRites.Machine.Window!.Size;
-        
+
         // Нормализованные координаты устройства (NDC)
         float x = 2.0f * mouseX / windowSize.X - 1.0f;
         float y = 1.0f - 2.0f * mouseY / windowSize.Y;

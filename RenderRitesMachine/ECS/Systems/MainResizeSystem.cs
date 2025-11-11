@@ -10,9 +10,9 @@ public class MainResizeSystem : IEcsRunSystem
     public void Run(IEcsSystems systems)
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        
+
         if (shared.Window == null) return;
-        
+
         Vector2i clientSize = shared.Window.ClientSize;
         GL.Viewport(0, 0, clientSize.X, clientSize.Y);
         shared.Camera.AspectRatio = clientSize.X / (float)clientSize.Y;

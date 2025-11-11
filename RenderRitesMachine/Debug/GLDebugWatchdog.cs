@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL4;
 
 namespace RenderRitesMachine.Debug;
@@ -12,14 +12,14 @@ internal static class GlDebugWatchdog
         DebugProc debugProc = DebugCallback;
         GL.DebugMessageCallback(debugProc, nint.Zero);
     }
-    
+
     private static void DebugCallback(DebugSource source, DebugType type, int i, DebugSeverity severity, int length,
         nint message, nint userParam)
     {
         string messageString = Marshal.PtrToStringAnsi(message, length);
         Console.WriteLine($"[OPENGL DEBUG MESSAGE] {messageString}");
     }
-    
+
     /// <summary>
     /// Проверяет наличие ошибок OpenGL и выбрасывает исключение, если ошибка обнаружена.
     /// Используется для проверки критических операций OpenGL.

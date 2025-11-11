@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 
 namespace RenderRitesMachine.Assets;
 
@@ -11,17 +11,17 @@ public class BoundingBoxAsset : IDisposable
     public int Vbo { get; set; }
     public int Ebo { get; set; }
     public int IndicesCount { get; set; }
-    
+
     private bool _disposed;
 
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         GL.DeleteBuffer(Vbo);
         GL.DeleteBuffer(Ebo);
         GL.DeleteVertexArray(Vao);
-        
+
         _disposed = true;
     }
 }

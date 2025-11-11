@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -14,7 +14,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     {
         FpsCounter.Initialize();
         GlDebugWatchdog.Initialize();
-        
+
         GL.Enable(EnableCap.DepthTest);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.Multisample);
@@ -24,11 +24,11 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         GL.ClearColor(Color4.Black);
-        
+
         // Инициализация GUI
         RenderRites.Machine.Gui.Initialize(this);
         RenderRitesMachine.UI.UI.Initialize(RenderRites.Machine.Gui);
-        
+
         var currentScene = RenderRites.Machine.Scenes.Current;
         if (currentScene != null)
         {
@@ -43,15 +43,15 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     }
 
     private string? _lastSceneName;
-    
+
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
         RenderRites.Machine.Window!.Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
-        
+
         // Проверяем, изменилась ли сцена
         var currentScene = RenderRites.Machine.Scenes.Current;
         string? currentSceneName = currentScene?.Name;
-        
+
         if (currentSceneName != _lastSceneName && currentScene != null)
         {
             // Новая сцена была установлена - нужно её инициализировать
@@ -59,12 +59,12 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
             currentScene.Initialize();
             _lastSceneName = currentSceneName;
         }
-        
+
         // Обновление GUI
         RenderRites.Machine.Gui.Update((float)args.Time);
-        
+
         currentScene?.UpdateScene(args);
-        
+
         if (KeyboardState.IsKeyPressed(Keys.Escape))
         {
             Close();
@@ -74,20 +74,20 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         FpsCounter.Update();
-        
+
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         RenderRites.Machine.Scenes.Current?.RenderScene(args);
-        
+
         // Рендеринг GUI поверх всего
         RenderRites.Machine.Gui.Render();
-        
+
         SwapBuffers();
     }
-    
+
     protected override void OnTextInput(TextInputEventArgs e)
     {
         base.OnTextInput(e);
-        
+
         // Передача текстового ввода в ImGui
         if (RenderRites.Machine.Gui != null)
         {

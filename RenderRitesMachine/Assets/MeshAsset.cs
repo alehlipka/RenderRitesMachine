@@ -14,17 +14,17 @@ public class MeshAsset : IDisposable
     public int IndicesCount { get; set; }
     public Vector3 Minimum { get; set; }
     public Vector3 Maximum { get; set; }
-    
+
     private bool _disposed;
 
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         GL.DeleteBuffer(Vbo);
         GL.DeleteBuffer(Ebo);
         GL.DeleteVertexArray(Vao);
-        
+
         _disposed = true;
     }
 }

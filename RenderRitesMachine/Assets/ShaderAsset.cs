@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace RenderRitesMachine.Assets;
@@ -9,16 +9,16 @@ namespace RenderRitesMachine.Assets;
 public class ShaderAsset : IDisposable
 {
     private readonly Dictionary<string, int> _uniformLocations = [];
-    
+
     public int Id { get; set; }
-    
+
     private bool _disposed;
-    
+
     public void Use()
     {
         GL.UseProgram(Id);
     }
-    
+
     public void SetInt(string name, int value)
     {
         GL.Uniform1(GetUniformLocation(name), value);
@@ -28,17 +28,17 @@ public class ShaderAsset : IDisposable
     {
         GL.Uniform1(GetUniformLocation(name), value);
     }
-    
+
     public void SetVector3(string name, Vector3 vector)
     {
         GL.Uniform3(GetUniformLocation(name), vector);
     }
-    
+
     public void SetMatrix4(string name, Matrix4 matrix)
     {
         GL.UniformMatrix4(GetUniformLocation(name), true, ref matrix);
     }
-    
+
     private int GetUniformLocation(string name)
     {
         if (_uniformLocations.TryGetValue(name, out int location))
@@ -48,16 +48,16 @@ public class ShaderAsset : IDisposable
 
         location = GL.GetUniformLocation(Id, name);
         _uniformLocations[name] = location;
-        
+
         return location;
     }
 
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         GL.DeleteProgram(Id);
-        
+
         _disposed = true;
     }
 }

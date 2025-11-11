@@ -1,9 +1,9 @@
+using System.Numerics;
 using ImGuiNET;
 using Leopotam.EcsLite;
 using RenderRitesMachine;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.UI;
-using System.Numerics;
 
 namespace RenderRitesDemo.ECS;
 
@@ -15,7 +15,7 @@ public class GuiRenderSystem : IEcsRunSystem
     private bool _showDemoWindow = false;
     private bool _showMetricsWindow = false;
     private bool _showAboutWindow = false;
-    
+
     public void Run(IEcsSystems systems)
     {
         // Убеждаемся, что контекст ImGui установлен
@@ -24,7 +24,7 @@ public class GuiRenderSystem : IEcsRunSystem
         {
             ImGui.SetCurrentContext(context);
         }
-        
+
         // Главное меню - используем прямой вызов ImGui для надежности
         // Обертка для меню вызывает проблемы с контекстом, поэтому используем прямой вызов
         if (ImGui.BeginMainMenuBar())
@@ -35,7 +35,7 @@ public class GuiRenderSystem : IEcsRunSystem
                 string currentScene = RenderRites.Machine.Scenes.Current?.Name ?? "";
                 bool isPreloader = currentScene == "preloader";
                 bool isGuiTest = currentScene == "guitest";
-                
+
                 if (ImGui.MenuItem("Главная сцена", "F1", isPreloader))
                 {
                     RenderRites.Machine.Scenes.SetCurrent("preloader");
@@ -46,7 +46,7 @@ public class GuiRenderSystem : IEcsRunSystem
                 }
                 ImGui.EndMenu();
             }
-            
+
             // Подменю "Окна"
             if (ImGui.BeginMenu("Окна"))
             {
@@ -65,28 +65,28 @@ public class GuiRenderSystem : IEcsRunSystem
                 }
                 ImGui.EndMenu();
             }
-            
+
             ImGui.EndMainMenuBar();
         }
-        
+
         // Демо окно ImGui
         if (_showDemoWindow)
         {
             UI.ShowDemoWindow(ref _showDemoWindow);
         }
-        
+
         // Окно метрик
         UI.Window("Метрики").With(ref _showMetricsWindow, () =>
         {
             UI.Text($"FPS: {FpsCounter.GetFps():F2}");
             UI.Text($"Время кадра: {1000.0 / FpsCounter.GetFps():F2} мс");
-            
+
             UI.Separator();
             UI.Text("Статистика ImGui:");
             UI.Text($"Активных окон: {ImGuiNET.ImGui.GetIO().MetricsRenderWindows}");
             UI.Text($"Активных виджетов: {ImGuiNET.ImGui.GetIO().MetricsActiveWindows}");
         });
-        
+
         // Окно "О программе"
         UI.Window("О программе").With(ref _showAboutWindow, () =>
         {
@@ -100,7 +100,7 @@ public class GuiRenderSystem : IEcsRunSystem
                 _showAboutWindow = false;
             }
         });
-        
+
         // Информационное окно
         UI.Window("Информация о сцене").With(() =>
         {

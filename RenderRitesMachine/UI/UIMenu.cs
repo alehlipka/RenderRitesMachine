@@ -103,7 +103,7 @@ public class UIMenu : IDisposable
     public void With(Action action)
     {
         EnsureContext();
-        
+
         if (Begin())
         {
             try

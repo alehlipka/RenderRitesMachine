@@ -1,4 +1,4 @@
-﻿using Leopotam.EcsLite;
+using Leopotam.EcsLite;
 using OpenTK.Windowing.Common;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
@@ -15,37 +15,37 @@ public abstract class Scene : IDisposable
     /// Имя сцены.
     /// </summary>
     public string Name { get; }
-    
+
     /// <summary>
     /// ECS мир для управления сущностями и компонентами.
     /// </summary>
     protected readonly EcsWorld World;
-    
+
     /// <summary>
     /// Системы обновления, выполняющиеся каждый кадр.
     /// </summary>
     protected readonly EcsSystems UpdateSystems;
-    
+
     /// <summary>
     /// Системы рендеринга, выполняющиеся каждый кадр.
     /// </summary>
     protected readonly EcsSystems RenderSystems;
-    
+
     /// <summary>
     /// Системы обработки изменения размера окна.
     /// </summary>
     protected readonly EcsSystems ResizeSystems;
-    
+
     /// <summary>
     /// Камера сцены для управления видом и проекцией.
     /// </summary>
     protected readonly PerspectiveCamera Camera;
-    
+
     /// <summary>
     /// Сервис управления ресурсами (меши, шейдеры, текстуры).
     /// </summary>
     protected readonly AssetsService Assets;
-    
+
     private bool _isLoaded;
     private readonly TimeService _timeService;
     private readonly SystemSharedObject _shared;

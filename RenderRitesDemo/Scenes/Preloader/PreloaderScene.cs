@@ -1,4 +1,4 @@
-﻿using Leopotam.EcsLite;
+using Leopotam.EcsLite;
 using OpenTK.Mathematics;
 using RenderRitesDemo.ECS;
 using RenderRitesDemo.ECS.Features.BoundingBox.Components;
@@ -32,7 +32,7 @@ public class PreloaderScene(string name) : Scene(name)
 
         Assets.AddTexture("debug", TextureType.ColorMap, Path.Combine("Assets", "Textures", "debug.jpg"));
     }
-    
+
     private void CreateCow(
         EcsPool<OutlineTag> outlines,
         EcsPool<BoundingBoxTag> boundingBoxes,
@@ -78,32 +78,32 @@ public class PreloaderScene(string name) : Scene(name)
         ref RotationTag sphereRotation = ref rotations.Add(sphere);
         sphereRotation.Speed = 1.0f;
     }
-    
+
     protected override void OnLoad()
     {
         RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
-        
+
         LoadAssets();
-        
+
         var outlines = World.GetPool<OutlineTag>();
         var boundingBoxes = World.GetPool<BoundingBoxTag>();
         var transforms = World.GetPool<Transform>();
         var colorTextures = World.GetPool<ColorTexture>();
         var meshes = World.GetPool<Mesh>();
         var rotations = World.GetPool<RotationTag>();
-        
+
         CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
         CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
 
         Camera.Position = new Vector3(0.0f, 0.0f, 10.0f);
 
         ResizeSystems.Add(new MainResizeSystem());
-        
+
         UpdateSystems.Add(new InputUpdateSystem());
         UpdateSystems.Add(new RotationUpdateSystem());
         UpdateSystems.Add(new OutlineUpdateSystem());
         UpdateSystems.Add(new SceneSwitchSystem());
-        
+
         RenderSystems.Add(new MainRenderSystem());
         RenderSystems.Add(new OutlineRenderSystem());
         RenderSystems.Add(new BoundingBoxRenderSystem());

@@ -11,10 +11,10 @@ public class RotationUpdateSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-        
+
         var transforms = world.GetPool<Transform>();
         var rotations = world.GetPool<RotationTag>();
-        
+
         EcsFilter filter = world
             .Filter<Transform>()
             .Inc<RotationTag>()
@@ -24,7 +24,7 @@ public class RotationUpdateSystem : IEcsRunSystem
         {
             ref Transform transform = ref transforms.Get(entity);
             RotationTag rotation = rotations.Get(entity);
-            
+
             transform.RotationAngle += rotation.Speed * shared.Time.UpdateDeltaTime;
         }
     }

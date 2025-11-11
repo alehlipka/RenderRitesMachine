@@ -10,7 +10,7 @@ public struct Transform : IEcsAutoReset<Transform>
     private Vector3 _scale;
     private Vector3 _rotationAxis;
     private float _rotationAngle;
-    
+
     private Matrix4 _cachedModelMatrix;
     private bool _modelMatrixDirty;
 
@@ -72,7 +72,7 @@ public struct Transform : IEcsAutoReset<Transform>
         {
             if (_modelMatrixDirty)
             {
-                _cachedModelMatrix = 
+                _cachedModelMatrix =
                     Matrix4.CreateScale(_scale) *
                     Matrix4.CreateFromQuaternion(Quaternion.FromAxisAngle(_rotationAxis, _rotationAngle)) *
                     Matrix4.CreateTranslation(_position);

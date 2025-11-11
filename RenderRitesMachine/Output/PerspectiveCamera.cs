@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using RenderRitesMachine.Configuration;
 
 namespace RenderRitesMachine.Output;
@@ -8,9 +8,9 @@ namespace RenderRitesMachine.Output;
 /// </summary>
 public class PerspectiveCamera
 {
-    
+
     private Vector3 _position = Vector3.Zero;
-    
+
     /// <summary>
     /// Позиция камеры в мировом пространстве.
     /// </summary>
@@ -26,9 +26,9 @@ public class PerspectiveCamera
             }
         }
     }
-    
+
     private float _aspectRatio = 1.0f;
-    
+
     /// <summary>
     /// Соотношение сторон окна (ширина / высота). Используется для расчета матрицы проекции.
     /// </summary>
@@ -50,44 +50,44 @@ public class PerspectiveCamera
             }
         }
     }
-    
+
     /// <summary>
     /// Направление взгляда камеры (нормализованный вектор).
     /// </summary>
     public Vector3 Front => _front;
-    
+
     /// <summary>
     /// Вектор "вверх" камеры (нормализованный вектор).
     /// </summary>
     public Vector3 Up => _up;
-    
+
     /// <summary>
     /// Вектор "вправо" камеры (нормализованный вектор).
     /// </summary>
     public Vector3 Right => _right;
-    
+
     /// <summary>
     /// Скорость движения камеры в единицах в секунду.
     /// </summary>
     public float Speed { get; set; } = 30.0f;
-    
+
     /// <summary>
     /// Угловая скорость поворота камеры в градусах в секунду.
     /// </summary>
     public float AngularSpeed { get; set; } = 90.0f;
-    
+
     private Vector3 _front = -Vector3.UnitZ;
     private Vector3 _up = Vector3.UnitY;
     private Vector3 _right = Vector3.UnitX;
     private float _pitch;
     private float _yaw = -MathHelper.PiOver2;
     private float _fov = MathHelper.PiOver2;
-    
+
     private Matrix4 _cachedViewMatrix;
     private Matrix4 _cachedProjectionMatrix;
     private bool _viewMatrixDirty = true;
     private bool _projectionMatrixDirty = true;
-    
+
     /// <summary>
     /// Матрица вида камеры. Кэшируется и обновляется только при изменении позиции или ориентации.
     /// </summary>
@@ -103,7 +103,7 @@ public class PerspectiveCamera
             return _cachedViewMatrix;
         }
     }
-    
+
     /// <summary>
     /// Матрица проекции камеры. Кэшируется и обновляется только при изменении FOV или AspectRatio.
     /// </summary>
@@ -119,7 +119,7 @@ public class PerspectiveCamera
             return _cachedProjectionMatrix;
         }
     }
-    
+
     /// <summary>
     /// Угол наклона камеры вверх/вниз в градусах. Ограничен диапазоном от -89 до 89 градусов.
     /// </summary>

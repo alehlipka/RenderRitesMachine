@@ -1,4 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Graphics.OpenGL4;
 
 namespace RenderRitesMachine.Assets;
 
@@ -9,9 +9,9 @@ public class TextureAsset : IDisposable
 {
     public int Id { get; set; }
     public TextureType Type { get; set; }
-    
+
     private bool _disposed;
-    
+
     public void Bind()
     {
         GL.BindTextureUnit((int)Type, Id);
@@ -20,9 +20,9 @@ public class TextureAsset : IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         GL.DeleteTexture(Id);
-        
+
         _disposed = true;
     }
 }

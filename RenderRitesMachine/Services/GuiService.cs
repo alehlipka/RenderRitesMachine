@@ -1,8 +1,8 @@
+using System.Numerics;
 using ImGuiNET;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Numerics;
 using Window = RenderRitesMachine.Output.Window;
 
 namespace RenderRitesMachine.Services;
@@ -37,11 +37,11 @@ public class GuiService : IDisposable
         _window = window;
         _context = ImGui.CreateContext();
         ImGui.SetCurrentContext(_context);
-        
+
         SetupKeyMap();
         SetupStyle();
         CreateDeviceObjects();
-        
+
         _isInitialized = true;
     }
 
@@ -57,16 +57,16 @@ public class GuiService : IDisposable
         }
 
         ImGui.SetCurrentContext(_context);
-        
+
         ImGuiIOPtr io = ImGui.GetIO();
         io.DeltaTime = deltaTime;
-        
+
         Vector2i size = _window.ClientSize;
         io.DisplaySize = new System.Numerics.Vector2(size.X, size.Y);
         io.DisplayFramebufferScale = new System.Numerics.Vector2(1.0f, 1.0f);
-        
+
         UpdateInput(io);
-        
+
         ImGui.NewFrame();
     }
 
@@ -82,7 +82,7 @@ public class GuiService : IDisposable
 
         ImGui.SetCurrentContext(_context);
         ImGui.Render();
-        
+
         RenderDrawData(ImGui.GetDrawData());
     }
 
@@ -98,10 +98,10 @@ public class GuiService : IDisposable
     private void SetupKeyMap()
     {
         ImGuiIOPtr io = ImGui.GetIO();
-        
+
         // Настройка маппинга клавиш для новой версии ImGui.NET
         io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
-        
+
         // Добавляем поддержку клавиш через AddKeyEvent
         // Это будет вызываться в UpdateInput
     }
@@ -120,13 +120,13 @@ public class GuiService : IDisposable
 
         KeyboardState keyboard = _window.KeyboardState;
         MouseState mouse = _window.MouseState;
-        
+
         // Обновление модификаторов
         io.AddKeyEvent(ImGuiKey.ModCtrl, keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl));
         io.AddKeyEvent(ImGuiKey.ModShift, keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift));
         io.AddKeyEvent(ImGuiKey.ModAlt, keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt));
         io.AddKeyEvent(ImGuiKey.ModSuper, keyboard.IsKeyDown(Keys.LeftSuper) || keyboard.IsKeyDown(Keys.RightSuper));
-        
+
         // Обновление специальных клавиш
         io.AddKeyEvent(ImGuiKey.Tab, keyboard.IsKeyDown(Keys.Tab));
         io.AddKeyEvent(ImGuiKey.LeftArrow, keyboard.IsKeyDown(Keys.Left));
@@ -149,18 +149,18 @@ public class GuiService : IDisposable
         io.AddKeyEvent(ImGuiKey.X, keyboard.IsKeyDown(Keys.X));
         io.AddKeyEvent(ImGuiKey.Y, keyboard.IsKeyDown(Keys.Y));
         io.AddKeyEvent(ImGuiKey.Z, keyboard.IsKeyDown(Keys.Z));
-        
+
         // Обновление мыши
         io.AddMousePosEvent(mouse.X, mouse.Y);
         io.AddMouseButtonEvent(0, mouse.IsButtonDown(MouseButton.Left));
         io.AddMouseButtonEvent(1, mouse.IsButtonDown(MouseButton.Right));
         io.AddMouseButtonEvent(2, mouse.IsButtonDown(MouseButton.Middle));
-        
+
         if (mouse.ScrollDelta.Y != 0)
         {
             io.AddMouseWheelEvent(0, mouse.ScrollDelta.Y);
         }
-        
+
         // Обновление текста через события текстового ввода
         // В OpenTK 4.x нужно использовать TextInput event, но для простоты оставим пустым
         // Можно добавить обработчик TextInput в Window если нужно
@@ -169,16 +169,16 @@ public class GuiService : IDisposable
     private void CreateDeviceObjects()
     {
         ImGuiIOPtr io = ImGui.GetIO();
-        
+
         // Загрузка шрифта с поддержкой кириллицы
         // Пробуем несколько возможных путей
-        string[] possiblePaths = 
+        string[] possiblePaths =
         {
             Path.Combine("Assets", "Fonts", "arial.ttf"),
             Path.Combine(AppContext.BaseDirectory, "Assets", "Fonts", "arial.ttf"),
             Path.Combine(Directory.GetCurrentDirectory(), "Assets", "Fonts", "arial.ttf")
         };
-        
+
         string? fontPath = null;
         foreach (string path in possiblePaths)
         {
@@ -188,7 +188,7 @@ public class GuiService : IDisposable
                 break;
             }
         }
-        
+
         // Загружаем шрифт с поддержкой кириллицы
         // Используем кастомный диапазон символов для явного указания базовых + кириллических символов
         unsafe
@@ -201,11 +201,11 @@ public class GuiService : IDisposable
                 0x0400, 0x052F, // Кириллица (расширенный диапазон, включает все кириллические символы)
                 0 // Завершающий ноль
             };
-            
+
             fixed (ushort* rangesPtr = customRanges)
             {
                 IntPtr glyphRanges = (IntPtr)rangesPtr;
-                
+
                 if (fontPath != null)
                 {
                     try
@@ -227,20 +227,20 @@ public class GuiService : IDisposable
                 }
             }
         }
-        
+
         // Создание шрифтовой текстуры
         io.Fonts.GetTexDataAsRGBA32(out IntPtr pixels, out int width, out int height, out int bytesPerPixel);
-        
+
         _fontTexture = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _fontTexture);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0, 
+        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0,
             PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         GL.BindTexture(TextureTarget.Texture2D, 0);
-        
+
         io.Fonts.SetTexID((IntPtr)_fontTexture);
-        
+
         // Создание шейдера
         string vertexShaderSource = @"
 #version 330 core
@@ -277,38 +277,38 @@ void main()
         int vertexShader = GL.CreateShader(ShaderType.VertexShader);
         GL.ShaderSource(vertexShader, vertexShaderSource);
         GL.CompileShader(vertexShader);
-        
+
         int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
         GL.ShaderSource(fragmentShader, fragmentShaderSource);
         GL.CompileShader(fragmentShader);
-        
+
         _shaderProgram = GL.CreateProgram();
         GL.AttachShader(_shaderProgram, vertexShader);
         GL.AttachShader(_shaderProgram, fragmentShader);
         GL.LinkProgram(_shaderProgram);
-        
+
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
-        
+
         _uniformLocationProjection = GL.GetUniformLocation(_shaderProgram, "ProjMtx");
         _uniformLocationFontTexture = GL.GetUniformLocation(_shaderProgram, "Texture");
-        
+
         // Создание буферов
         _vertexArray = GL.GenVertexArray();
         _vertexBuffer = GL.GenBuffer();
         _indexBuffer = GL.GenBuffer();
-        
+
         GL.BindVertexArray(_vertexArray);
         GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBuffer);
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _indexBuffer);
-        
+
         GL.EnableVertexAttribArray(0);
         GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 20, 0);
         GL.EnableVertexAttribArray(1);
         GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, 20, 8);
         GL.EnableVertexAttribArray(2);
         GL.VertexAttribPointer(2, 4, VertexAttribPointerType.UnsignedByte, true, 20, 16);
-        
+
         GL.BindVertexArray(0);
     }
 
@@ -333,7 +333,7 @@ void main()
         bool lastEnableCullFace = GL.IsEnabled(EnableCap.CullFace);
         bool lastEnableDepthTest = GL.IsEnabled(EnableCap.DepthTest);
         bool lastEnableScissorTest = GL.IsEnabled(EnableCap.ScissorTest);
-        
+
         // Настройка состояния для рендеринга ImGui
         GL.Enable(EnableCap.Blend);
         GL.BlendEquation(BlendEquationMode.FuncAdd);
@@ -341,12 +341,12 @@ void main()
         GL.Disable(EnableCap.CullFace);
         GL.Disable(EnableCap.DepthTest);
         GL.Enable(EnableCap.ScissorTest);
-        
+
         // Настройка проекции
         Vector2i displaySize = _window!.ClientSize;
         Matrix4x4 projection = Matrix4x4.CreateOrthographicOffCenter(
             0.0f, displaySize.X, displaySize.Y, 0.0f, -1.0f, 1.0f);
-        
+
         GL.UseProgram(_shaderProgram);
         float[] matrixArray = new float[16];
         matrixArray[0] = projection.M11; matrixArray[1] = projection.M12; matrixArray[2] = projection.M13; matrixArray[3] = projection.M14;
@@ -358,28 +358,28 @@ void main()
             GL.UniformMatrix4(_uniformLocationProjection, 1, false, matrixPtr);
         }
         GL.Uniform1(_uniformLocationFontTexture, 0);
-        
+
         GL.BindVertexArray(_vertexArray);
-        
+
         drawData.ScaleClipRects(ImGui.GetIO().DisplayFramebufferScale);
-        
+
         for (int n = 0; n < drawData.CmdListsCount; n++)
         {
             ImDrawListPtr cmdList = drawData.CmdLists[n];
-            
+
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBuffer);
-            GL.BufferData(BufferTarget.ArrayBuffer, cmdList.VtxBuffer.Size * 20, cmdList.VtxBuffer.Data, 
+            GL.BufferData(BufferTarget.ArrayBuffer, cmdList.VtxBuffer.Size * 20, cmdList.VtxBuffer.Data,
                 BufferUsageHint.DynamicDraw);
-            
+
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _indexBuffer);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, cmdList.IdxBuffer.Size * 2, cmdList.IdxBuffer.Data, 
+            GL.BufferData(BufferTarget.ElementArrayBuffer, cmdList.IdxBuffer.Size * 2, cmdList.IdxBuffer.Data,
                 BufferUsageHint.DynamicDraw);
-            
+
             int vtxOffset = 0;
             for (int cmdI = 0; cmdI < cmdList.CmdBuffer.Size; cmdI++)
             {
                 ImDrawCmdPtr cmd = cmdList.CmdBuffer[cmdI];
-                
+
                 if (cmd.UserCallback != IntPtr.Zero)
                 {
                     // Обработка пользовательского колбэка (если нужно)
@@ -387,17 +387,17 @@ void main()
                 else
                 {
                     GL.BindTexture(TextureTarget.Texture2D, (int)cmd.TextureId);
-                    GL.Scissor((int)cmd.ClipRect.X, (int)(displaySize.Y - cmd.ClipRect.W), 
+                    GL.Scissor((int)cmd.ClipRect.X, (int)(displaySize.Y - cmd.ClipRect.W),
                         (int)(cmd.ClipRect.Z - cmd.ClipRect.X), (int)(cmd.ClipRect.W - cmd.ClipRect.Y));
-                    
-                    GL.DrawElements(PrimitiveType.Triangles, (int)cmd.ElemCount, 
+
+                    GL.DrawElements(PrimitiveType.Triangles, (int)cmd.ElemCount,
                         DrawElementsType.UnsignedShort, (IntPtr)(vtxOffset * 2));
                 }
-                
+
                 vtxOffset += (int)cmd.ElemCount;
             }
         }
-        
+
         // Восстановление состояния OpenGL
         GL.UseProgram(lastProgram);
         GL.BindTexture(TextureTarget.Texture2D, lastTexture);
@@ -406,7 +406,7 @@ void main()
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, lastElementArrayBuffer);
         GL.BlendEquationSeparate((BlendEquationMode)lastBlendEquationRgb, (BlendEquationMode)lastBlendEquationAlpha);
         GL.BlendFunc((BlendingFactor)lastBlendSrc, (BlendingFactor)lastBlendDst);
-        
+
         if (lastEnableBlend)
         {
             GL.Enable(EnableCap.Blend);
@@ -415,7 +415,7 @@ void main()
         {
             GL.Disable(EnableCap.Blend);
         }
-        
+
         if (lastEnableCullFace)
         {
             GL.Enable(EnableCap.CullFace);
@@ -424,7 +424,7 @@ void main()
         {
             GL.Disable(EnableCap.CullFace);
         }
-        
+
         if (lastEnableDepthTest)
         {
             GL.Enable(EnableCap.DepthTest);
@@ -433,7 +433,7 @@ void main()
         {
             GL.Disable(EnableCap.DepthTest);
         }
-        
+
         if (lastEnableScissorTest)
         {
             GL.Enable(EnableCap.ScissorTest);

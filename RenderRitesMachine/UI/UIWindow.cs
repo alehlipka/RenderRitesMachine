@@ -1,5 +1,5 @@
-using ImGuiNET;
 using System.Numerics;
+using ImGuiNET;
 
 namespace RenderRitesMachine.UI;
 

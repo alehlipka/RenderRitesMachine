@@ -56,7 +56,7 @@ public class AssetsService : IDisposable
         {
             return value;
         }
-        
+
         throw new KeyNotFoundException($"No mesh found with the name: {name}");
     }
 
@@ -78,7 +78,7 @@ public class AssetsService : IDisposable
         {
             return value;
         }
-        
+
         throw new KeyNotFoundException($"No shader found with the name: {name}");
     }
 
@@ -90,7 +90,7 @@ public class AssetsService : IDisposable
     {
         return _shaders.Values;
     }
-    
+
     /// <summary>
     /// Получает текстуру по имени.
     /// </summary>
@@ -109,10 +109,10 @@ public class AssetsService : IDisposable
         {
             return value;
         }
-        
+
         throw new KeyNotFoundException($"No texture found with the name: {name}");
     }
-    
+
     /// <summary>
     /// Получает bounding box по имени меша.
     /// </summary>
@@ -131,7 +131,7 @@ public class AssetsService : IDisposable
         {
             return value;
         }
-        
+
         throw new KeyNotFoundException($"No bounding box found with the name: {name}");
     }
 
@@ -149,7 +149,7 @@ public class AssetsService : IDisposable
         }
 
         MeshAsset meshAsset = GetMesh(meshName);
-        
+
         float[] vertices =
         [
             meshAsset.Minimum.X, meshAsset.Minimum.Y, meshAsset.Minimum.Z,
@@ -161,7 +161,7 @@ public class AssetsService : IDisposable
             meshAsset.Maximum.X, meshAsset.Maximum.Y, meshAsset.Maximum.Z,
             meshAsset.Minimum.X, meshAsset.Maximum.Y, meshAsset.Maximum.Z
         ];
-        
+
         uint[] indices =
         [
             0, 1, 1, 2, 2, 3, 3, 0,
@@ -177,7 +177,7 @@ public class AssetsService : IDisposable
             Ebo = ebo,
             IndicesCount = indices.Length
         };
-        
+
         _boundingBoxes.Add(meshName, asset);
     }
 
@@ -213,36 +213,36 @@ public class AssetsService : IDisposable
             StbImage.stbi_set_flip_vertically_on_load(1);
             using FileStream stream = File.OpenRead(path);
             ImageResult? image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
-            
+
             if (image == null)
             {
                 throw new InvalidDataException($"Failed to load texture image from {path}.");
             }
-            
-        int handle = GL.GenTexture();
-        GlDebugWatchdog.CheckGLError("texture generation");
-        
-        GL.BindTexture(TextureTarget.Texture2D, handle);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, 
-            image.Width, image.Height, 0, PixelFormat.Rgba, 
-            PixelType.UnsignedByte, image.Data);
-        GlDebugWatchdog.CheckGLError("texture data upload");
-        
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-        
-        GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, RenderConstants.AnisotropicFilteringLevel);
-        
-        GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-        GlDebugWatchdog.CheckGLError("texture mipmap generation");
-        
-        GL.BindTexture(TextureTarget.Texture2D, 0);
+            int handle = GL.GenTexture();
+            GlDebugWatchdog.CheckGLError("texture generation");
+
+            GL.BindTexture(TextureTarget.Texture2D, handle);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
+                image.Width, image.Height, 0, PixelFormat.Rgba,
+                PixelType.UnsignedByte, image.Data);
+            GlDebugWatchdog.CheckGLError("texture data upload");
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+            GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, RenderConstants.AnisotropicFilteringLevel);
+
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            GlDebugWatchdog.CheckGLError("texture mipmap generation");
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
 
             TextureAsset asset = new() { Id = handle, Type = type };
-            
+
             _textures.Add(name, asset);
         }
         catch (Exception ex) when (ex is not FileNotFoundException and not InvalidDataException)
@@ -283,7 +283,7 @@ public class AssetsService : IDisposable
         {
             throw new FileNotFoundException("Fragment shader file not found.", fragmentShaderPath);
         }
-        
+
         Shader vertexShader = new(vertexShaderPath, ShaderType.VertexShader);
         Shader fragmentShader = new(fragmentShaderPath, ShaderType.FragmentShader);
 
@@ -315,7 +315,7 @@ public class AssetsService : IDisposable
 
         _shaders.Add(name, shader);
     }
-    
+
     /// <summary>
     /// Загружает меш из файла 3D-модели (поддерживаются форматы, поддерживаемые Assimp).
     /// </summary>
@@ -354,7 +354,7 @@ public class AssetsService : IDisposable
         }
 
         Mesh mesh = scene.Meshes[0];
-        
+
         List<float> floatVertices = [];
         var textures = mesh.TextureCoordinateChannels[0];
 
@@ -395,7 +395,7 @@ public class AssetsService : IDisposable
             Minimum = min,
             Maximum = max
         };
-        
+
         _meshes.Add(name, asset);
     }
 
@@ -434,7 +434,7 @@ public class AssetsService : IDisposable
         List<uint> indices = [];
         Vector3 min = new(-radius);
         Vector3 max = new(radius);
-        
+
         for (int i = 0; i <= stacks; ++i)
         {
             double stackAngle = Math.PI / 2 - i * Math.PI / stacks;
@@ -481,13 +481,13 @@ public class AssetsService : IDisposable
                 }
 
                 if (i == stacks - 1) continue;
-                
+
                 indices.Add(k1 + 1);
                 indices.Add(k2);
                 indices.Add(k2 + 1);
             }
         }
-        
+
         var (vao, vbo, ebo) = GetPositionNormalTextureVao(vertices.ToArray(), indices.ToArray());
         MeshAsset asset = new()
         {
@@ -498,17 +498,17 @@ public class AssetsService : IDisposable
             Minimum = min,
             Maximum = max
         };
-        
+
         _meshes.Add(name, asset);
     }
-    
+
     private (int vao, int vbo, int ebo) GetPositionNormalTextureVao(float[] vertices, uint[] indices)
     {
         int vao = GL.GenVertexArray();
         int vbo = GL.GenBuffer();
         int ebo = GL.GenBuffer();
         GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
-        
+
         GL.BindVertexArray(vao);
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
@@ -521,10 +521,10 @@ public class AssetsService : IDisposable
 
         GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 0);
         GL.EnableVertexAttribArray(0);
-        
+
         GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 3 * sizeof(float));
         GL.EnableVertexAttribArray(1);
-        
+
         GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 6 * sizeof(float));
         GL.EnableVertexAttribArray(2);
 
@@ -534,14 +534,14 @@ public class AssetsService : IDisposable
 
         return (vao, vbo, ebo);
     }
-    
+
     private (int vao, int vbo, int ebo) GetPositionVao(float[] vertices, uint[] indices)
     {
         int vbo = GL.GenBuffer();
         int ebo = GL.GenBuffer();
         int vao = GL.GenVertexArray();
         GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
-        
+
         GL.BindVertexArray(vao);
 
         GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
@@ -568,32 +568,32 @@ public class AssetsService : IDisposable
     public void Dispose()
     {
         if (_disposed) return;
-        
+
         foreach (var mesh in _meshes.Values)
         {
             mesh.Dispose();
         }
-        
+
         foreach (var shader in _shaders.Values)
         {
             shader.Dispose();
         }
-        
+
         foreach (var texture in _textures.Values)
         {
             texture.Dispose();
         }
-        
+
         foreach (var boundingBox in _boundingBoxes.Values)
         {
             boundingBox.Dispose();
         }
-        
+
         _meshes.Clear();
         _shaders.Clear();
         _textures.Clear();
         _boundingBoxes.Clear();
-        
+
         _disposed = true;
     }
 }
