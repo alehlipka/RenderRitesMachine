@@ -2,11 +2,13 @@ using ImGuiNET;
 using Leopotam.EcsLite;
 using RenderRitesMachine;
 using RenderRitesMachine.Debug;
+using RenderRitesMachine.UI;
+using System.Numerics;
 
 namespace RenderRitesDemo.ECS;
 
 /// <summary>
-/// Система для рендеринга GUI через ImGui.
+/// Система для рендеринга GUI через ImGui с использованием обертки UI.
 /// </summary>
 public class GuiRenderSystem : IEcsRunSystem
 {
@@ -22,9 +24,12 @@ public class GuiRenderSystem : IEcsRunSystem
         {
             ImGui.SetCurrentContext(context);
         }
-        // Главное меню
+        
+        // Главное меню - используем прямой вызов ImGui для надежности
+        // Обертка для меню вызывает проблемы с контекстом, поэтому используем прямой вызов
         if (ImGui.BeginMainMenuBar())
         {
+            // Подменю "Сцены"
             if (ImGui.BeginMenu("Сцены"))
             {
                 string currentScene = RenderRites.Machine.Scenes.Current?.Name ?? "";
@@ -42,6 +47,7 @@ public class GuiRenderSystem : IEcsRunSystem
                 ImGui.EndMenu();
             }
             
+            // Подменю "Окна"
             if (ImGui.BeginMenu("Окна"))
             {
                 if (ImGui.MenuItem("Демо окно", "Ctrl+D", _showDemoWindow))
@@ -59,66 +65,58 @@ public class GuiRenderSystem : IEcsRunSystem
                 }
                 ImGui.EndMenu();
             }
+            
             ImGui.EndMainMenuBar();
         }
         
         // Демо окно ImGui
         if (_showDemoWindow)
         {
-            ImGui.ShowDemoWindow(ref _showDemoWindow);
+            UI.ShowDemoWindow(ref _showDemoWindow);
         }
         
         // Окно метрик
-        if (_showMetricsWindow)
+        UI.Window("Метрики").With(ref _showMetricsWindow, () =>
         {
-            if (ImGui.Begin("Метрики", ref _showMetricsWindow))
-            {
-                ImGui.Text($"FPS: {FpsCounter.GetFps():F2}");
-                ImGui.Text($"Время кадра: {1000.0 / FpsCounter.GetFps():F2} мс");
-                
-                ImGui.Separator();
-                ImGui.Text("Статистика ImGui:");
-                ImGui.Text($"Активных окон: {ImGui.GetIO().MetricsRenderWindows}");
-                ImGui.Text($"Активных виджетов: {ImGui.GetIO().MetricsActiveWindows}");
-            }
-            ImGui.End();
-        }
+            UI.Text($"FPS: {FpsCounter.GetFps():F2}");
+            UI.Text($"Время кадра: {1000.0 / FpsCounter.GetFps():F2} мс");
+            
+            UI.Separator();
+            UI.Text("Статистика ImGui:");
+            UI.Text($"Активных окон: {ImGuiNET.ImGui.GetIO().MetricsRenderWindows}");
+            UI.Text($"Активных виджетов: {ImGuiNET.ImGui.GetIO().MetricsActiveWindows}");
+        });
         
         // Окно "О программе"
-        if (_showAboutWindow)
+        UI.Window("О программе").With(ref _showAboutWindow, () =>
         {
-            if (ImGui.Begin("О программе", ref _showAboutWindow))
+            UI.Text("RenderRites Machine Demo");
+            UI.Separator();
+            UI.Text("Движок рендеринга на базе OpenTK и ECS");
+            UI.Text("Версия: 1.0.0");
+            UI.Separator();
+            if (UI.Button("Закрыть"))
             {
-                ImGui.Text("RenderRites Machine Demo");
-                ImGui.Separator();
-                ImGui.Text("Движок рендеринга на базе OpenTK и ECS");
-                ImGui.Text("Версия: 1.0.0");
-                ImGui.Separator();
-                if (ImGui.Button("Закрыть"))
-                {
-                    _showAboutWindow = false;
-                }
+                _showAboutWindow = false;
             }
-            ImGui.End();
-        }
+        });
         
-        // Пример информационного окна
-        if (ImGui.Begin("Информация о сцене"))
+        // Информационное окно
+        UI.Window("Информация о сцене").With(() =>
         {
-            ImGui.Text("Добро пожаловать в RenderRites!");
-            ImGui.Separator();
-            ImGui.Text("Переключение сцен:");
-            ImGui.BulletText("F1 - Главная сцена");
-            ImGui.BulletText("F2 - GUI Тест");
-            ImGui.Separator();
-            ImGui.Text("Управление:");
-            ImGui.BulletText("WASD - перемещение камеры");
-            ImGui.BulletText("Мышь - поворот камеры");
-            ImGui.BulletText("ESC - выход");
-            ImGui.Separator();
-            ImGui.Text("Нажмите 'Окна' в меню для открытия дополнительных окон.");
-        }
-        ImGui.End();
+            UI.Text("Добро пожаловать в RenderRites!");
+            UI.Separator();
+            UI.Text("Переключение сцен:");
+            UI.BulletText("F1 - Главная сцена");
+            UI.BulletText("F2 - GUI Тест");
+            UI.Separator();
+            UI.Text("Управление:");
+            UI.BulletText("WASD - перемещение камеры");
+            UI.BulletText("Мышь - поворот камеры");
+            UI.BulletText("ESC - выход");
+            UI.Separator();
+            UI.Text("Нажмите 'Окна' в меню для открытия дополнительных окон.");
+        });
     }
 }
 

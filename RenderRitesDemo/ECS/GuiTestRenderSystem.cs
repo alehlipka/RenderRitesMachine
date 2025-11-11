@@ -12,6 +12,8 @@ namespace RenderRitesDemo.ECS;
 /// </summary>
 public class GuiTestRenderSystem : IEcsRunSystem
 {
+    private bool _showMetricsWindow = false;
+    
     public void Run(IEcsSystems systems)
     {
         // Убеждаемся, что контекст ImGui установлен
@@ -55,6 +57,10 @@ public class GuiTestRenderSystem : IEcsRunSystem
                 {
                     scene.ShowStyleEditor = !scene.ShowStyleEditor;
                 }
+                if (ImGui.MenuItem("Метрики", "Ctrl+M", _showMetricsWindow))
+                {
+                    _showMetricsWindow = !_showMetricsWindow;
+                }
                 ImGui.EndMenu();
             }
             
@@ -73,6 +79,22 @@ public class GuiTestRenderSystem : IEcsRunSystem
             if (ImGui.Begin("Редактор стилей", ref scene.ShowStyleEditor))
             {
                 ImGui.ShowStyleEditor();
+            }
+            ImGui.End();
+        }
+        
+        // Окно метрик
+        if (_showMetricsWindow)
+        {
+            if (ImGui.Begin("Метрики", ref _showMetricsWindow))
+            {
+                ImGui.Text($"FPS: {FpsCounter.GetFps():F2}");
+                ImGui.Text($"Время кадра: {1000.0 / FpsCounter.GetFps():F2} мс");
+                
+                ImGui.Separator();
+                ImGui.Text("Статистика ImGui:");
+                ImGui.Text($"Активных окон: {ImGui.GetIO().MetricsRenderWindows}");
+                ImGui.Text($"Активных виджетов: {ImGui.GetIO().MetricsActiveWindows}");
             }
             ImGui.End();
         }

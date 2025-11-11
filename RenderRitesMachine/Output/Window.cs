@@ -27,7 +27,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         
         // Инициализация GUI
         RenderRites.Machine.Gui.Initialize(this);
-        
+        RenderRitesMachine.UI.UI.Initialize(RenderRites.Machine.Gui);
         
         var currentScene = RenderRites.Machine.Scenes.Current;
         if (currentScene != null)
