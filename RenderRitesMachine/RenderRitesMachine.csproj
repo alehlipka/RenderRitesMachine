@@ -20,4 +20,10 @@
       <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Include="render-rites-logo.png">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>

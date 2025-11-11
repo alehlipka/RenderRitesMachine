@@ -9,7 +9,6 @@ using RenderRitesDemo.ECS.Features.Outline.Systems;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
 using RenderRitesDemo.ECS.Features.Rotation.Systems;
 using RenderRitesDemo.ECS.Features.SceneSwitch;
-using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Systems;
@@ -81,8 +80,6 @@ public class DemoScene(string name) : Scene(name)
 
     protected override void OnLoad()
     {
-        RenderRites.Machine.Scenes.ForEach(item => item.Initialize());
-
         LoadAssets();
 
         var outlines = World.GetPool<OutlineTag>();

@@ -1,4 +1,3 @@
-using System.Numerics;
 using ImGuiNET;
 using Leopotam.EcsLite;
 using RenderRitesMachine;
@@ -33,12 +32,12 @@ public class GuiRenderSystem : IEcsRunSystem
             if (ImGui.BeginMenu("Сцены"))
             {
                 string currentScene = RenderRites.Machine.Scenes.Current?.Name ?? "";
-                bool isPreloader = currentScene == "preloader";
+                bool isDemo = currentScene == "demo";
                 bool isGuiTest = currentScene == "guitest";
 
-                if (ImGui.MenuItem("Главная сцена", "F1", isPreloader))
+                if (ImGui.MenuItem("Главная сцена", "F1", isDemo))
                 {
-                    RenderRites.Machine.Scenes.SetCurrent("preloader");
+                    RenderRites.Machine.Scenes.SetCurrent("demo");
                 }
                 if (ImGui.MenuItem("GUI Тест", "F2", isGuiTest))
                 {

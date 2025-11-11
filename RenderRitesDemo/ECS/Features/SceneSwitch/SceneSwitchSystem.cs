@@ -30,7 +30,7 @@ public class SceneSwitchSystem : IEcsRunSystem
         // Работает независимо от того, захвачен ли ввод ImGui (для переключения сцен это важно)
         if (window.IsKeyPressed(Keys.F1))
         {
-            RenderRites.Machine.Scenes.SetCurrent("preloader");
+            RenderRites.Machine.Scenes.SetCurrent("demo");
         }
 
         if (window.IsKeyPressed(Keys.F2))

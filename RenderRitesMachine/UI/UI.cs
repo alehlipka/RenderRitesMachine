@@ -451,5 +451,24 @@ public static class UI
         EnsureContext();
         return ImGui.MenuItem(label, shortcut, selected, enabled);
     }
+
+    /// <summary>
+    /// Отображает изображение из текстуры OpenGL.
+    /// </summary>
+    /// <param name="textureId">ID текстуры OpenGL (int).</param>
+    /// <param name="size">Размер изображения для отображения.</param>
+    /// <param name="uv0">Координаты верхнего левого угла текстуры (0,0 по умолчанию).</param>
+    /// <param name="uv1">Координаты нижнего правого угла текстуры (1,1 по умолчанию).</param>
+    /// <param name="tintColor">Цвет оттенка (белый по умолчанию).</param>
+    /// <param name="borderColor">Цвет границы (прозрачный по умолчанию).</param>
+    public static void Image(int textureId, Vector2 size, Vector2 uv0 = default, Vector2 uv1 = default, Vector4 tintColor = default, Vector4 borderColor = default)
+    {
+        EnsureContext();
+        if (uv0 == default) uv0 = new Vector2(0, 0);
+        if (uv1 == default) uv1 = new Vector2(1, 1);
+        if (tintColor == default) tintColor = new Vector4(1, 1, 1, 1);
+        if (borderColor == default) borderColor = new Vector4(0, 0, 0, 0);
+        ImGui.Image((IntPtr)textureId, size, uv0, uv1, tintColor, borderColor);
+    }
 }
 
