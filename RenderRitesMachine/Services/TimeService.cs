@@ -1,7 +1,10 @@
 namespace RenderRitesMachine.Services;
 
-public class TimeService
+/// <summary>
+/// Сервис для управления временем между кадрами.
+/// </summary>
+public class TimeService : ITimeService
 {
-    public float UpdateDeltaTime { get; internal set; } = 0.0f;
-    public float RenderDeltaTime { get; internal set; } = 0.0f;
+    public float UpdateDeltaTime { get; set; } = 0.0f;
+    public float RenderDeltaTime { get; set; } = 0.0f;
 }

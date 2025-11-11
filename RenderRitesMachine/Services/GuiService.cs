@@ -10,7 +10,7 @@ namespace RenderRitesMachine.Services;
 /// <summary>
 /// Сервис для управления GUI через ImGui.
 /// </summary>
-public class GuiService : IDisposable
+public class GuiService : IGuiService, IDisposable
 {
     private bool _isInitialized;
     private IntPtr _context;

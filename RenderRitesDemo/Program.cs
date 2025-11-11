@@ -9,12 +9,12 @@ internal static class Program
 {
     private static void Main()
     {
-        // Добавляем пользовательские сцены
+        // Добавляем пользовательские сцены через фабрику
         // Сцена логотипа автоматически добавляется движком и запускается первой
         RenderRites.Machine.Scenes
-            .Add(new DemoScene("demo"))
-            .Add(new GuiTestScene("guitest"));
+            .AddScene<DemoScene>("demo")
+            .AddScene<GuiTestScene>("guitest");
 
-        RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.On, 8);
+        RenderRites.Machine.RunWindow("RenderRites Machine Demo", VSyncMode.Off, 8);
     }
 }

@@ -1,15 +1,18 @@
 using System.Numerics;
 using RenderRitesDemo.ECS;
 using RenderRitesDemo.ECS.Features.SceneSwitch;
+using RenderRitesMachine;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.Scenes.GuiTest;
 
 /// <summary>
 /// Сцена для тестирования различных элементов GUI через ImGui.
 /// </summary>
-public class GuiTestScene(string name) : Scene(name)
+public class GuiTestScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IGuiService guiService, ISceneManager sceneManager) 
+    : Scene(name, assetsService, timeService, renderService, guiService, sceneManager)
 {
     // Переменные для различных GUI элементов (публичные для доступа из системы рендеринга)
     public bool Checkbox1 = false;

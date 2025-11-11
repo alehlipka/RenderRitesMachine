@@ -5,11 +5,15 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine.Debug;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.Output;
 
-public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWindow(gws, nws)
+public class Window(GameWindowSettings gws, NativeWindowSettings nws, GuiService guiService, SceneManager sceneManager) : GameWindow(gws, nws)
 {
+    private readonly GuiService _guiService = guiService;
+    private readonly SceneManager _sceneManager = sceneManager;
+
     protected override void OnLoad()
     {
         FpsCounter.Initialize();
@@ -25,10 +29,10 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
         GL.ClearColor(Color4.Black);
 
-        RenderRites.Machine.Gui.Initialize(this);
-        RenderRitesMachine.UI.UI.Initialize(RenderRites.Machine.Gui);
+        _guiService.Initialize(this);
+        RenderRitesMachine.UI.UI.Initialize(_guiService);
 
-        var currentScene = RenderRites.Machine.Scenes.Current;
+        var currentScene = _sceneManager.Current;
         if (currentScene != null)
         {
             currentScene.SetWindow(this);
@@ -39,16 +43,16 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
 
     protected override void OnResize(ResizeEventArgs e)
     {
-        RenderRites.Machine.Scenes.Current?.ResizeScene(e);
+        _sceneManager.Current?.ResizeScene(e);
     }
 
     private string? _lastSceneName;
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
-        RenderRites.Machine.Window!.Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
+        Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
 
-        var currentScene = RenderRites.Machine.Scenes.Current;
+        var currentScene = _sceneManager.Current;
         string? currentSceneName = currentScene?.Name;
 
         if (currentSceneName != _lastSceneName && currentScene != null)
@@ -59,7 +63,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
             _lastSceneName = currentSceneName;
         }
 
-        RenderRites.Machine.Gui.Update((float)args.Time);
+        _guiService.Update((float)args.Time);
 
         currentScene?.UpdateScene(args);
 
@@ -74,9 +78,9 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
         FpsCounter.Update();
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-        RenderRites.Machine.Scenes.Current?.RenderScene(args);
+        _sceneManager.Current?.RenderScene(args);
 
-        RenderRites.Machine.Gui.Render();
+        _guiService.Render();
 
         SwapBuffers();
     }
@@ -85,17 +89,14 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws) : GameWind
     {
         base.OnTextInput(e);
 
-        if (RenderRites.Machine.Gui != null)
+        IntPtr context = _guiService.GetContext();
+        if (context != IntPtr.Zero)
         {
-            IntPtr context = RenderRites.Machine.Gui.GetContext();
-            if (context != IntPtr.Zero)
+            ImGui.SetCurrentContext(context);
+            ImGuiIOPtr io = ImGui.GetIO();
+            if (e.Unicode > 0 && e.Unicode < 0x10000)
             {
-                ImGui.SetCurrentContext(context);
-                ImGuiIOPtr io = ImGui.GetIO();
-                if (e.Unicode > 0 && e.Unicode < 0x10000)
-                {
-                    io.AddInputCharacter((uint)e.Unicode);
-                }
+                io.AddInputCharacter((uint)e.Unicode);
             }
         }
     }

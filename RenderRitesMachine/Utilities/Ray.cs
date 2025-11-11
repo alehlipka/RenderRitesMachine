@@ -48,9 +48,8 @@ public class Ray(Vector3 origin, Vector3 direction)
         return tMin >= 0 ? tMin : null;
     }
 
-    public static Ray GetFromScreen(float mouseX, float mouseY, Vector3 cameraPosition, Matrix4 projection, Matrix4 view)
+    public static Ray GetFromScreen(float mouseX, float mouseY, Vector2i windowSize, Vector3 cameraPosition, Matrix4 projection, Matrix4 view)
     {
-        Vector2i windowSize = RenderRites.Machine.Window!.Size;
 
         // Нормализованные координаты устройства (NDC)
         float x = 2.0f * mouseX / windowSize.X - 1.0f;

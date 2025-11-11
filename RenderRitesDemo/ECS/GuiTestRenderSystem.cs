@@ -4,6 +4,7 @@ using Leopotam.EcsLite;
 using RenderRitesDemo.Scenes.GuiTest;
 using RenderRitesMachine;
 using RenderRitesMachine.Debug;
+using RenderRitesMachine.ECS;
 
 namespace RenderRitesDemo.ECS;
 
@@ -16,15 +17,17 @@ public class GuiTestRenderSystem : IEcsRunSystem
 
     public void Run(IEcsSystems systems)
     {
+        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+        
         // Убеждаемся, что контекст ImGui установлен
-        IntPtr context = RenderRites.Machine.Gui.GetContext();
+        IntPtr context = shared.Gui.GetContext();
         if (context != IntPtr.Zero)
         {
             ImGui.SetCurrentContext(context);
         }
 
         // Получаем ссылку на сцену
-        var scene = RenderRites.Machine.Scenes.Current as GuiTestScene;
+        var scene = shared.SceneManager.Current as GuiTestScene;
         if (scene == null) return;
 
         // Главное меню
@@ -32,17 +35,17 @@ public class GuiTestRenderSystem : IEcsRunSystem
         {
             if (ImGui.BeginMenu("Сцены"))
             {
-                string currentScene = RenderRites.Machine.Scenes.Current?.Name ?? "";
+                string currentScene = shared.SceneManager.Current?.Name ?? "";
                 bool isPreloader = currentScene == "preloader";
                 bool isGuiTest = currentScene == "guitest";
 
                 if (ImGui.MenuItem("Главная сцена", "F1", isPreloader))
                 {
-                    RenderRites.Machine.Scenes.SwitchTo("preloader");
+                    shared.SceneManager.SwitchTo("preloader");
                 }
                 if (ImGui.MenuItem("GUI Тест", "F2", isGuiTest))
                 {
-                    RenderRites.Machine.Scenes.SwitchTo("guitest");
+                    shared.SceneManager.SwitchTo("guitest");
                 }
                 ImGui.EndMenu();
             }
@@ -148,7 +151,7 @@ public class GuiTestRenderSystem : IEcsRunSystem
         if (ImGui.Begin("Информация"))
         {
             ImGui.Text($"FPS: {FpsCounter.GetFps():F2}");
-            ImGui.Text($"Текущая сцена: {RenderRites.Machine.Scenes.Current?.Name ?? "Нет"}");
+            ImGui.Text($"Текущая сцена: {shared.SceneManager.Current?.Name ?? "Нет"}");
             ImGui.Separator();
             ImGui.TextWrapped("Это демонстрационная сцена для тестирования различных элементов GUI ImGui.");
         }

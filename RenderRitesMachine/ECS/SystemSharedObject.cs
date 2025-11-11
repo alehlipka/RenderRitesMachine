@@ -5,11 +5,20 @@ using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.ECS;
 
-public class SystemSharedObject(PerspectiveCamera camera, TimeService time, AssetsService assets)
+public class SystemSharedObject(
+    PerspectiveCamera camera,
+    ITimeService time,
+    IAssetsService assets,
+    IRenderService render,
+    IGuiService gui,
+    ISceneManager sceneManager)
 {
     public PerspectiveCamera Camera = camera;
-    public TimeService Time = time;
-    public AssetsService Assets = assets;
+    public ITimeService Time = time;
+    public IAssetsService Assets = assets;
+    public IRenderService Render = render;
+    public IGuiService Gui = gui;
+    public ISceneManager SceneManager = sceneManager;
     public Window? Window { get; set; }
 
     private readonly HashSet<int> _activeShaders = [];
@@ -51,14 +60,16 @@ public class SystemSharedObject(PerspectiveCamera camera, TimeService time, Asse
     private static bool MatricesEqual(Matrix4 a, Matrix4 b)
     {
         const float epsilon = 0.0001f;
-        return Math.Abs(a.M11 - b.M11) < epsilon && Math.Abs(a.M12 - b.M12) < epsilon &&
-               Math.Abs(a.M13 - b.M13) < epsilon && Math.Abs(a.M14 - b.M14) < epsilon &&
-               Math.Abs(a.M21 - b.M21) < epsilon && Math.Abs(a.M22 - b.M22) < epsilon &&
-               Math.Abs(a.M23 - b.M23) < epsilon && Math.Abs(a.M24 - b.M24) < epsilon &&
-               Math.Abs(a.M31 - b.M31) < epsilon && Math.Abs(a.M32 - b.M32) < epsilon &&
-               Math.Abs(a.M33 - b.M33) < epsilon && Math.Abs(a.M34 - b.M34) < epsilon &&
-               Math.Abs(a.M41 - b.M41) < epsilon && Math.Abs(a.M42 - b.M42) < epsilon &&
-               Math.Abs(a.M43 - b.M43) < epsilon && Math.Abs(a.M44 - b.M44) < epsilon;
+        // Оптимизированная проверка: используем Vector4 для сравнения строк матрицы
+        // Это быстрее, чем проверка каждого элемента отдельно
+        return Math.Abs(a.Row0.X - b.Row0.X) < epsilon && Math.Abs(a.Row0.Y - b.Row0.Y) < epsilon &&
+               Math.Abs(a.Row0.Z - b.Row0.Z) < epsilon && Math.Abs(a.Row0.W - b.Row0.W) < epsilon &&
+               Math.Abs(a.Row1.X - b.Row1.X) < epsilon && Math.Abs(a.Row1.Y - b.Row1.Y) < epsilon &&
+               Math.Abs(a.Row1.Z - b.Row1.Z) < epsilon && Math.Abs(a.Row1.W - b.Row1.W) < epsilon &&
+               Math.Abs(a.Row2.X - b.Row2.X) < epsilon && Math.Abs(a.Row2.Y - b.Row2.Y) < epsilon &&
+               Math.Abs(a.Row2.Z - b.Row2.Z) < epsilon && Math.Abs(a.Row2.W - b.Row2.W) < epsilon &&
+               Math.Abs(a.Row3.X - b.Row3.X) < epsilon && Math.Abs(a.Row3.Y - b.Row3.Y) < epsilon &&
+               Math.Abs(a.Row3.Z - b.Row3.Z) < epsilon && Math.Abs(a.Row3.W - b.Row3.W) < epsilon;
     }
 
     private void UpdateShaderMatrices(int shaderId)

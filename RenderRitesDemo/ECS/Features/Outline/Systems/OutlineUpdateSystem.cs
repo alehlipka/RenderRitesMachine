@@ -1,4 +1,5 @@
 using Leopotam.EcsLite;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesDemo.ECS.Features.Outline.Components;
 using RenderRitesMachine.Assets;
@@ -35,8 +36,9 @@ public class OutlineUpdateSystem : IEcsRunSystem
             Transform transform = transforms.Get(entity);
             MeshAsset meshAsset = shared.Assets.GetMesh(meshes.Get(entity).Name);
 
+            Vector2i windowSize = shared.Window.ClientSize;
             float? hitDistance = Ray
-                .GetFromScreen(mouse.X, mouse.Y, shared.Camera.Position, shared.Camera.ProjectionMatrix, shared.Camera.ViewMatrix)
+                .GetFromScreen(mouse.X, mouse.Y, windowSize, shared.Camera.Position, shared.Camera.ProjectionMatrix, shared.Camera.ViewMatrix)
                 .TransformToLocalSpace(transform.ModelMatrix)
                 .IntersectsAABB(meshAsset.Minimum, meshAsset.Maximum);
 

@@ -20,7 +20,7 @@ public class SceneSwitchSystem : IEcsRunSystem
         var window = shared.Window;
 
         // Устанавливаем контекст ImGui для проверки
-        IntPtr context = RenderRites.Machine.Gui.GetContext();
+        IntPtr context = shared.Gui.GetContext();
         if (context != IntPtr.Zero)
         {
             ImGui.SetCurrentContext(context);
@@ -30,12 +30,12 @@ public class SceneSwitchSystem : IEcsRunSystem
         // Работает независимо от того, захвачен ли ввод ImGui (для переключения сцен это важно)
         if (window.IsKeyPressed(Keys.F1))
         {
-            RenderRites.Machine.Scenes.SwitchTo("demo");
+            shared.SceneManager.SwitchTo("demo");
         }
 
         if (window.IsKeyPressed(Keys.F2))
         {
-            RenderRites.Machine.Scenes.SwitchTo("guitest");
+            shared.SceneManager.SwitchTo("guitest");
         }
     }
 }

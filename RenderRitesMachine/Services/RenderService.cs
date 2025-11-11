@@ -4,9 +4,12 @@ using RenderRitesMachine.Assets;
 
 namespace RenderRitesMachine.Services;
 
-public static class RenderService
+/// <summary>
+/// Сервис для рендеринга различных объектов (меши, bounding boxes, контуры).
+/// </summary>
+public class RenderService : IRenderService
 {
-    public static void Render(BoundingBoxAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix)
+    public void Render(BoundingBoxAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix)
     {
         shader.Use();
         shader.SetMatrix4("model", meshModelMatrix);
@@ -14,7 +17,7 @@ public static class RenderService
         GL.DrawElements(PrimitiveType.Lines, mesh.IndicesCount, DrawElementsType.UnsignedInt, 0);
     }
 
-    public static void Render(MeshAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset texture)
+    public void Render(MeshAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset texture)
     {
         texture.Bind();
         shader.Use();
@@ -23,7 +26,7 @@ public static class RenderService
         GL.DrawElements(PrimitiveType.Triangles, mesh.IndicesCount, DrawElementsType.UnsignedInt, 0);
     }
 
-    public static void RenderOutline(MeshAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix, Vector3 cameraPosition)
+    public void RenderOutline(MeshAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix, Vector3 cameraPosition)
     {
         GL.Disable(EnableCap.DepthTest);
         GL.CullFace(TriangleFace.Front);

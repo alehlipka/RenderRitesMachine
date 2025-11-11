@@ -5,7 +5,6 @@ using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Components;
-using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.ECS.Features.Outline.Systems;
 
@@ -48,7 +47,7 @@ public class OutlineRenderSystem : IEcsRunSystem
             int stencilId = entity % RenderConstants.MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Notequal, stencilId, 0xFF);
 
-            RenderService.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
+            shared.Render.RenderOutline(meshAsset, outlineShaderAsset, transform.ModelMatrix, shared.Camera.Position);
         }
 
         GL.StencilMask(0xFF);

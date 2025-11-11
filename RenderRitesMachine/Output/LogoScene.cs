@@ -4,6 +4,7 @@ using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Systems;
+using RenderRitesMachine.Services;
 using Vector2 = System.Numerics.Vector2;
 
 namespace RenderRitesMachine.Output;
@@ -21,12 +22,17 @@ internal class LogoScene : Scene
     private int _logoTextureId;
     private Vector2 _logoSize = new(400, 400); // Размер логотипа
     private bool _logoLoaded;
+    private readonly ISceneManager _sceneManager;
+    private readonly IGuiService _guiService;
 
     /// <summary>
     /// Создает новую сцену логотипа. Используется только внутри движка.
     /// </summary>
-    internal LogoScene() : base(LogoSceneName)
+    internal LogoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IGuiService guiService, ISceneManager sceneManager) 
+        : base(name, assetsService, timeService, renderService, guiService, sceneManager)
     {
+        _sceneManager = sceneManager;
+        _guiService = guiService;
     }
 
     protected override void OnLoad()
@@ -84,7 +90,7 @@ internal class LogoScene : Scene
     private void FindNextScene()
     {
         // Находим первую сцену, которая не является логотипом
-        var allScenes = RenderRites.Machine.Scenes.Select(s => s.Name).ToList();
+        var allScenes = _sceneManager.Select(s => s.Name).ToList();
         _nextSceneName = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
 
         // Если не нашли, используем первую доступную сцену (кроме логотипа)
@@ -129,18 +135,18 @@ internal class LogoScene : Scene
             try
             {
                 // Пытаемся переключиться на следующую сцену
-                RenderRites.Machine.Scenes.SwitchTo(_nextSceneName);
+                _sceneManager.SwitchTo(_nextSceneName);
             }
             catch (ArgumentException)
             {
                 // Если сцена не найдена, пробуем найти любую другую сцену (кроме логотипа)
-                var allScenes = RenderRites.Machine.Scenes.Select(s => s.Name).ToList();
+                var allScenes = _sceneManager.Select(s => s.Name).ToList();
                 var fallbackScene = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
                 if (!string.IsNullOrEmpty(fallbackScene))
                 {
                     try
                     {
-                        RenderRites.Machine.Scenes.SwitchTo(fallbackScene);
+                        _sceneManager.SwitchTo(fallbackScene);
                     }
                     catch
                     {
@@ -206,7 +212,7 @@ internal class LogoRenderSystem : IEcsRunSystem
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
         // Устанавливаем контекст ImGui
-        IntPtr context = RenderRites.Machine.Gui.GetContext();
+        IntPtr context = shared.Gui.GetContext();
         if (context != IntPtr.Zero)
         {
             ImGui.SetCurrentContext(context);

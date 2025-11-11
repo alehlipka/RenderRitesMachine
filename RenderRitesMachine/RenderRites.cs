@@ -36,10 +36,35 @@ public sealed class RenderRites
     /// </summary>
     public readonly GuiService Gui;
 
+    /// <summary>
+    /// Общий сервис управления ресурсами для всех сцен.
+    /// </summary>
+    public readonly IAssetsService AssetsService;
+
+    /// <summary>
+    /// Общий сервис времени для всех сцен.
+    /// </summary>
+    public readonly ITimeService TimeService;
+
+    /// <summary>
+    /// Общий сервис рендеринга для всех сцен.
+    /// </summary>
+    public readonly IRenderService RenderService;
+
     private RenderRites()
     {
-        Scenes = new SceneManager();
+        // Создаем общие сервисы, которые будут использоваться всеми сценами
+        AssetsService = new AssetsService();
+        TimeService = new TimeService();
+        RenderService = new RenderService();
         Gui = new GuiService();
+        
+        // Создаем фабрику сцен (без SceneManager пока)
+        var sceneFactory = new SceneFactory(AssetsService, TimeService, RenderService, Gui);
+        Scenes = new SceneManager(sceneFactory);
+        
+        // Устанавливаем SceneManager в фабрику после создания
+        sceneFactory.SetSceneManager(Scenes);
     }
 
     /// <summary>
@@ -113,9 +138,10 @@ public sealed class RenderRites
             }
         }
 
-        Window = new Window(gws, nws);
+        Window = new Window(gws, nws, Gui, Scenes);
         Window.Run();
         Gui.Dispose();
         Scenes.Dispose();
+        AssetsService.Dispose();
     }
 }

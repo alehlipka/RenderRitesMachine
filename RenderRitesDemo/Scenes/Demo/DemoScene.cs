@@ -9,14 +9,17 @@ using RenderRitesDemo.ECS.Features.Outline.Systems;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
 using RenderRitesDemo.ECS.Features.Rotation.Systems;
 using RenderRitesDemo.ECS.Features.SceneSwitch;
+using RenderRitesMachine;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesDemo.Scenes.Demo;
 
-public class DemoScene(string name) : Scene(name)
+public class DemoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IGuiService guiService, ISceneManager sceneManager) 
+    : Scene(name, assetsService, timeService, renderService, guiService, sceneManager)
 {
     private void LoadAssets()
     {

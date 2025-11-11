@@ -2,6 +2,7 @@ using ImGuiNET;
 using Leopotam.EcsLite;
 using RenderRitesMachine;
 using RenderRitesMachine.Debug;
+using RenderRitesMachine.ECS;
 using RenderRitesMachine.UI;
 
 namespace RenderRitesDemo.ECS;
@@ -17,8 +18,10 @@ public class GuiRenderSystem : IEcsRunSystem
 
     public void Run(IEcsSystems systems)
     {
+        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+        
         // Убеждаемся, что контекст ImGui установлен
-        IntPtr context = RenderRites.Machine.Gui.GetContext();
+        IntPtr context = shared.Gui.GetContext();
         if (context != IntPtr.Zero)
         {
             ImGui.SetCurrentContext(context);
@@ -31,17 +34,17 @@ public class GuiRenderSystem : IEcsRunSystem
             // Подменю "Сцены"
             if (ImGui.BeginMenu("Сцены"))
             {
-                string currentScene = RenderRites.Machine.Scenes.Current?.Name ?? "";
+                string currentScene = shared.SceneManager.Current?.Name ?? "";
                 bool isDemo = currentScene == "demo";
                 bool isGuiTest = currentScene == "guitest";
 
                 if (ImGui.MenuItem("Главная сцена", "F1", isDemo))
                 {
-                    RenderRites.Machine.Scenes.SwitchTo("demo");
+                    shared.SceneManager.SwitchTo("demo");
                 }
                 if (ImGui.MenuItem("GUI Тест", "F2", isGuiTest))
                 {
-                    RenderRites.Machine.Scenes.SwitchTo("guitest");
+                    shared.SceneManager.SwitchTo("guitest");
                 }
                 ImGui.EndMenu();
             }

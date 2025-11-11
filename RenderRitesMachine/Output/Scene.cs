@@ -44,18 +44,18 @@ public abstract class Scene : IDisposable
     /// <summary>
     /// Сервис управления ресурсами (меши, шейдеры, текстуры).
     /// </summary>
-    protected readonly AssetsService Assets;
+    protected readonly IAssetsService Assets;
 
     private bool _isLoaded;
-    private readonly TimeService _timeService;
+    private readonly ITimeService _timeService;
     private readonly SystemSharedObject _shared;
 
-    protected Scene(string name)
+    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IGuiService guiService, ISceneManager sceneManager)
     {
-        _timeService = new TimeService();
+        _timeService = timeService;
         Camera = new PerspectiveCamera();
-        Assets = new AssetsService();
-        _shared = new SystemSharedObject(Camera, _timeService, Assets);
+        Assets = assetsService;
+        _shared = new SystemSharedObject(Camera, _timeService, Assets, renderService, guiService, sceneManager);
 
         Name = name;
         World = new EcsWorld();
@@ -127,7 +127,7 @@ public abstract class Scene : IDisposable
         UpdateSystems.Destroy();
         RenderSystems.Destroy();
         World.Destroy();
-        Assets.Dispose();
+        // Assets теперь общий сервис, не нужно его освобождать здесь
         GC.SuppressFinalize(this);
     }
 

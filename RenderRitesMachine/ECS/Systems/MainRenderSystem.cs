@@ -3,7 +3,6 @@ using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.ECS.Components;
-using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.ECS.Systems;
 
@@ -44,7 +43,7 @@ public class MainRenderSystem : IEcsRunSystem
             int stencilId = entity % RenderConstants.MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Gequal, stencilId, 0xFF);
 
-            RenderService.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
+            shared.Render.Render(meshAsset, shaderAsset, transform.ModelMatrix, textureAsset);
         }
 
         GL.Disable(EnableCap.StencilTest);

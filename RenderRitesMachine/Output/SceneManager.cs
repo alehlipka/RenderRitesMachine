@@ -4,16 +4,25 @@ namespace RenderRitesMachine.Output;
 /// Менеджер для управления сценами приложения. Позволяет добавлять, переключать и управлять сценами.
 /// Автоматически добавляет сцену логотипа при создании.
 /// </summary>
-public class SceneManager : IDisposable
+public class SceneManager : ISceneManager, IDisposable
 {
     private readonly Dictionary<string, Scene> _items = new();
     private const string LogoSceneName = "logo";
     private bool _isInitialized;
+    private readonly ISceneFactory _sceneFactory;
 
     /// <summary>
     /// Текущая активная сцена. Может быть null, если сцена не установлена.
     /// </summary>
     public Scene? Current { get; private set; }
+
+    /// <summary>
+    /// Создает новый менеджер сцен с указанной фабрикой сцен.
+    /// </summary>
+    public SceneManager(ISceneFactory sceneFactory)
+    {
+        _sceneFactory = sceneFactory;
+    }
 
     /// <summary>
     /// Инициализирует менеджер сцен, автоматически добавляя сцену логотипа.
@@ -23,8 +32,8 @@ public class SceneManager : IDisposable
         if (_isInitialized) return;
         _isInitialized = true;
 
-        // Автоматически добавляем сцену логотипа
-        var logoScene = new LogoScene();
+        // Автоматически добавляем сцену логотипа через фабрику
+        var logoScene = _sceneFactory.CreateScene<LogoScene>(LogoSceneName);
         _items.TryAdd(LogoSceneName, logoScene);
 
         // Автоматически устанавливаем логотип как текущую сцену при первом запуске
@@ -35,48 +44,28 @@ public class SceneManager : IDisposable
     }
 
     /// <summary>
-    /// Добавляет сцену в менеджер.
+    /// Добавляет сцену указанного типа в менеджер, создавая её через фабрику.
     /// </summary>
-    /// <param name="item">Сцена для добавления.</param>
+    /// <typeparam name="T">Тип сцены для создания.</typeparam>
+    /// <param name="name">Имя сцены.</param>
     /// <returns>Текущий экземпляр SceneManager для цепочки вызовов.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если item равен null.</exception>
+    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null или пустой.</exception>
     /// <exception cref="InvalidOperationException">Выбрасывается, если пытаются перезаписать встроенную сцену логотипа.</exception>
-    public SceneManager Add(Scene item)
+    public SceneManager AddScene<T>(string name) where T : Scene
     {
-        if (item == null)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentNullException(nameof(item), "Scene cannot be null.");
+            throw new ArgumentNullException(nameof(name), "Scene name cannot be null or empty.");
         }
 
         // Защищаем встроенную сцену логотипа от перезаписи
-        if (item.Name == LogoSceneName && _items.ContainsKey(LogoSceneName))
+        if (name == LogoSceneName && _items.ContainsKey(LogoSceneName))
         {
             throw new InvalidOperationException($"Cannot override the built-in '{LogoSceneName}' scene. It is automatically managed by the engine.");
         }
 
-        _items.TryAdd(item.Name, item);
-
-        return this;
-    }
-
-    /// <summary>
-    /// Добавляет несколько сцен в менеджер.
-    /// </summary>
-    /// <param name="items">Массив сцен для добавления.</param>
-    /// <returns>Текущий экземпляр SceneManager для цепочки вызовов.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если items равен null.</exception>
-    /// <exception cref="InvalidOperationException">Выбрасывается, если пытаются перезаписать встроенную сцену логотипа.</exception>
-    public SceneManager AddMany(Scene[] items)
-    {
-        if (items == null)
-        {
-            throw new ArgumentNullException(nameof(items), "Scenes array cannot be null.");
-        }
-
-        foreach (Scene item in items)
-        {
-            Add(item);
-        }
+        var scene = _sceneFactory.CreateScene<T>(name);
+        _items.TryAdd(name, scene);
 
         return this;
     }

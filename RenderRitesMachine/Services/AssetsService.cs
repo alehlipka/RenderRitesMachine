@@ -30,7 +30,7 @@ namespace RenderRitesMachine.Services;
 /// Сервис для управления ресурсами (меши, шейдеры, текстуры, bounding boxes).
 /// Предоставляет методы для загрузки и получения ресурсов OpenGL.
 /// </summary>
-public class AssetsService : IDisposable
+public class AssetsService : IAssetsService
 {
     private readonly Dictionary<string, MeshAsset> _meshes = [];
     private readonly Dictionary<string, ShaderAsset> _shaders = [];
