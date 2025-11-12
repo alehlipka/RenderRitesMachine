@@ -15,7 +15,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="NAudio" Version="2.2.1" />
+      <PackageReference Include="NLayer" Version="1.16.0" />
       <PackageReference Include="OpenTK" Version="4.9.4" />
       <PackageReference Include="StbImageSharp" Version="2.30.15" />
       <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />

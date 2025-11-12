@@ -1,5 +1,4 @@
-using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
+using NLayer;
 using OpenTK.Audio.OpenAL;
 using OpenTK.Mathematics;
 
@@ -96,39 +95,80 @@ public class AudioService : IAudioService
 
         try
         {
-            // Декодируем аудио файл в PCM
-            using var audioFile = new AudioFileReader(filePath);
-            var sourceFormat = audioFile.WaveFormat;
-
-            // Конвертируем в 16-bit PCM
-            var sampleProvider = audioFile.ToSampleProvider();
-            var pcm16Provider = new SampleToWaveProvider16(sampleProvider);
-            var pcmFormat = pcm16Provider.WaveFormat;
-
-            // Определяем формат OpenAL
-            ALFormat alFormat = ALFormat.Mono16;
-            // Buffers containing more than one channel of data will be played without 3D spatialization
-
-            // Читаем PCM данные
-            using var memoryStream = new MemoryStream();
-            var tempBuffer = new byte[pcmFormat.AverageBytesPerSecond * 2];
-
-            int bytesRead;
-            while ((bytesRead = pcm16Provider.Read(tempBuffer, 0, tempBuffer.Length)) > 0)
+            // Декодируем аудио файл в PCM используя NLayer
+            using var mpegFile = new MpegFile(filePath);
+            
+            int sampleRate = mpegFile.SampleRate;
+            int channels = mpegFile.Channels;
+            
+            // Читаем все сэмплы (float значения от -1.0 до 1.0)
+            // NLayer читает сэмплы по частям, собираем все в список
+            var samplesList = new List<float>();
+            float[] buffer = new float[4096];
+            int samplesRead;
+            
+            while ((samplesRead = mpegFile.ReadSamples(buffer, 0, buffer.Length)) > 0)
             {
-                memoryStream.Write(tempBuffer, 0, bytesRead);
+                for (int i = 0; i < samplesRead; i++)
+                {
+                    samplesList.Add(buffer[i]);
+                }
             }
-
-            if (memoryStream.Length == 0)
+            
+            if (samplesList.Count == 0)
             {
                 throw new InvalidDataException("No audio data read from file");
             }
+            
+            float[] samples = samplesList.ToArray();
 
-            byte[] audioData = memoryStream.ToArray();
+            // Конвертируем float сэмплы в 16-bit PCM байты
+            // Для OpenAL используем моно формат (3D spatialization работает только с моно)
+            byte[] audioData;
+            ALFormat alFormat;
+
+            if (channels == 1)
+            {
+                // Моно - конвертируем напрямую
+                audioData = new byte[samples.Length * 2]; // 2 байта на сэмпл (16-bit)
+                for (int i = 0; i < samples.Length; i++)
+                {
+                    // Ограничиваем значение от -1.0 до 1.0 и конвертируем в 16-bit integer
+                    float sample = Math.Clamp(samples[i], -1.0f, 1.0f);
+                    short sample16 = (short)(sample * 32767.0f);
+                    audioData[i * 2] = (byte)(sample16 & 0xFF);
+                    audioData[i * 2 + 1] = (byte)((sample16 >> 8) & 0xFF);
+                }
+                alFormat = ALFormat.Mono16;
+            }
+            else
+            {
+                // Стерео или больше каналов - конвертируем в моно
+                int monoSampleCount = samples.Length / channels;
+                audioData = new byte[monoSampleCount * 2];
+                
+                for (int i = 0; i < monoSampleCount; i++)
+                {
+                    // Смешиваем каналы в один моно сэмпл
+                    float monoSample = 0.0f;
+                    for (int ch = 0; ch < channels; ch++)
+                    {
+                        monoSample += samples[i * channels + ch];
+                    }
+                    monoSample /= channels;
+                    
+                    // Ограничиваем и конвертируем в 16-bit
+                    monoSample = Math.Clamp(monoSample, -1.0f, 1.0f);
+                    short sample16 = (short)(monoSample * 32767.0f);
+                    audioData[i * 2] = (byte)(sample16 & 0xFF);
+                    audioData[i * 2 + 1] = (byte)((sample16 >> 8) & 0xFF);
+                }
+                alFormat = ALFormat.Mono16;
+            }
 
             // Создаем буфер OpenAL
             int alBuffer = AL.GenBuffer();
-            AL.BufferData(alBuffer, alFormat, audioData, pcmFormat.SampleRate);
+            AL.BufferData(alBuffer, alFormat, audioData, sampleRate);
 
             ALError error = AL.GetError();
             if (error != ALError.NoError)
@@ -138,7 +178,7 @@ public class AudioService : IAudioService
             }
 
             _audioBuffers[name] = alBuffer;
-            _logger?.LogDebug($"Loaded audio '{name}' from '{filePath}' ({audioData.Length} bytes)");
+            _logger?.LogDebug($"Loaded audio '{name}' from '{filePath}' ({audioData.Length} bytes, {sampleRate}Hz, {channels}ch -> mono)");
 
             return alBuffer;
         }
