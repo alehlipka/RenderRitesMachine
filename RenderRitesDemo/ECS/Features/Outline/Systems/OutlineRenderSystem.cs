@@ -19,9 +19,9 @@ public class OutlineRenderSystem : IEcsRunSystem
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
-        var transforms = world.GetPool<Transform>();
-        var meshes = world.GetPool<Mesh>();
-        var outlines = world.GetPool<OutlineTag>();
+        EcsPool<Transform>? transforms = world.GetPool<Transform>();
+        EcsPool<Mesh>? meshes = world.GetPool<Mesh>();
+        EcsPool<OutlineTag>? outlines = world.GetPool<OutlineTag>();
 
         EcsFilter filter = world
             .Filter<Transform>()

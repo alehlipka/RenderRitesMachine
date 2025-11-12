@@ -145,7 +145,6 @@ public abstract class Scene : IDisposable
         }
         finally
         {
-            // Assets теперь общий сервис, не нужно его освобождать здесь
             GC.SuppressFinalize(this);
         }
     }

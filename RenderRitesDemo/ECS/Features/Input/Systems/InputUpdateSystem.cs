@@ -4,6 +4,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesDemo.ECS.Features.Rotation.Components;
 using RenderRitesMachine.ECS;
+using Window = RenderRitesMachine.Output.Window;
 
 namespace RenderRitesDemo.ECS.Features.Input.Systems;
 
@@ -16,7 +17,7 @@ public class InputUpdateSystem : IEcsRunSystem
 
         if (shared.Window == null) return;
 
-        var window = shared.Window;
+        Window? window = shared.Window;
 
         if (window.IsKeyPressed(Keys.P))
         {
@@ -36,7 +37,7 @@ public class InputUpdateSystem : IEcsRunSystem
         if (window.IsKeyPressed(Keys.R))
         {
             EcsFilter rotationFilter = world.Filter<RotationTag>().End();
-            var rotations = world.GetPool<RotationTag>();
+            EcsPool<RotationTag>? rotations = world.GetPool<RotationTag>();
 
             foreach (int entity in rotationFilter)
             {
@@ -89,8 +90,5 @@ public class InputUpdateSystem : IEcsRunSystem
         {
             shared.Camera.Pitch += shared.Camera.AngularSpeed * shared.Time.UpdateDeltaTime;
         }
-
-        // Матрицы камеры обновляются лениво, а шейдеры обновляются автоматически
-        // в конце рендеринга через SystemSharedObject.UpdateActiveShaders()
     }
 }

@@ -34,10 +34,10 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, GuiService
         _logger?.LogDebug("OpenGL state configured");
 
         _guiService.Initialize(this);
-        RenderRitesMachine.UI.UI.Initialize(_guiService);
+        UI.UI.Initialize(_guiService);
         _logger?.LogInfo("GUI service initialized");
 
-        var currentScene = _sceneManager.Current;
+        Scene? currentScene = _sceneManager.Current;
         if (currentScene != null)
         {
             currentScene.SetWindow(this);
@@ -59,7 +59,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, GuiService
     {
         Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
 
-        var currentScene = _sceneManager.Current;
+        Scene? currentScene = _sceneManager.Current;
         string? currentSceneName = currentScene?.Name;
 
         if (currentSceneName != _lastSceneName && currentScene != null)

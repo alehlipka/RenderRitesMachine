@@ -63,7 +63,6 @@ public sealed class RenderRites
 
     private RenderRites()
     {
-        // Создаем общие сервисы, которые будут использоваться всеми сценами
         Logger = new Logger();
         AssetsService = new AssetsService(Logger);
         TimeService = new TimeService();
@@ -71,11 +70,9 @@ public sealed class RenderRites
         Gui = new GuiService();
         AudioService = new AudioService(Logger);
 
-        // Создаем фабрику сцен (без SceneManager пока)
         var sceneFactory = new SceneFactory(AssetsService, TimeService, RenderService, Gui, AudioService, Logger);
         Scenes = new SceneManager(sceneFactory, Logger);
 
-        // Устанавливаем SceneManager в фабрику после создания
         sceneFactory.SetSceneManager(Scenes);
     }
 

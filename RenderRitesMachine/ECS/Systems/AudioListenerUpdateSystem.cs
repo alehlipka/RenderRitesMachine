@@ -12,10 +12,8 @@ public class AudioListenerUpdateSystem : IEcsRunSystem
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
-        // Обновляем позицию слушателя на основе позиции камеры
         shared.Audio.SetListenerPosition(shared.Camera.Position);
 
-        // Обновляем ориентацию слушателя на основе направления камеры
         shared.Audio.SetListenerOrientation(shared.Camera.Front, shared.Camera.Up);
     }
 }

@@ -1,4 +1,5 @@
 using ImGuiNET;
+using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.UI;
 
@@ -63,8 +64,7 @@ public class UIMenu : IDisposable
     /// </summary>
     private static void EnsureContext()
     {
-        // Получаем GuiService через UI класс
-        var guiService = UI.GetGuiService();
+        GuiService? guiService = UI.GetGuiService();
         if (guiService == null)
         {
             return;
@@ -107,7 +107,6 @@ public class UIMenu : IDisposable
         {
             try
             {
-                // Контекст уже установлен в Begin(), но убеждаемся что он сохраняется
                 action();
             }
             finally
@@ -130,8 +129,6 @@ public class UIMenu : IDisposable
             return;
         }
 
-        // Контекст уже установлен в Begin(), не нужно переустанавливать
-        // Используем прямой вызов ImGui, как в рабочем варианте
         if (ImGui.BeginMenu(label))
         {
             try

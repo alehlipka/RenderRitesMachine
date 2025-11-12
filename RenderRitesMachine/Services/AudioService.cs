@@ -12,12 +12,12 @@ public class AudioService : IAudioService
 {
     private ALDevice? _audioDevice;
     private ALContext? _audioContext;
-    private readonly Dictionary<string, int> _audioBuffers = new(); // Имя -> OpenAL буфер
-    private readonly Dictionary<int, int> _sources = new(); // sourceId -> OpenAL source
-    private readonly Dictionary<int, float> _sourceBaseVolumes = new(); // sourceId -> базовая громкость (без мастер-громкости)
+    private readonly Dictionary<string, int> _audioBuffers = new();
+    private readonly Dictionary<int, int> _sources = new();
+    private readonly Dictionary<int, float> _sourceBaseVolumes = new();
     private int _nextSourceId = 1;
     private float _masterVolume = 1.0f;
-    private bool _disposed = false;
+    private bool _disposed;
     private readonly ILogger? _logger;
 
     /// <summary>
@@ -53,7 +53,6 @@ public class AudioService : IAudioService
 
             ALC.MakeContextCurrent(_audioContext.Value);
 
-            // Настраиваем слушателя по умолчанию
             AL.Listener(ALListener3f.Position, 0, 0, 0);
             AL.Listener(ALListener3f.Velocity, 0, 0, 0);
             var forward = new Vector3(0, 0, -1);
@@ -81,7 +80,6 @@ public class AudioService : IAudioService
             throw new FileNotFoundException($"Audio file not found: {filePath}", filePath);
         }
 
-        // Если уже загружен, возвращаем существующий буфер
         if (_audioBuffers.TryGetValue(name, out int existingBuffer))
         {
             _logger?.LogDebug($"Audio '{name}' already loaded, reusing buffer");
@@ -95,18 +93,15 @@ public class AudioService : IAudioService
 
         try
         {
-            // Декодируем аудио файл в PCM используя NLayer
             using var mpegFile = new MpegFile(filePath);
-            
+
             int sampleRate = mpegFile.SampleRate;
             int channels = mpegFile.Channels;
-            
-            // Читаем все сэмплы (float значения от -1.0 до 1.0)
-            // NLayer читает сэмплы по частям, собираем все в список
+
             var samplesList = new List<float>();
             float[] buffer = new float[4096];
             int samplesRead;
-            
+
             while ((samplesRead = mpegFile.ReadSamples(buffer, 0, buffer.Length)) > 0)
             {
                 for (int i = 0; i < samplesRead; i++)
@@ -114,26 +109,22 @@ public class AudioService : IAudioService
                     samplesList.Add(buffer[i]);
                 }
             }
-            
+
             if (samplesList.Count == 0)
             {
                 throw new InvalidDataException("No audio data read from file");
             }
-            
+
             float[] samples = samplesList.ToArray();
 
-            // Конвертируем float сэмплы в 16-bit PCM байты
-            // Для OpenAL используем моно формат (3D spatialization работает только с моно)
             byte[] audioData;
             ALFormat alFormat;
 
             if (channels == 1)
             {
-                // Моно - конвертируем напрямую
-                audioData = new byte[samples.Length * 2]; // 2 байта на сэмпл (16-bit)
+                audioData = new byte[samples.Length * 2];
                 for (int i = 0; i < samples.Length; i++)
                 {
-                    // Ограничиваем значение от -1.0 до 1.0 и конвертируем в 16-bit integer
                     float sample = Math.Clamp(samples[i], -1.0f, 1.0f);
                     short sample16 = (short)(sample * 32767.0f);
                     audioData[i * 2] = (byte)(sample16 & 0xFF);
@@ -143,21 +134,18 @@ public class AudioService : IAudioService
             }
             else
             {
-                // Стерео или больше каналов - конвертируем в моно
                 int monoSampleCount = samples.Length / channels;
                 audioData = new byte[monoSampleCount * 2];
-                
+
                 for (int i = 0; i < monoSampleCount; i++)
                 {
-                    // Смешиваем каналы в один моно сэмпл
                     float monoSample = 0.0f;
                     for (int ch = 0; ch < channels; ch++)
                     {
                         monoSample += samples[i * channels + ch];
                     }
                     monoSample /= channels;
-                    
-                    // Ограничиваем и конвертируем в 16-bit
+
                     monoSample = Math.Clamp(monoSample, -1.0f, 1.0f);
                     short sample16 = (short)(monoSample * 32767.0f);
                     audioData[i * 2] = (byte)(sample16 & 0xFF);
@@ -166,7 +154,6 @@ public class AudioService : IAudioService
                 alFormat = ALFormat.Mono16;
             }
 
-            // Создаем буфер OpenAL
             int alBuffer = AL.GenBuffer();
             AL.BufferData(alBuffer, alFormat, audioData, sampleRate);
 
@@ -204,17 +191,14 @@ public class AudioService : IAudioService
         int sourceId = _nextSourceId++;
         int alSource = AL.GenSource();
 
-        // Привязываем буфер к источнику
         AL.Source(alSource, ALSourcei.Buffer, bufferId);
 
-        // Настраиваем параметры источника
         if (position.HasValue)
         {
             AL.Source(alSource, ALSource3f.Position, position.Value.X, position.Value.Y, position.Value.Z);
         }
         else
         {
-            // 2D звук (не позиционированный)
             AL.Source(alSource, ALSourceb.SourceRelative, true);
             AL.Source(alSource, ALSource3f.Position, 0, 0, 0);
         }
@@ -341,8 +325,7 @@ public class AudioService : IAudioService
 
         AL.Listener(ALListenerf.Gain, _masterVolume);
 
-        // Обновляем громкость всех источников с учетом новой мастер-громкости
-        foreach (var kvp in _sources)
+        foreach (KeyValuePair<int, int> kvp in _sources)
         {
             int sourceId = kvp.Key;
             int alSource = kvp.Value;
@@ -372,13 +355,11 @@ public class AudioService : IAudioService
             return;
         }
 
-        // Удаляем все источники
         foreach (int sourceId in _sources.Keys.ToList())
         {
             DeleteSource(sourceId);
         }
 
-        // Удаляем все буферы
         foreach (int bufferId in _audioBuffers.Values)
         {
             AL.DeleteBuffer(bufferId);

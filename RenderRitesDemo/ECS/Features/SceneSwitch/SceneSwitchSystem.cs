@@ -2,6 +2,7 @@ using ImGuiNET;
 using Leopotam.EcsLite;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine.ECS;
+using Window = RenderRitesMachine.Output.Window;
 
 namespace RenderRitesDemo.ECS.Features.SceneSwitch;
 
@@ -16,17 +17,14 @@ public class SceneSwitchSystem : IEcsRunSystem
 
         if (shared.Window == null) return;
 
-        var window = shared.Window;
+        Window? window = shared.Window;
 
-        // Устанавливаем контекст ImGui для проверки
         IntPtr context = shared.Gui.GetContext();
         if (context != IntPtr.Zero)
         {
             ImGui.SetCurrentContext(context);
         }
 
-        // Переключение сцен через функциональные клавиши
-        // Работает независимо от того, захвачен ли ввод ImGui (для переключения сцен это важно)
         if (window.IsKeyPressed(Keys.F1))
         {
             shared.SceneManager.SwitchTo("demo");
@@ -34,7 +32,7 @@ public class SceneSwitchSystem : IEcsRunSystem
 
         if (window.IsKeyPressed(Keys.F2))
         {
-            shared.SceneManager.SwitchTo("guitest");
+            shared.SceneManager.SwitchTo("gui-test");
         }
     }
 }

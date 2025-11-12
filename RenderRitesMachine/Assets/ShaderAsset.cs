@@ -72,8 +72,6 @@ public class ShaderAsset : IDisposable
         }
         catch
         {
-            // Игнорируем ошибки при освобождении ресурсов OpenGL
-            // Ресурсы могут быть уже освобождены или контекст OpenGL может быть недоступен
         }
 
         _disposed = true;

@@ -77,16 +77,13 @@ public class RenderService : IRenderService, IDisposable
 
         int instanceCount = modelMatrices.Count;
 
-        // Получаем или создаем кэшированный VBO
         if (!_instanceVboCache.TryGetValue(mesh.Vao, out InstanceVboCache? cache) || cache.Capacity < instanceCount)
         {
-            // Удаляем старый VBO если он существует
             if (cache != null)
             {
                 GL.DeleteBuffer(cache.Vbo);
             }
 
-            // Создаем новый VBO с достаточной емкостью
             cache = new InstanceVboCache
             {
                 Vbo = GL.GenBuffer(),
@@ -141,16 +138,13 @@ public class RenderService : IRenderService, IDisposable
 
         int instanceCount = modelMatrices.Count;
 
-        // Получаем или создаем кэшированный VBO
         if (!_instanceVboCache.TryGetValue(mesh.Vao, out InstanceVboCache? cache) || cache.Capacity < instanceCount)
         {
-            // Удаляем старый VBO если он существует
             if (cache != null)
             {
                 GL.DeleteBuffer(cache.Vbo);
             }
 
-            // Создаем новый VBO с достаточной емкостью
             cache = new InstanceVboCache
             {
                 Vbo = GL.GenBuffer(),
@@ -209,8 +203,6 @@ public class RenderService : IRenderService, IDisposable
         }
         catch
         {
-            // Игнорируем ошибки при освобождении ресурсов OpenGL
-            // Ресурсы могут быть уже освобождены или контекст OpenGL может быть недоступен
         }
         finally
         {

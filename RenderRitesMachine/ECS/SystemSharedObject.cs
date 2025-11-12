@@ -59,7 +59,6 @@ public class SystemSharedObject(
             _lastProjectionMatrix = currentProjection;
             _matricesInitialized = true;
 
-            // Обновляем кэшированный frustum при изменении матриц
             _cachedFrustum = new Frustum(currentView, currentProjection);
 
             foreach (int shaderId in _activeShaders)
@@ -90,8 +89,6 @@ public class SystemSharedObject(
     private static bool MatricesEqual(Matrix4 a, Matrix4 b)
     {
         const float epsilon = 0.0001f;
-        // Оптимизированная проверка: используем Vector4 для сравнения строк матрицы
-        // Это быстрее, чем проверка каждого элемента отдельно
         return Math.Abs(a.Row0.X - b.Row0.X) < epsilon && Math.Abs(a.Row0.Y - b.Row0.Y) < epsilon &&
                Math.Abs(a.Row0.Z - b.Row0.Z) < epsilon && Math.Abs(a.Row0.W - b.Row0.W) < epsilon &&
                Math.Abs(a.Row1.X - b.Row1.X) < epsilon && Math.Abs(a.Row1.Y - b.Row1.Y) < epsilon &&

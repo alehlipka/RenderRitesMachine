@@ -50,9 +50,9 @@ public class MainRenderSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
 
-        var transforms = world.GetPool<Transform>();
-        var meshes = world.GetPool<Mesh>();
-        var textures = world.GetPool<ColorTexture>();
+        EcsPool<Transform>? transforms = world.GetPool<Transform>();
+        EcsPool<Mesh>? meshes = world.GetPool<Mesh>();
+        EcsPool<ColorTexture>? textures = world.GetPool<ColorTexture>();
 
         EcsFilter filter = world
             .Filter<Transform>()
@@ -68,8 +68,7 @@ public class MainRenderSystem : IEcsRunSystem
         GL.Enable(EnableCap.StencilTest);
         GL.StencilMask(0xFF);
 
-        // Очищаем кэш батчей и переиспользуем списки
-        foreach (var batchList in _batchesCache.Values)
+        foreach (List<BatchItem> batchList in _batchesCache.Values)
         {
             batchList.Clear();
         }
@@ -123,7 +122,7 @@ public class MainRenderSystem : IEcsRunSystem
 
         Vector3 cameraPos = shared.Camera.Position;
 
-        foreach (var (key, batchList) in _batchesCache)
+        foreach ((BatchKey key, var batchList) in _batchesCache)
         {
             if (batchList == null || batchList.Count == 0) continue;
 
@@ -137,10 +136,10 @@ public class MainRenderSystem : IEcsRunSystem
 
             if (batchList.Count > 1 && batchList.Count <= RenderConstants.MaxBatchSize)
             {
-                var sortedItems = SortByDistance(batchList, cameraPos);
+                List<BatchItem> sortedItems = SortByDistance(batchList, cameraPos);
 
                 List<Matrix4> modelMatrices = new List<Matrix4>(sortedItems.Count);
-                foreach (var item in sortedItems)
+                foreach (BatchItem item in sortedItems)
                 {
                     modelMatrices.Add(item.ModelMatrix);
                 }
@@ -153,10 +152,9 @@ public class MainRenderSystem : IEcsRunSystem
             }
             else
             {
-                // Сортируем объекты по расстоянию от камеры (ближние к дальним) для правильного depth testing
-                var sortedItems = SortByDistance(batchList, cameraPos);
+                List<BatchItem> sortedItems = SortByDistance(batchList, cameraPos);
 
-                foreach (var item in sortedItems)
+                foreach (BatchItem item in sortedItems)
                 {
                     int stencilId = item.Entity % RenderConstants.MaxStencilValue + 1;
                     GL.StencilFunc(StencilFunction.Gequal, stencilId, 0xFF);

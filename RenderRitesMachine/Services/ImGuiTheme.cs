@@ -15,7 +15,6 @@ public static class ImGuiTheme
     {
         ImGuiStylePtr style = ImGui.GetStyle();
 
-        // Цвета темы - темная тема с акцентами
         style.Colors[(int)ImGuiCol.Text] = new Vector4(0.95f, 0.95f, 0.95f, 1.00f);
         style.Colors[(int)ImGuiCol.TextDisabled] = new Vector4(0.50f, 0.50f, 0.50f, 1.00f);
         style.Colors[(int)ImGuiCol.WindowBg] = new Vector4(0.10f, 0.10f, 0.12f, 0.94f);
@@ -68,7 +67,6 @@ public static class ImGuiTheme
         style.Colors[(int)ImGuiCol.NavWindowingDimBg] = new Vector4(0.80f, 0.80f, 0.80f, 0.20f);
         style.Colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0.80f, 0.80f, 0.80f, 0.35f);
 
-        // Настройки стиля
         style.WindowPadding = new Vector2(8.0f, 8.0f);
         style.FramePadding = new Vector2(4.0f, 3.0f);
         style.CellPadding = new Vector2(4.0f, 2.0f);

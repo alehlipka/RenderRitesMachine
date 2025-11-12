@@ -37,12 +37,10 @@ public class SceneManager : ISceneManager, IDisposable
         _isInitialized = true;
 
         _logger?.LogInfo("Initializing SceneManager");
-        // Автоматически добавляем сцену логотипа через фабрику
-        var logoScene = _sceneFactory.CreateScene<LogoScene>(LogoSceneName);
+        LogoScene logoScene = _sceneFactory.CreateScene<LogoScene>(LogoSceneName);
         _items.TryAdd(LogoSceneName, logoScene);
         _logger?.LogDebug($"Logo scene '{LogoSceneName}' added automatically");
 
-        // Автоматически устанавливаем логотип как текущую сцену при первом запуске
         if (Current == null)
         {
             Current = logoScene;
@@ -65,13 +63,12 @@ public class SceneManager : ISceneManager, IDisposable
             throw new ArgumentNullException(nameof(name), "Scene name cannot be null or empty.");
         }
 
-        // Защищаем встроенную сцену логотипа от перезаписи
         if (name == LogoSceneName && _items.ContainsKey(LogoSceneName))
         {
             throw new InvalidOperationException($"Cannot override the built-in '{LogoSceneName}' scene. It is automatically managed by the engine.");
         }
 
-        var scene = _sceneFactory.CreateScene<T>(name);
+        T scene = _sceneFactory.CreateScene<T>(name);
         _items.TryAdd(name, scene);
         _logger?.LogInfo($"Scene '{name}' (type: {typeof(T).Name}) added to SceneManager");
 

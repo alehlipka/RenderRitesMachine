@@ -12,8 +12,8 @@ public class RotationUpdateSystem : IEcsRunSystem
         EcsWorld world = systems.GetWorld();
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
-        var transforms = world.GetPool<Transform>();
-        var rotations = world.GetPool<RotationTag>();
+        EcsPool<Transform>? transforms = world.GetPool<Transform>();
+        EcsPool<RotationTag>? rotations = world.GetPool<RotationTag>();
 
         EcsFilter filter = world
             .Filter<Transform>()

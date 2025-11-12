@@ -1,6 +1,7 @@
 using ImGuiNET;
 using Leopotam.EcsLite;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Systems;
@@ -15,12 +16,12 @@ namespace RenderRitesMachine.Output;
 /// </summary>
 internal class LogoScene : Scene
 {
-    private const float DisplayDuration = 3.0f; // Длительность отображения в секундах
-    private const string LogoSceneName = "logo"; // Имя сцены логотипа
+    private const float DisplayDuration = 3.0f;
+    private const string LogoSceneName = "logo";
     private float _elapsedTime;
     private string? _nextSceneName;
     private int _logoTextureId;
-    private Vector2 _logoSize = new(400, 400); // Размер логотипа
+    private Vector2 _logoSize = new(400, 400);
     private bool _logoLoaded;
     private readonly ISceneManager _sceneManager;
     private readonly IGuiService _guiService;
@@ -40,16 +41,12 @@ internal class LogoScene : Scene
 
     protected override void OnLoad()
     {
-        // Инициализируем и воспроизводим звук
         LoadAndPlayAudio();
 
-        // Загружаем логотип
         LoadLogo();
 
-        // Находим следующую сцену (первую после логотипа)
         FindNextScene();
 
-        // Добавляем системы
         ResizeSystems.Add(new MainResizeSystem());
         UpdateSystems.Add(new LogoUpdateSystem(this));
         RenderSystems.Add(new MainRenderSystem());
@@ -60,7 +57,6 @@ internal class LogoScene : Scene
     {
         try
         {
-            // Загружаем логотип из папки движка
             string[] logoPaths =
             {
                 "render-rites-logo.png",
@@ -88,7 +84,6 @@ internal class LogoScene : Scene
         }
         catch
         {
-            // Если не удалось загрузить логотип, просто не будем его отображать
             _logoLoaded = false;
         }
     }
@@ -97,7 +92,6 @@ internal class LogoScene : Scene
     {
         try
         {
-            // Ищем файл logo.mp3 в нескольких возможных местах
             string[] audioPaths =
             {
                 "logo.mp3",
@@ -117,13 +111,10 @@ internal class LogoScene : Scene
 
             if (audioPath != null)
             {
-                // Загружаем аудио файл
                 Audio.LoadAudio("logo", audioPath);
 
-                // Создаем источник звука (2D, без позиционирования)
                 _audioSourceId = Audio.CreateSource("logo", position: null, volume: 1.0f, loop: false);
 
-                // Воспроизводим звук
                 Audio.Play(_audioSourceId.Value);
             }
             else
@@ -139,11 +130,9 @@ internal class LogoScene : Scene
 
     private void FindNextScene()
     {
-        // Находим первую сцену, которая не является логотипом
         var allScenes = _sceneManager.Select(s => s.Name).ToList();
         _nextSceneName = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
 
-        // Если не нашли, используем первую доступную сцену (кроме логотипа)
         if (string.IsNullOrEmpty(_nextSceneName))
         {
             _nextSceneName = allScenes.FirstOrDefault(s => s != LogoSceneName);
@@ -165,7 +154,6 @@ internal class LogoScene : Scene
     {
         _elapsedTime += deltaTime;
 
-        // Переключаемся на следующую сцену после истечения времени
         if (_elapsedTime >= DisplayDuration)
         {
             SwitchToNextScene();
@@ -177,21 +165,18 @@ internal class LogoScene : Scene
     /// </summary>
     public void SwitchToNextScene()
     {
-        // Обновляем следующую сцену на случай, если сцены были добавлены после загрузки
         UpdateNextScene();
 
         if (!string.IsNullOrEmpty(_nextSceneName))
         {
             try
             {
-                // Пытаемся переключиться на следующую сцену
                 _sceneManager.SwitchTo(_nextSceneName);
             }
             catch (ArgumentException)
             {
-                // Если сцена не найдена, пробуем найти любую другую сцену (кроме логотипа)
                 var allScenes = _sceneManager.Select(s => s.Name).ToList();
-                var fallbackScene = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
+                string? fallbackScene = allScenes.FirstOrDefault(s => s != LogoSceneName && s != Name);
                 if (!string.IsNullOrEmpty(fallbackScene))
                 {
                     try
@@ -200,7 +185,6 @@ internal class LogoScene : Scene
                     }
                     catch
                     {
-                        // Если не удалось переключиться, просто остаемся на логотипе
                     }
                 }
             }
@@ -241,16 +225,13 @@ internal class LogoUpdateSystem : IEcsRunSystem
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
-        // Обновляем время отображения
         _logoScene.UpdateLogo(shared.Time.UpdateDeltaTime);
 
-        // Проверяем нажатие клавиш для пропуска логотипа
         if (shared.Window != null)
         {
-            var keyboard = shared.Window.KeyboardState;
-            // Переключаемся при нажатии Space или Enter для пропуска логотипа
-            if (keyboard.IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Space) ||
-                keyboard.IsKeyPressed(OpenTK.Windowing.GraphicsLibraryFramework.Keys.Enter))
+            KeyboardState? keyboard = shared.Window.KeyboardState;
+            if (keyboard.IsKeyPressed(Keys.Space) ||
+                keyboard.IsKeyPressed(Keys.Enter))
             {
                 _logoScene.SwitchToNextScene();
             }
@@ -274,38 +255,34 @@ internal class LogoRenderSystem : IEcsRunSystem
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 
-        // Устанавливаем контекст ImGui
         IntPtr context = shared.Gui.GetContext();
         if (context != IntPtr.Zero)
         {
             ImGui.SetCurrentContext(context);
         }
 
-        // Создаем полноэкранное окно без рамки для отображения логотипа
         ImGuiWindowFlags flags = ImGuiWindowFlags.NoTitleBar
-                                | ImGuiWindowFlags.NoResize
-                                | ImGuiWindowFlags.NoMove
-                                | ImGuiWindowFlags.NoScrollbar
-                                | ImGuiWindowFlags.NoCollapse
-                                | ImGuiWindowFlags.NoBackground
-                                | ImGuiWindowFlags.NoBringToFrontOnFocus;
+                                 | ImGuiWindowFlags.NoResize
+                                 | ImGuiWindowFlags.NoMove
+                                 | ImGuiWindowFlags.NoScrollbar
+                                 | ImGuiWindowFlags.NoCollapse
+                                 | ImGuiWindowFlags.NoBackground
+                                 | ImGuiWindowFlags.NoBringToFrontOnFocus;
 
         if (shared.Window != null)
         {
             Vector2i windowSize = shared.Window.ClientSize;
-            ImGui.SetNextWindowPos(new System.Numerics.Vector2(0, 0));
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(windowSize.X, windowSize.Y));
+            ImGui.SetNextWindowPos(new Vector2(0, 0));
+            ImGui.SetNextWindowSize(new Vector2(windowSize.X, windowSize.Y));
         }
 
         if (ImGui.Begin("LogoWindow", flags))
         {
-            // Центрируем логотип
             if (shared.Window != null && _logoScene.IsLogoLoaded)
             {
                 Vector2i windowSize = shared.Window.ClientSize;
                 Vector2 logoSize = _logoScene.LogoSize;
 
-                // Адаптивный размер логотипа (максимум 80% от размера окна)
                 float maxSize = Math.Min(windowSize.X, windowSize.Y) * 0.8f;
                 if (logoSize.X > maxSize || logoSize.Y > maxSize)
                 {
@@ -316,13 +293,11 @@ internal class LogoRenderSystem : IEcsRunSystem
                 float x = (windowSize.X - logoSize.X) * 0.5f;
                 float y = (windowSize.Y - logoSize.Y) * 0.5f;
 
-                ImGui.SetCursorPos(new System.Numerics.Vector2(x, y));
+                ImGui.SetCursorPos(new Vector2(x, y));
 
-                // Отображаем логотип с инвертированными UV координатами
-                // чтобы компенсировать flip при загрузке текстуры для OpenGL
-                Vector2 uv0 = new Vector2(0, 1); // Верхний левый угол (инвертирован по Y)
-                Vector2 uv1 = new Vector2(1, 0); // Нижний правый угол (инвертирован по Y)
-                RenderRitesMachine.UI.UI.Image(_logoScene.LogoTextureId, logoSize, uv0, uv1);
+                Vector2 uv0 = new Vector2(0, 1);
+                Vector2 uv1 = new Vector2(1, 0);
+                UI.UI.Image(_logoScene.LogoTextureId, logoSize, uv0, uv1);
             }
         }
         ImGui.End();

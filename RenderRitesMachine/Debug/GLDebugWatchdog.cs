@@ -24,15 +24,13 @@ internal static class GlDebugWatchdog
     {
         string messageString = Marshal.PtrToStringAnsi(message, length);
 
-        // Логируем в зависимости от типа и серьезности
-        // OpenTK DebugSeverity использует числовые значения: DontCare=0, Low=1, Medium=2, High=3, Notification=0x826B
         LogLevel level = (int)severity switch
         {
-            0 => LogLevel.Debug, // DontCare или Notification
-            1 => LogLevel.Info, // Low
-            2 => LogLevel.Warning, // Medium
-            3 => LogLevel.Error, // High
-            0x826B => LogLevel.Debug, // Notification
+            0 => LogLevel.Debug,
+            1 => LogLevel.Info,
+            2 => LogLevel.Warning,
+            3 => LogLevel.Error,
+            0x826B => LogLevel.Debug,
             _ => LogLevel.Info
         };
 

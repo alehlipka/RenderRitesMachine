@@ -91,7 +91,6 @@ public class DemoScene(string name, IAssetsService assetsService, ITimeService t
         EcsPool<RotationTag> rotations
     )
     {
-        // Создаем сетку объектов для демонстрации frustum culling
         const int gridSize = 50;
         const float spacing = 8.0f;
         const float startOffset = -(gridSize - 1) * spacing * 0.5f;
@@ -114,17 +113,16 @@ public class DemoScene(string name, IAssetsService assetsService, ITimeService t
     {
         LoadAssets();
 
-        var outlines = World.GetPool<OutlineTag>();
-        var boundingBoxes = World.GetPool<BoundingBoxTag>();
-        var transforms = World.GetPool<Transform>();
-        var colorTextures = World.GetPool<ColorTexture>();
-        var meshes = World.GetPool<Mesh>();
-        var rotations = World.GetPool<RotationTag>();
+        EcsPool<OutlineTag>? outlines = World.GetPool<OutlineTag>();
+        EcsPool<BoundingBoxTag>? boundingBoxes = World.GetPool<BoundingBoxTag>();
+        EcsPool<Transform>? transforms = World.GetPool<Transform>();
+        EcsPool<ColorTexture>? colorTextures = World.GetPool<ColorTexture>();
+        EcsPool<Mesh>? meshes = World.GetPool<Mesh>();
+        EcsPool<RotationTag>? rotations = World.GetPool<RotationTag>();
 
         CreateCow(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
         CreateSphere(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations, new Vector3(15.0f, 0.0f, 0.0f));
 
-        // Создаем множество объектов для демонстрации frustum culling
         CreateManyObjects(outlines, boundingBoxes, transforms, colorTextures, meshes, rotations);
 
         Camera.Position = new Vector3(0.0f, 0.0f, 10.0f);

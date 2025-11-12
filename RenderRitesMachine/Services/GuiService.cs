@@ -99,11 +99,7 @@ public class GuiService : IGuiService, IDisposable
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
-        // Настройка маппинга клавиш для новой версии ImGui.NET
         io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
-
-        // Добавляем поддержку клавиш через AddKeyEvent
-        // Это будет вызываться в UpdateInput
     }
 
     private void SetupStyle()
@@ -121,13 +117,11 @@ public class GuiService : IGuiService, IDisposable
         KeyboardState keyboard = _window.KeyboardState;
         MouseState mouse = _window.MouseState;
 
-        // Обновление модификаторов
         io.AddKeyEvent(ImGuiKey.ModCtrl, keyboard.IsKeyDown(Keys.LeftControl) || keyboard.IsKeyDown(Keys.RightControl));
         io.AddKeyEvent(ImGuiKey.ModShift, keyboard.IsKeyDown(Keys.LeftShift) || keyboard.IsKeyDown(Keys.RightShift));
         io.AddKeyEvent(ImGuiKey.ModAlt, keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt));
         io.AddKeyEvent(ImGuiKey.ModSuper, keyboard.IsKeyDown(Keys.LeftSuper) || keyboard.IsKeyDown(Keys.RightSuper));
 
-        // Обновление специальных клавиш
         io.AddKeyEvent(ImGuiKey.Tab, keyboard.IsKeyDown(Keys.Tab));
         io.AddKeyEvent(ImGuiKey.LeftArrow, keyboard.IsKeyDown(Keys.Left));
         io.AddKeyEvent(ImGuiKey.RightArrow, keyboard.IsKeyDown(Keys.Right));
@@ -150,7 +144,6 @@ public class GuiService : IGuiService, IDisposable
         io.AddKeyEvent(ImGuiKey.Y, keyboard.IsKeyDown(Keys.Y));
         io.AddKeyEvent(ImGuiKey.Z, keyboard.IsKeyDown(Keys.Z));
 
-        // Обновление мыши
         io.AddMousePosEvent(mouse.X, mouse.Y);
         io.AddMouseButtonEvent(0, mouse.IsButtonDown(MouseButton.Left));
         io.AddMouseButtonEvent(1, mouse.IsButtonDown(MouseButton.Right));
@@ -160,18 +153,12 @@ public class GuiService : IGuiService, IDisposable
         {
             io.AddMouseWheelEvent(0, mouse.ScrollDelta.Y);
         }
-
-        // Обновление текста через события текстового ввода
-        // В OpenTK 4.x нужно использовать TextInput event, но для простоты оставим пустым
-        // Можно добавить обработчик TextInput в Window если нужно
     }
 
     private void CreateDeviceObjects()
     {
         ImGuiIOPtr io = ImGui.GetIO();
 
-        // Загрузка шрифта с поддержкой кириллицы
-        // Пробуем несколько возможных путей
         string[] possiblePaths =
         {
             Path.Combine("Assets", "Fonts", "arial.ttf"),
@@ -189,17 +176,11 @@ public class GuiService : IGuiService, IDisposable
             }
         }
 
-        // Загружаем шрифт с поддержкой кириллицы
-        // Используем кастомный диапазон символов для явного указания базовых + кириллических символов
         unsafe
         {
-            // Диапазон символов: базовые (0x0020-0x00FF) + кириллица (0x0400-0x052F)
-            // Формат: массив ushort, где каждая пара - начало и конец диапазона, заканчивается 0
             ushort[] customRanges = new ushort[]
             {
-                0x0020, 0x00FF, // Базовые символы (латиница, цифры, знаки препинания)
-                0x0400, 0x052F, // Кириллица (расширенный диапазон, включает все кириллические символы)
-                0 // Завершающий ноль
+                0x0020, 0x00FF, 0x0400, 0x052F, 0
             };
 
             fixed (ushort* rangesPtr = customRanges)
@@ -210,25 +191,20 @@ public class GuiService : IGuiService, IDisposable
                 {
                     try
                     {
-                        // Загружаем шрифт Arial с размером 16px и кастомным диапазоном
-                        // Это заменит стандартный шрифт полностью
                         io.Fonts.AddFontFromFileTTF(fontPath, 16.0f, null, glyphRanges);
                     }
                     catch
                     {
-                        // Если загрузка не удалась, используем стандартный шрифт с кириллицей
                         io.Fonts.AddFontDefault(glyphRanges);
                     }
                 }
                 else
                 {
-                    // Если файл не найден, используем стандартный шрифт с кириллицей
                     io.Fonts.AddFontDefault(glyphRanges);
                 }
             }
         }
 
-        // Создание шрифтовой текстуры
         io.Fonts.GetTexDataAsRGBA32(out IntPtr pixels, out int width, out int height, out int bytesPerPixel);
 
         _fontTexture = GL.GenTexture();
@@ -241,7 +217,6 @@ public class GuiService : IGuiService, IDisposable
 
         io.Fonts.SetTexID((IntPtr)_fontTexture);
 
-        // Создание шейдера
         string vertexShaderSource = @"
 #version 330 core
 layout (location = 0) in vec2 Position;
@@ -293,7 +268,6 @@ void main()
         _uniformLocationProjection = GL.GetUniformLocation(_shaderProgram, "ProjMtx");
         _uniformLocationFontTexture = GL.GetUniformLocation(_shaderProgram, "Texture");
 
-        // Создание буферов
         _vertexArray = GL.GenVertexArray();
         _vertexBuffer = GL.GenBuffer();
         _indexBuffer = GL.GenBuffer();
@@ -319,7 +293,6 @@ void main()
             return;
         }
 
-        // Сохранение состояния OpenGL
         int lastProgram = GL.GetInteger(GetPName.CurrentProgram);
         int lastTexture = GL.GetInteger(GetPName.TextureBinding2D);
         int lastArrayBuffer = GL.GetInteger(GetPName.ArrayBufferBinding);
@@ -334,7 +307,6 @@ void main()
         bool lastEnableDepthTest = GL.IsEnabled(EnableCap.DepthTest);
         bool lastEnableScissorTest = GL.IsEnabled(EnableCap.ScissorTest);
 
-        // Настройка состояния для рендеринга ImGui
         GL.Enable(EnableCap.Blend);
         GL.BlendEquation(BlendEquationMode.FuncAdd);
         GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -342,7 +314,6 @@ void main()
         GL.Disable(EnableCap.DepthTest);
         GL.Enable(EnableCap.ScissorTest);
 
-        // Настройка проекции
         Vector2i displaySize = _window!.ClientSize;
         Matrix4x4 projection = Matrix4x4.CreateOrthographicOffCenter(
             0.0f, displaySize.X, displaySize.Y, 0.0f, -1.0f, 1.0f);
@@ -382,7 +353,6 @@ void main()
 
                 if (cmd.UserCallback != IntPtr.Zero)
                 {
-                    // Обработка пользовательского колбэка (если нужно)
                 }
                 else
                 {
@@ -398,7 +368,6 @@ void main()
             }
         }
 
-        // Восстановление состояния OpenGL
         GL.UseProgram(lastProgram);
         GL.BindTexture(TextureTarget.Texture2D, lastTexture);
         GL.BindVertexArray(lastVertexArray);

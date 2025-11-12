@@ -23,9 +23,9 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
     {
         EcsWorld world = systems.GetWorld();
 
-        var transforms = world.GetPool<Transform>();
-        var meshes = world.GetPool<Mesh>();
-        var boundingBoxes = world.GetPool<BoundingBoxTag>();
+        EcsPool<Transform>? transforms = world.GetPool<Transform>();
+        EcsPool<Mesh>? meshes = world.GetPool<Mesh>();
+        EcsPool<BoundingBoxTag>? boundingBoxes = world.GetPool<BoundingBoxTag>();
 
         EcsFilter filter = world
             .Filter<Transform>()
@@ -80,14 +80,14 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
         ShaderAsset boundingShaderAsset = shared.Assets.GetShader("bounding");
         shared.MarkShaderActive(boundingShaderAsset.Id);
 
-        foreach (var (meshName, batchList) in batches)
+        foreach ((string meshName, List<BatchItem> batchList) in batches)
         {
             BoundingBoxAsset boundingBoxAsset = batchList[0].BoundingBoxAsset;
 
             if (batchList.Count > 1 && batchList.Count <= RenderConstants.MaxBatchSize)
             {
                 List<Matrix4> modelMatrices = new List<Matrix4>(batchList.Count);
-                foreach (var item in batchList)
+                foreach (BatchItem item in batchList)
                 {
                     modelMatrices.Add(item.ModelMatrix);
                 }
@@ -96,7 +96,7 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
             }
             else
             {
-                foreach (var item in batchList)
+                foreach (BatchItem item in batchList)
                 {
                     shared.Render.Render(boundingBoxAsset, boundingShaderAsset, item.ModelMatrix);
                 }

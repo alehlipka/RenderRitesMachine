@@ -36,9 +36,7 @@ public class SceneFactory : ISceneFactory
 
     public T CreateScene<T>(string name) where T : Scene
     {
-        // Используем рефлексию для создания сцены с правильными параметрами
-        // BindingFlags.NonPublic нужен для internal конструкторов (например, LogoScene)
-        var constructor = typeof(T).GetConstructor(
+        ConstructorInfo? constructor = typeof(T).GetConstructor(
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
             null,
             new[] { typeof(string), typeof(IAssetsService), typeof(ITimeService), typeof(IRenderService), typeof(IGuiService), typeof(IAudioService), typeof(ISceneManager), typeof(ILogger) },

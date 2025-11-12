@@ -186,7 +186,7 @@ public class AssetsService : IAssetsService
             0, 4, 1, 5, 2, 6, 3, 7
         ];
 
-        var (vao, vbo, ebo) = GetPositionVao(vertices.ToArray(), indices.ToArray());
+        (int vao, int vbo, int ebo) = GetPositionVao(vertices.ToArray(), indices.ToArray());
         BoundingBoxAsset asset = new()
         {
             Vao = vao,
@@ -423,7 +423,7 @@ public class AssetsService : IAssetsService
         Mesh mesh = scene.Meshes[0];
 
         List<float> floatVertices = [];
-        var textures = mesh.TextureCoordinateChannels[0];
+        List<System.Numerics.Vector3>? textures = mesh.TextureCoordinateChannels[0];
 
         for (int i = 0; i < mesh.VertexCount; i++)
         {
@@ -452,7 +452,7 @@ public class AssetsService : IAssetsService
         Vector3 min = new(aabb.Min.X, aabb.Min.Y, aabb.Min.Z);
         Vector3 max = new(aabb.Max.X, aabb.Max.Y, aabb.Max.Z);
 
-        var (vao, vbo, ebo) = GetPositionNormalTextureVao(vertices, indices);
+        (int vao, int vbo, int ebo) = GetPositionNormalTextureVao(vertices, indices);
         MeshAsset asset = new()
         {
             Vao = vao,
@@ -565,7 +565,7 @@ public class AssetsService : IAssetsService
             }
         }
 
-        var (vao, vbo, ebo) = GetPositionNormalTextureVao(vertices.ToArray(), indices.ToArray());
+        (int vao, int vbo, int ebo) = GetPositionNormalTextureVao(vertices.ToArray(), indices.ToArray());
         MeshAsset asset = new()
         {
             Vao = vao,
