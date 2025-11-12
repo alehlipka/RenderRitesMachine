@@ -5,13 +5,15 @@
 ## Содержание
 
 1. [Базовые примеры](#базовые-примеры)
-2. [ECS примеры](#ecs-примеры)
-3. [Работа с ресурсами](#работа-с-ресурсами)
-4. [Работа с камерой](#работа-с-камерой)
-5. [Работа с аудио](#работа-с-аудио)
-6. [Создание UI](#создание-ui)
-7. [Обработка ввода](#обработка-ввода)
-8. [Оптимизация](#оптимизация)
+2. [Полный пример создания игры](#полный-пример-создания-игры)
+3. [ECS примеры](#ecs-примеры)
+4. [Работа с ресурсами](#работа-с-ресурсами)
+5. [Работа с камерой](#работа-с-камерой)
+6. [Работа с аудио](#работа-с-аудио)
+7. [Создание UI](#создание-ui)
+8. [Обработка ввода](#обработка-ввода)
+9. [Оптимизация](#оптимизация)
+10. [Дополнительные примеры](#дополнительные-примеры)
 
 ## Базовые примеры
 
@@ -48,6 +50,162 @@ class Program
             .AddScene<MinimalScene>("main");
         
         RenderRites.Machine.RunWindow("Minimal Example", VSyncMode.Adaptive);
+    }
+}
+```
+
+## Полный пример создания игры
+
+```csharp
+using RenderRitesMachine;
+using RenderRitesMachine.Output;
+using RenderRitesMachine.Services;
+using RenderRitesMachine.ECS.Components;
+using RenderRitesMachine.ECS.Systems;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+
+namespace MyGame;
+
+// 1. Создаем главную сцену игры
+public class GameScene : Scene
+{
+    public GameScene(string name, IAssetsService assetsService, ITimeService timeService, 
+                     IRenderService renderService, IGuiService guiService, 
+                     IAudioService audioService, ISceneManager sceneManager, ILogger logger)
+        : base(name, assetsService, timeService, renderService, guiService, audioService, sceneManager, logger) { }
+    
+    protected override void OnLoad()
+    {
+        // Загрузка всех ресурсов
+        LoadAssets();
+        
+        // Создание игровых объектов
+        CreatePlayer();
+        CreateEnemies();
+        CreateEnvironment();
+        
+        // Настройка камеры
+        SetupCamera();
+        
+        // Добавление систем
+        SetupSystems();
+    }
+    
+    private void LoadAssets()
+    {
+        // Шейдеры
+        Assets.AddShader("cel", Path.Combine("Assets", "Shaders", "CelShading"));
+        Assets.AddShader("outline", Path.Combine("Assets", "Shaders", "Outline"));
+        
+        // Модели
+        Assets.AddMeshFromFile("player", Path.Combine("Assets", "Objects", "player.obj"));
+        Assets.AddMeshFromFile("enemy", Path.Combine("Assets", "Objects", "enemy.obj"));
+        Assets.AddSphere("bullet", 0.1f, 10, 10);
+        
+        // Текстуры
+        Assets.AddTexture("playerTex", TextureType.ColorMap, 
+            Path.Combine("Assets", "Textures", "player.jpg"));
+        Assets.AddTexture("enemyTex", TextureType.ColorMap, 
+            Path.Combine("Assets", "Textures", "enemy.jpg"));
+        
+        // Bounding boxes для коллизий
+        Assets.AddBoundingBox("player");
+        Assets.AddBoundingBox("enemy");
+    }
+    
+    private void CreatePlayer()
+    {
+        int player = World.NewEntity();
+        var transforms = World.GetPool<Transform>();
+        ref Transform transform = ref transforms.Add(player);
+        transform.Position = new Vector3(0, 0, 0);
+        transform.Scale = Vector3.One;
+        
+        var meshes = World.GetPool<Mesh>();
+        ref Mesh mesh = ref meshes.Add(player);
+        mesh.Name = "player";
+        mesh.ShaderName = "cel";
+        
+        var textures = World.GetPool<ColorTexture>();
+        ref ColorTexture texture = ref textures.Add(player);
+        texture.Name = "playerTex";
+    }
+    
+    private void CreateEnemies()
+    {
+        var transforms = World.GetPool<Transform>();
+        var meshes = World.GetPool<Mesh>();
+        var textures = World.GetPool<ColorTexture>();
+        
+        // Создаем 10 врагов в случайных позициях
+        Random random = new();
+        for (int i = 0; i < 10; i++)
+        {
+            int enemy = World.NewEntity();
+            ref Transform transform = ref transforms.Add(enemy);
+            transform.Position = new Vector3(
+                random.NextSingle() * 20 - 10,
+                0,
+                random.NextSingle() * 20 - 10
+            );
+            
+            ref Mesh mesh = ref meshes.Add(enemy);
+            mesh.Name = "enemy";
+            mesh.ShaderName = "cel";
+            
+            ref ColorTexture texture = ref textures.Add(enemy);
+            texture.Name = "enemyTex";
+        }
+    }
+    
+    private void CreateEnvironment()
+    {
+        // Создание окружения (например, платформы)
+        // ...
+    }
+    
+    private void SetupCamera()
+    {
+        Camera.Position = new Vector3(0, 5, 10);
+        Camera.Pitch = -20.0f; // Смотрим немного вниз
+        Camera.Yaw = 0.0f;
+        Camera.Fov = 60.0f;
+        Camera.Speed = 10.0f;
+    }
+    
+    private void SetupSystems()
+    {
+        // Системы обновления (выполняются каждый кадр)
+        UpdateSystems.Add(new InputUpdateSystem());
+        UpdateSystems.Add(new PlayerMovementSystem());
+        UpdateSystems.Add(new EnemyAISystem());
+        UpdateSystems.Add(new CollisionSystem());
+        
+        // Системы рендеринга
+        ResizeSystems.Add(new MainResizeSystem());
+        RenderSystems.Add(new MainRenderSystem());
+        RenderSystems.Add(new OutlineRenderSystem());
+        RenderSystems.Add(new GuiRenderSystem());
+    }
+}
+
+// 2. Точка входа приложения
+internal static class Program
+{
+    private static void Main()
+    {
+        // Регистрация сцен
+        RenderRites.Machine.Scenes
+            .AddScene<GameScene>("game")
+            .AddScene<MenuScene>("menu");
+        
+        // Запуск игры
+        RenderRites.Machine.RunWindow(
+            "My Awesome Game", 
+            VSyncMode.Adaptive, 
+            samples: 4
+        );
     }
 }
 ```
@@ -153,6 +311,71 @@ public class PhysicsSystem : IEcsRunSystem
             {
                 transform.Position = new Vector3(transform.Position.X, 0, transform.Position.Z);
                 velocity.Value = new Vector3(velocity.Value.X, 0, velocity.Value.Z);
+            }
+        }
+    }
+}
+```
+
+### Создание системы переключения сцен
+
+```csharp
+public class MenuScene : Scene
+{
+    protected override void OnLoad()
+    {
+        // ... настройка меню ...
+        
+        UpdateSystems.Add(new MenuInputSystem());
+    }
+}
+
+// Система обработки ввода в меню
+public class MenuInputSystem : IEcsRunSystem
+{
+    public void Run(IEcsSystems systems)
+    {
+        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+        var window = shared.Window;
+        
+        if (window != null && window.KeyboardState.IsKeyPressed(Keys.Enter))
+        {
+            // Переключение на игровую сцену
+            shared.SceneManager.SwitchTo("game");
+        }
+    }
+}
+```
+
+### Создание системы коллизий
+
+```csharp
+public class CollisionSystem : IEcsRunSystem
+{
+    public void Run(IEcsSystems systems)
+    {
+        EcsWorld world = systems.GetWorld();
+        SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
+        
+        var transforms = world.GetPool<Transform>();
+        var players = world.GetPool<PlayerTag>();
+        var enemies = world.GetPool<EnemyTag>();
+        
+        // Получаем позиции всех игроков и врагов
+        var playerPositions = GetEntityPositions(world, players);
+        var enemyPositions = GetEntityPositions(world, enemies);
+        
+        // Проверяем коллизии
+        foreach (var playerPos in playerPositions)
+        {
+            foreach (var enemyPos in enemyPositions)
+            {
+                float distance = (playerPos - enemyPos).Length;
+                if (distance < 1.0f) // Радиус коллизии
+                {
+                    // Обработка коллизии
+                    HandleCollision(playerPos, enemyPos);
+                }
             }
         }
     }
@@ -868,4 +1091,3 @@ public class AnimationSystem : IEcsRunSystem
     }
 }
 ```
-
