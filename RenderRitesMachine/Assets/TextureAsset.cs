@@ -1,0 +1,36 @@
+using OpenTK.Graphics.OpenGL4;
+
+namespace RenderRitesMachine.Assets;
+
+/// <summary>
+/// Ресурс текстуры. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// </summary>
+public class TextureAsset : IDisposable
+{
+    public int Id { get; set; }
+    public TextureType Type { get; set; }
+
+    private bool _disposed;
+
+    public void Bind()
+    {
+        GL.BindTextureUnit((int)Type, Id);
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        try
+        {
+            GL.DeleteTexture(Id);
+        }
+        catch
+        {
+            // Игнорируем ошибки при освобождении ресурсов OpenGL
+            // Ресурсы могут быть уже освобождены или контекст OpenGL может быть недоступен
+        }
+
+        _disposed = true;
+    }
+}
