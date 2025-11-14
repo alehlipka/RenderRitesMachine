@@ -30,7 +30,6 @@ public class OutlineUpdateSystem : IEcsRunSystem
             .Inc<Mesh>()
             .End();
 
-        Frustum frustum = shared.GetFrustum();
         Vector2i windowSize = shared.Window.ClientSize;
         Ray worldRay = Ray.GetFromScreen(mouse.X, mouse.Y, windowSize, shared.Camera.Position, shared.Camera.ProjectionMatrix, shared.Camera.ViewMatrix);
 
@@ -47,14 +46,6 @@ public class OutlineUpdateSystem : IEcsRunSystem
             {
                 meshAsset = shared.Assets.GetMesh(mesh.Name);
                 _meshAssetCache[mesh.Name] = meshAsset;
-            }
-
-            if (shared.EnableFrustumCulling)
-            {
-                if (!frustum.IntersectsAABB(meshAsset.Minimum, meshAsset.Maximum, transform.ModelMatrix))
-                {
-                    continue;
-                }
             }
 
             Ray localRay = worldRay.TransformToLocalSpace(transform.ModelMatrix);

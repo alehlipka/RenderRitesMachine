@@ -55,15 +55,6 @@ public class GuiRenderSystem : IEcsRunSystem
             RenderStatistics stats = shared.RenderStats;
             UI.Text($"Всего объектов: {stats.TotalObjects}");
             UI.Text($"Отрендерено: {stats.RenderedObjects}");
-            UI.Text($"Отсечено (Frustum Culling): {stats.CulledObjects}");
-            UI.Text($"Процент отсечения: {stats.CullingPercentage:F1}%");
-
-            UI.Separator();
-            bool enableFrustumCulling = shared.EnableFrustumCulling;
-            if (UI.Checkbox("Включить Frustum Culling", ref enableFrustumCulling))
-            {
-                shared.EnableFrustumCulling = enableFrustumCulling;
-            }
 
             UI.Separator();
             UI.Text("Статистика ImGui:");

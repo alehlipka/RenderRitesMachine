@@ -22,15 +22,5 @@ public interface IRenderService
     /// Рендерит контур меша.
     /// </summary>
     void RenderOutline(MeshAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix, Vector3 cameraPosition, Vector2 viewportSize);
-
-    /// <summary>
-    /// Рендерит множество одинаковых объектов за один вызов (batch rendering).
-    /// </summary>
-    void RenderBatch(MeshAsset mesh, ShaderAsset shader, TextureAsset texture, List<Matrix4> modelMatrices);
-
-    /// <summary>
-    /// Рендерит множество одинаковых bounding boxes за один вызов (batch rendering).
-    /// </summary>
-    void RenderBatch(BoundingBoxAsset mesh, ShaderAsset shader, List<Matrix4> modelMatrices);
 }
 

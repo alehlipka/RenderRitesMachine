@@ -2,7 +2,6 @@ using OpenTK.Mathematics;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
-using RenderRitesMachine.Utilities;
 
 namespace RenderRitesMachine.ECS;
 
@@ -28,17 +27,11 @@ public class SystemSharedObject(
     public Window? Window { get; set; }
     public RenderStatistics RenderStats { get; } = new RenderStatistics();
 
-    /// <summary>
-    /// Включен ли frustum culling. Можно изменять для тестирования.
-    /// </summary>
-    public bool EnableFrustumCulling { get; set; } = true;
-
     private readonly IOpenGLWrapper _openGL = openGLWrapper ?? new OpenGLWrapper();
     private readonly HashSet<int> _activeShaders = [];
     private Matrix4 _lastViewMatrix;
     private Matrix4 _lastProjectionMatrix;
     private bool _matricesInitialized;
-    private Frustum? _cachedFrustum;
 
     public void MarkShaderActive(int shaderId)
     {
@@ -59,26 +52,11 @@ public class SystemSharedObject(
             _lastProjectionMatrix = currentProjection;
             _matricesInitialized = true;
 
-            _cachedFrustum = new Frustum(currentView, currentProjection);
-
             foreach (int shaderId in _activeShaders)
             {
                 UpdateShaderMatrices(shaderId);
             }
         }
-    }
-
-    /// <summary>
-    /// Получает актуальный frustum камеры. Кэшируется и обновляется автоматически при изменении матриц камеры.
-    /// </summary>
-    public Frustum GetFrustum()
-    {
-        if (_cachedFrustum == null || !_matricesInitialized)
-        {
-            UpdateActiveShaders();
-        }
-
-        return _cachedFrustum!;
     }
 
     public void ClearActiveShaders()

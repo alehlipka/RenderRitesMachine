@@ -6,23 +6,16 @@
 - **Отслеживание активных шейдеров** - Обновляются только шейдеры, использованные в текущем кадре
 - **Lazy evaluation** - Ресурсы загружаются по требованию
 - **Система общих сервисов** - Ресурсы и сервисы разделяются между всеми сценами для экономии памяти
-- **Frustum culling** - Автоматическое отсечение объектов вне видимости камеры
-- **Batch rendering** - Группировка объектов с одинаковыми параметрами для эффективного рендеринга
 - **Кэширование мешей** - Меши кэшируются в системах рендеринга для избежания повторных запросов
 
-## Использование frustum culling
+## Получение статистики рендеринга
 
 ```csharp
-// Frustum culling включен по умолчанию в MainRenderSystem
-// Для отключения (например, для отладки):
-SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
-shared.EnableFrustumCulling = false; // Отключить culling
-
 // Получение статистики рендеринга
+SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
 var stats = shared.RenderStats;
 Console.WriteLine($"Total objects: {stats.TotalObjects}");
 Console.WriteLine($"Rendered: {stats.RenderedObjects}");
-Console.WriteLine($"Culled: {stats.CulledObjects}");
 ```
 
 ## Оптимизация загрузки ресурсов

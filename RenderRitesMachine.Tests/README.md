@@ -58,11 +58,11 @@ dotnet test /p:CollectCoverage=true
 
 ## Структура тестов
 
-- **PerspectiveCameraTests** - Тесты для камеры (25 тестов)
-- **SceneManagerTests** - Тесты для менеджера сцен (13 тестов)
-- **AssetsServiceTests** - Тесты для сервиса ресурсов (35 тестов)
+- **PerspectiveCameraTests** - Тесты для камеры (40 тестов)
+- **SceneManagerTests** - Тесты для менеджера сцен (20 тестов)
+- **AssetsServiceTests** - Тесты для сервиса ресурсов (47 тестов)
 - **RenderConstantsTests** - Тесты для констант (10 тестов)
-- **SystemSharedObjectTests** - Тесты для общего объекта систем (9 тестов)
+- **SystemSharedObjectTests** - Тесты для общего объекта систем (18 тестов)
 
 ## Решение проблемы тестирования OpenGL
 
@@ -80,8 +80,8 @@ dotnet test /p:CollectCoverage=true
 
 ## Статистика
 
-- **Всего тестов:** 273
-- **Пройдено:** 273
+- **Всего тестов:** 262
+- **Пройдено:** 262
 - **Пропущено:** 0
 - **Провалено:** 0
 
@@ -91,10 +91,9 @@ dotnet test /p:CollectCoverage=true
 - **SceneManagerTests** - 20 тестов (включая edge cases)
 - **AssetsServiceTests** - 47 тестов (включая edge cases)
 - **SystemSharedObjectTests** - 18 тестов (включая edge cases)
-- **FrustumTests** - 9 тестов (edge cases для frustum culling)
 - **RayTests** - 10 тестов (edge cases для работы с лучами)
 - **LoggerTests** - 20 тестов (включая edge cases)
 - **SceneFactoryTests** - 5 тестов
-- **RenderConstantsTests** - 12 тестов
+- **RenderConstantsTests** - 10 тестов
 - **AudioServiceTests** - 32 теста
 

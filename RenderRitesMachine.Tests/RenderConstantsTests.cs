@@ -81,18 +81,5 @@ public class RenderConstantsTests
     {
         Assert.True(RenderConstants.VertexAttributeSize >= RenderConstants.PositionAttributeSize);
     }
-
-    [Fact]
-    public void MaxBatchSize_IsPositive()
-    {
-        Assert.True(RenderConstants.MaxBatchSize > 0);
-    }
-
-    [Fact]
-    public void MaxBatchSize_IsReasonable()
-    {
-        Assert.True(RenderConstants.MaxBatchSize >= 100);
-        Assert.True(RenderConstants.MaxBatchSize <= 10000);
-    }
 }
 

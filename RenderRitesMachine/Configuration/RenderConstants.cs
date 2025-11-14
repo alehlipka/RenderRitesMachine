@@ -79,10 +79,5 @@ public static class RenderConstants
     /// Размер окна по умолчанию (высота).
     /// </summary>
     public const int DefaultWindowHeight = 1080;
-
-    /// <summary>
-    /// Максимальное количество объектов в одном batch для instanced rendering.
-    /// </summary>
-    public const int MaxBatchSize = 1000;
 }
 

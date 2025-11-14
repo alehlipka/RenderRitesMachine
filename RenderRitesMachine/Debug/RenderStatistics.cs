@@ -11,19 +11,9 @@ public class RenderStatistics
     public int TotalObjects { get; set; }
 
     /// <summary>
-    /// Количество объектов, отсеченных frustum culling.
-    /// </summary>
-    public int CulledObjects { get; set; }
-
-    /// <summary>
     /// Количество объектов, которые были отрендерены.
     /// </summary>
     public int RenderedObjects { get; set; }
-
-    /// <summary>
-    /// Процент объектов, отсеченных frustum culling.
-    /// </summary>
-    public float CullingPercentage => TotalObjects > 0 ? (CulledObjects / (float)TotalObjects) * 100.0f : 0.0f;
 
     /// <summary>
     /// Сбрасывает статистику для нового кадра.
@@ -31,7 +21,6 @@ public class RenderStatistics
     public void Reset()
     {
         TotalObjects = 0;
-        CulledObjects = 0;
         RenderedObjects = 0;
     }
 }

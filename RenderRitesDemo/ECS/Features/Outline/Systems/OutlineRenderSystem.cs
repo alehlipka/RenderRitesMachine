@@ -6,7 +6,6 @@ using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.ECS.Components;
-using RenderRitesMachine.Utilities;
 
 namespace RenderRitesDemo.ECS.Features.Outline.Systems;
 
@@ -29,8 +28,6 @@ public class OutlineRenderSystem : IEcsRunSystem
             .Inc<OutlineTag>()
             .End();
 
-        Frustum frustum = shared.GetFrustum();
-
         GL.Enable(EnableCap.StencilTest);
         GL.StencilMask(0x00);
 
@@ -48,14 +45,6 @@ public class OutlineRenderSystem : IEcsRunSystem
             {
                 meshAsset = shared.Assets.GetMesh(mesh.Name);
                 _meshAssetCache[mesh.Name] = meshAsset;
-            }
-
-            if (shared.EnableFrustumCulling)
-            {
-                if (!frustum.IntersectsAABB(meshAsset.Minimum, meshAsset.Maximum, transform.ModelMatrix))
-                {
-                    continue;
-                }
             }
 
             ShaderAsset outlineShaderAsset = shared.Assets.GetShader("outline");
