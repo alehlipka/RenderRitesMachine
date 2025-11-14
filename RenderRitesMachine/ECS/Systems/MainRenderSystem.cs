@@ -18,15 +18,20 @@ public class MainRenderSystem : IEcsRunSystem
         public MeshAsset MeshAsset;
         public ShaderAsset ShaderAsset;
         public TextureAsset TextureAsset;
+        public float DistanceSquared;
     }
 
-    private static List<RenderItem> SortByDistance(List<RenderItem> items, Vector3 cameraPos)
+    private static void SortByDistance(List<RenderItem> items, Vector3 cameraPos)
     {
-        return items.OrderBy(item =>
+        for (int i = 0; i < items.Count; i++)
         {
+            RenderItem item = items[i];
             Vector3 objectPos = item.ModelMatrix.Row3.Xyz;
-            return (objectPos - cameraPos).LengthSquared;
-        }).ToList();
+            item.DistanceSquared = (objectPos - cameraPos).LengthSquared;
+            items[i] = item;
+        }
+
+        items.Sort((a, b) => a.DistanceSquared.CompareTo(b.DistanceSquared));
     }
 
     public void Run(IEcsSystems systems)
@@ -80,19 +85,26 @@ public class MainRenderSystem : IEcsRunSystem
         }
 
         Vector3 cameraPos = shared.Camera.Position;
-        List<RenderItem> sortedItems = SortByDistance(renderItems, cameraPos);
+
+        SortByDistance(renderItems, cameraPos);
 
         GL.Enable(EnableCap.StencilTest);
         GL.StencilMask(0xFF);
 
-        foreach (RenderItem item in sortedItems)
+        int currentShaderId = -1;
+
+        foreach (RenderItem item in renderItems)
         {
-            shared.MarkShaderActive(item.ShaderAsset.Id);
+            if (currentShaderId != item.ShaderAsset.Id)
+            {
+                shared.MarkShaderActive(item.ShaderAsset.Id);
+                currentShaderId = item.ShaderAsset.Id;
+            }
 
             int stencilId = item.Entity % RenderConstants.MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Gequal, stencilId, 0xFF);
 
-            shared.Render.Render(item.MeshAsset, item.ShaderAsset, item.ModelMatrix, item.TextureAsset);
+            shared.Render.Render(item.MeshAsset.Vao, item.MeshAsset.IndicesCount, item.ShaderAsset, item.ModelMatrix, item.TextureAsset, PrimitiveType.Triangles);
             shared.RenderStats.RenderedObjects++;
         }
 

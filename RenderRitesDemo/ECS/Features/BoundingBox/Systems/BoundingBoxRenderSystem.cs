@@ -1,4 +1,5 @@
 using Leopotam.EcsLite;
+using OpenTK.Graphics.OpenGL4;
 using RenderRitesDemo.ECS.Features.BoundingBox.Components;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS;
@@ -46,7 +47,7 @@ public class BoundingBoxRenderSystem : IEcsRunSystem
             }
 
             BoundingBoxAsset boundingBoxAsset = shared.Assets.GetBoundingBox(mesh.Name);
-            shared.Render.Render(boundingBoxAsset, boundingShaderAsset, transform.ModelMatrix);
+            shared.Render.Render(boundingBoxAsset.Vao, boundingBoxAsset.IndicesCount, boundingShaderAsset, transform.ModelMatrix, null, PrimitiveType.Lines);
         }
     }
 }

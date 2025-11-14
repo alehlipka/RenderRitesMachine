@@ -1,3 +1,4 @@
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 
@@ -9,14 +10,15 @@ namespace RenderRitesMachine.Services;
 public interface IRenderService
 {
     /// <summary>
-    /// Рендерит bounding box.
+    /// Рендерит меш или bounding box.
     /// </summary>
-    void Render(BoundingBoxAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix);
-
-    /// <summary>
-    /// Рендерит меш с текстурой.
-    /// </summary>
-    void Render(MeshAsset mesh, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset texture);
+    /// <param name="vao">Vertex Array Object</param>
+    /// <param name="indicesCount">Количество индексов</param>
+    /// <param name="shader">Шейдер</param>
+    /// <param name="meshModelMatrix">Матрица модели</param>
+    /// <param name="texture">Текстура (опционально, null для bounding boxes)</param>
+    /// <param name="primitiveType">Тип примитива (Triangles для мешей, Lines для bounding boxes)</param>
+    void Render(int vao, int indicesCount, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset? texture, PrimitiveType primitiveType);
 
     /// <summary>
     /// Рендерит контур меша.
