@@ -6,7 +6,7 @@
 - **ITimeService** - Управление временем (delta time для update и render)
 - **IRenderService** - Сервис рендеринга
 - **IGuiService** - Доступ к контексту ImGui для создания интерфейсов
-- **IAudioService** - Управление аудио (загрузка и воспроизведение звуков)
+- **IAudioService** - Управление аудио (загрузка и воспроизведение звуков, использует OpenAI)
 - **ILogger** - Система логирования
 
 ## Работа с камерой
@@ -45,6 +45,8 @@ public class CameraFollowSystem : IEcsRunSystem
 ```
 
 ## Работа с аудио
+
+**Важно:** Для работы аудио системы используется OpenAI. Убедитесь, что библиотека OpenAI установлена и настроена перед использованием аудио функций.
 
 ```csharp
 protected override void OnLoad()
