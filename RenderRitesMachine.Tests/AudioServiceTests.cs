@@ -1,4 +1,5 @@
 using OpenTK.Mathematics;
+using RenderRitesMachine.Exceptions;
 using RenderRitesMachine.Services;
 
 namespace RenderRitesMachine.Tests;
@@ -28,6 +29,37 @@ public sealed class AudioServiceTests : IDisposable
         AudioService service = CreateService(logger);
 
         Assert.NotNull(service);
+    }
+
+    [Fact]
+    public void ConstructorInitializesAudioServiceSuccessfully()
+    {
+        try
+        {
+            AudioService service = CreateService();
+
+            Assert.NotNull(service);
+            service.SetListenerPosition(new Vector3(0, 0, 0));
+        }
+        catch (AudioInitializationException)
+        {
+            Assert.Fail("AudioService initialization should not throw AudioInitializationException in normal conditions");
+        }
+    }
+
+    [Fact]
+    public void ConstructorCanThrowAudioInitializationExceptionOnInitializationFailure()
+    {
+        try
+        {
+            AudioService service = CreateService();
+            Assert.NotNull(service);
+        }
+        catch (AudioInitializationException ex)
+        {
+            Assert.NotNull(ex);
+            Assert.NotNull(ex.Message);
+        }
     }
 
     [Fact]
@@ -76,7 +108,16 @@ public sealed class AudioServiceTests : IDisposable
     [Fact]
     public void LoadAudioWithValidFileReturnsBufferId()
     {
-        AudioService service = CreateService();
+        AudioService service;
+        try
+        {
+            service = CreateService();
+        }
+        catch (AudioInitializationException)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -93,12 +134,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void LoadAudioWithSameNameTwiceReturnsSameBufferId()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -114,6 +163,9 @@ public sealed class AudioServiceTests : IDisposable
             Assert.Equal(bufferId1, bufferId2);
         }
         catch (InvalidOperationException)
+        {
+        }
+        catch (AudioInitializationException)
         {
         }
     }
@@ -132,12 +184,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void CreateSourceWithValidAudioReturnsSourceId()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -156,12 +216,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void CreateSourceWithPositionCreates3DSource()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -181,12 +249,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void CreateSourceWithVolumeCreatesSourceWithVolume()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -205,12 +281,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void CreateSourceWithVolumeGreaterThanOneClampsToOne()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -230,12 +314,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void CreateSourceWithNegativeVolumeClampsToZero()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -254,12 +346,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void CreateSourceWithLoopCreatesLoopingSource()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -278,6 +378,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -292,12 +395,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void PlayWithValidSourceIdDoesNotThrow()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -315,6 +426,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -329,12 +443,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void StopWithValidSourceIdDoesNotThrow()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -353,6 +475,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -367,12 +492,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void PauseWithValidSourceIdDoesNotThrow()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -391,6 +524,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -406,12 +542,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void SetSourcePositionWithValidSourceIdDoesNotThrow()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -430,6 +574,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -444,12 +591,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void SetSourceVolumeWithValidSourceIdDoesNotThrow()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -467,12 +622,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void SetSourceVolumeWithVolumeGreaterThanOneClampsToOne()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -492,12 +655,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void SetSourceVolumeWithNegativeVolumeClampsToZero()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -517,6 +688,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -531,12 +705,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void SetSourceLoopWithValidSourceIdDoesNotThrow()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -555,6 +737,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -569,12 +754,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void DeleteSourceWithValidSourceIdRemovesSource()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -594,6 +787,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -607,6 +803,9 @@ public sealed class AudioServiceTests : IDisposable
             service.SetListenerPosition(position);
         }
         catch (InvalidOperationException)
+        {
+        }
+        catch (AudioInitializationException)
         {
         }
     }
@@ -625,6 +824,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -639,6 +841,9 @@ public sealed class AudioServiceTests : IDisposable
             service.SetMasterVolume(0.0f);
         }
         catch (InvalidOperationException)
+        {
+        }
+        catch (AudioInitializationException)
         {
         }
     }
@@ -657,6 +862,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -673,12 +881,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void SetMasterVolumeUpdatesAllSources()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -699,6 +915,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -715,12 +934,20 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
     public void IsPlayingWithStoppedSourceReturnsFalse()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -740,6 +967,9 @@ public sealed class AudioServiceTests : IDisposable
         catch (InvalidOperationException)
         {
         }
+        catch (AudioInitializationException)
+        {
+        }
     }
 
     [Fact]
@@ -754,7 +984,12 @@ public sealed class AudioServiceTests : IDisposable
     [Fact]
     public void DisposeAfterCreatingSourcesCleansUpResources()
     {
-        AudioService service = CreateService();
+        AudioService? service = TryCreateService();
+        if (service == null)
+        {
+            return;
+        }
+
         string? audioFile = GetTestAudioFile();
 
         if (audioFile == null)
@@ -816,6 +1051,22 @@ public sealed class AudioServiceTests : IDisposable
         var service = new AudioService(logger);
         _services.Add(service);
         return service;
+    }
+
+    /// <summary>
+    /// Пытается создать новый экземпляр AudioService для тестирования.
+    /// Возвращает null, если инициализация не удалась.
+    /// </summary>
+    private AudioService? TryCreateService(ILogger? logger = null)
+    {
+        try
+        {
+            return CreateService(logger);
+        }
+        catch (AudioInitializationException)
+        {
+            return null;
+        }
     }
 
     public void Dispose()

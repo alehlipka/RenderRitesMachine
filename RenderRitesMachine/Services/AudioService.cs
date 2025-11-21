@@ -1,6 +1,7 @@
 using NLayer;
 using OpenTK.Audio.OpenAL;
 using OpenTK.Mathematics;
+using RenderRitesMachine.Exceptions;
 
 namespace RenderRitesMachine.Services;
 
@@ -65,6 +66,7 @@ public sealed class AudioService : IAudioService
         catch (Exception ex)
         {
             _logger?.LogError($"Failed to initialize AudioService: {ex.Message}");
+            throw new AudioInitializationException($"Failed to initialize AudioService: {ex.Message}", ex);
         }
     }
 
