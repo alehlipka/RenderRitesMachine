@@ -156,7 +156,20 @@ public sealed class AudioService : IAudioService
                 alFormat = ALFormat.Mono16;
             }
 
+            AL.GetError();
             int alBuffer = AL.GenBuffer();
+            
+            ALError genError = AL.GetError();
+            if (genError != ALError.NoError)
+            {
+                throw new InvalidOperationException($"OpenAL error after GenBuffer: {genError}");
+            }
+
+            if (alBuffer == 0)
+            {
+                throw new InvalidOperationException("OpenAL GenBuffer returned 0, which indicates an error (context may not be active)");
+            }
+
             AL.BufferData(alBuffer, alFormat, audioData, sampleRate);
 
             ALError error = AL.GetError();
