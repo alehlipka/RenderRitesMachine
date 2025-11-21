@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Install OpenAL (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get update && sudo apt-get install -y libopenal-dev
+    
+    - name: Install OpenAL (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: pwsh
+      run: choco install openal -y
+        
+    - name: Restore dependencies
+      run: dotnet restore RenderRites.sln
+      
+    - name: Build solution
+      run: dotnet build RenderRites.sln --configuration Release --no-restore
+      
+    - name: Run unit tests
+      run: dotnet test RenderRites.sln --configuration Release --no-build --verbosity normal
+      
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Check code formatting
+      run: dotnet format RenderRites.sln --verify-no-changes --verbosity diagnostic
+      
