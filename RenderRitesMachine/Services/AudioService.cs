@@ -158,7 +158,7 @@ public sealed class AudioService : IAudioService
 
             AL.GetError();
             int alBuffer = AL.GenBuffer();
-            
+
             ALError genError = AL.GetError();
             if (genError != ALError.NoError)
             {
