@@ -5,15 +5,23 @@ namespace RenderRitesMachine.Output;
 /// <summary>
 /// Менеджер для управления сценами приложения. Позволяет добавлять, переключать и управлять сценами.
 /// </summary>
-/// <remarks>
-/// Создает новый менеджер сцен с указанной фабрикой сцен.
-/// </remarks>
-public class SceneManager(ISceneFactory sceneFactory, ILogger? logger = null) : ISceneManager, IDisposable
+public class SceneManager : ISceneManager, IDisposable
 {
     private readonly Dictionary<string, Scene> _items = [];
     private bool _isInitialized;
-    private readonly ISceneFactory _sceneFactory = sceneFactory;
-    private readonly ILogger? _logger = logger;
+    private readonly ISceneFactory _sceneFactory;
+    private readonly ILogger? _logger;
+
+    /// <summary>
+    /// Создает менеджер сцен с указанной фабрикой и опциональным логгером.
+    /// </summary>
+    /// <param name="sceneFactory">Фабрика, используемая для создания экземпляров сцен.</param>
+    /// <param name="logger">Логгер для диагностических сообщений или null, чтобы отключить журналирование.</param>
+    public SceneManager(ISceneFactory sceneFactory, ILogger? logger = null)
+    {
+        _sceneFactory = sceneFactory ?? throw new ArgumentNullException(nameof(sceneFactory));
+        _logger = logger;
+    }
 
     /// <summary>
     /// Текущая активная сцена. Может быть null, если сцена не установлена.

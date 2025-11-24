@@ -31,18 +31,23 @@ namespace RenderRitesMachine.Services;
 /// Сервис для управления ресурсами (меши, шейдеры, текстуры, bounding boxes).
 /// Предоставляет методы для загрузки и получения ресурсов OpenGL.
 /// </summary>
-/// <remarks>
-/// Создает новый экземпляр AssetsService.
-/// </remarks>
-/// <param name="logger">Логгер для записи сообщений. Может быть null.</param>
-public class AssetsService(ILogger? logger = null) : IAssetsService
+public class AssetsService : IAssetsService
 {
     private readonly Dictionary<string, MeshAsset> _meshes = [];
     private readonly Dictionary<string, ShaderAsset> _shaders = [];
     private readonly Dictionary<string, TextureAsset> _textures = [];
     private readonly Dictionary<string, BoundingBoxAsset> _boundingBoxes = [];
-    private readonly ILogger? _logger = logger;
+    private readonly ILogger? _logger;
     private bool _disposed;
+
+    /// <summary>
+    /// Создает новый экземпляр сервиса управления ресурсами.
+    /// </summary>
+    /// <param name="logger">Логгер для записи сообщений или null, чтобы отключить журналирование.</param>
+    public AssetsService(ILogger? logger = null)
+    {
+        _logger = logger;
+    }
 
     /// <summary>
     /// Получает меш по имени.

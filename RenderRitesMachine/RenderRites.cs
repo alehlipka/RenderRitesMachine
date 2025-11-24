@@ -91,12 +91,9 @@ public sealed class RenderRites : IDisposable
     }
 
     /// <summary>
-    /// Создает и запускает окно рендеринга с указанными параметрами.
+    /// Создает и запускает окно рендеринга, используя заданный заголовок или значение по умолчанию.
     /// </summary>
-    /// <param name="title">Заголовок окна.</param>
-    /// <exception cref="ArgumentException">Выбрасывается, если title пустой или null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Выбрасывается, если samples меньше 1 или больше 16.</exception>
-    /// <exception cref="FileNotFoundException">Выбрасывается, если iconPath указан, но файл не найден.</exception>
+    /// <param name="title">Желаемый заголовок окна или null, чтобы использовать стандартное значение.</param>
     public void RunWindow(string? title)
     {
         if (string.IsNullOrWhiteSpace(title))
