@@ -25,7 +25,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
         _rootPanel = new Panel
         {
             Width = 260,
-            Height = 110,
+            Height = 120,
             BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
             BorderColor = new Color4(1f, 1f, 1f, 0.35f)
         };
@@ -50,9 +50,9 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
 
         _toggleCrosshairButton = new Button(font)
         {
-            Position = new Vector2i(10, 70),
-            Width = 200,
-            Height = 26,
+            Position = new Vector2i(10, 75),
+            Width = 240,
+            Height = 36,
             Text = "Toggle crosshair",
             BackgroundColor = new Color4(0.25f, 0.25f, 0.25f, 0.7f),
             HoverBackgroundColor = new Color4(0.35f, 0.35f, 0.35f, 0.85f),

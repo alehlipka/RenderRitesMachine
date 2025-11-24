@@ -16,8 +16,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
     private readonly IRenderService _renderService = renderService;
     private readonly ILogger? _logger = logger;
     private KeyboardState _previousKeyboardState = null!;
-    private MouseState _previousMouseState = null!;
-    private static readonly MouseButton[] TrackedMouseButtons = [MouseButton.Left, MouseButton.Right, MouseButton.Middle];
     private static readonly Keys[] TrackedKeys = Enum.GetValues<Keys>();
 
     protected override void OnLoad()
@@ -40,7 +38,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
 
         _guiService.EnsureInitialized(ClientSize.X, ClientSize.Y);
         _previousKeyboardState = KeyboardState;
-        _previousMouseState = MouseState;
 
         Scene? currentScene = _sceneManager.Current;
         if (currentScene != null)
@@ -103,14 +100,33 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
         SwapBuffers();
     }
 
+    protected override void OnMouseMove(MouseMoveEventArgs e)
+    {
+        base.OnMouseMove(e);
+
+        _guiService.Events.Enqueue(GuiEvent.MouseMove(MouseState.Position));
+    }
+
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        base.OnMouseDown(e);
+        _guiService.Events.Enqueue(GuiEvent.MouseDown(MouseState.Position, e.Button));
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseUp(e);
+
+        _guiService.Events.Enqueue(GuiEvent.MouseUp(MouseState.Position, e.Button));
+    }
+
     protected override void OnMouseWheel(MouseWheelEventArgs e)
     {
         base.OnMouseWheel(e);
 
-        Vector2 position = MouseState.Position;
         Vector2d offset = e.Offset;
         Vector2 scrollDelta = new((float)offset.X, (float)offset.Y);
-        _guiService.Events.Enqueue(GuiEvent.MouseScroll(position, scrollDelta));
+        _guiService.Events.Enqueue(GuiEvent.MouseScroll(MouseState.Position, scrollDelta));
     }
 
     protected override void OnTextInput(TextInputEventArgs e)
@@ -145,29 +161,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
             }
         }
 
-        MouseState currentMouse = MouseState;
-        Vector2 currentPosition = currentMouse.Position;
-        if (currentPosition != _previousMouseState.Position)
-        {
-            _guiService.Events.Enqueue(GuiEvent.MouseMove(currentPosition));
-        }
-
-        foreach (MouseButton button in TrackedMouseButtons)
-        {
-            bool wasDown = _previousMouseState.IsButtonDown(button);
-            bool isDown = currentMouse.IsButtonDown(button);
-
-            if (isDown && !wasDown)
-            {
-                _guiService.Events.Enqueue(GuiEvent.MouseDown(currentPosition, button));
-            }
-            else if (!isDown && wasDown)
-            {
-                _guiService.Events.Enqueue(GuiEvent.MouseUp(currentPosition, button));
-            }
-        }
-
         _previousKeyboardState = currentKeyboard;
-        _previousMouseState = currentMouse;
     }
 }
