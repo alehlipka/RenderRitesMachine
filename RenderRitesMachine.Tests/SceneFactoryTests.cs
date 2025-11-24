@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Moq;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Tests;
 
@@ -16,10 +17,11 @@ public sealed class SceneFactoryTests
         ITimeService timeService = Mock.Of<ITimeService>();
         IRenderService renderService = Mock.Of<IRenderService>();
         IAudioService audioService = Mock.Of<IAudioService>();
+        IGuiService guiService = Mock.Of<IGuiService>();
         ILogger logger = Mock.Of<ILogger>();
         ISceneManager sceneManager = Mock.Of<ISceneManager>();
 
-        var factory = new SceneFactory(assetsService, timeService, renderService, audioService, logger);
+        var factory = new SceneFactory(assetsService, timeService, renderService, audioService, guiService, logger);
         factory.SetSceneManager(sceneManager);
         return factory;
     }
@@ -31,9 +33,10 @@ public sealed class SceneFactoryTests
         ITimeService timeService = Mock.Of<ITimeService>();
         IRenderService renderService = Mock.Of<IRenderService>();
         IAudioService audioService = Mock.Of<IAudioService>();
+        IGuiService guiService = Mock.Of<IGuiService>();
         ILogger logger = Mock.Of<ILogger>();
 
-        var factory = new SceneFactory(assetsService, timeService, renderService, audioService, logger);
+        var factory = new SceneFactory(assetsService, timeService, renderService, audioService, guiService, logger);
 
         InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => factory.CreateScene<TestScene>("test"));
         Assert.Contains("SceneManager must be set", exception.Message, StringComparison.Ordinal);
@@ -105,7 +108,8 @@ public sealed class SceneFactoryTests
 
     [SuppressMessage("Performance", "CA1812", Justification = "Instantiated via SceneFactory.CreateScene<>")]
     private sealed class TestScene(string name, IAssetsService assetsService, ITimeService timeService,
-        IRenderService renderService, IAudioService audioService, ISceneManager sceneManager, ILogger logger) : Scene(name, assetsService, timeService, renderService, audioService, sceneManager, logger)
+        IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+        : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
     {
         protected override void OnLoad()
         {

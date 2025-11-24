@@ -4,6 +4,7 @@ using OpenTK.Windowing.Desktop;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine;
 
@@ -54,6 +55,11 @@ public sealed class RenderRites : IDisposable
     /// </summary>
     public readonly IAudioService AudioService;
 
+    /// <summary>
+    /// Сервис GUI, предоставляющий поверхность и события.
+    /// </summary>
+    public readonly IGuiService GuiService;
+
     private RenderRites()
     {
         Logger = new Logger();
@@ -61,8 +67,9 @@ public sealed class RenderRites : IDisposable
         TimeService = new TimeService();
         RenderService = new RenderService();
         AudioService = new AudioService(Logger);
+        GuiService = new GuiService(Logger);
 
-        var sceneFactory = new SceneFactory(AssetsService, TimeService, RenderService, AudioService, Logger);
+        var sceneFactory = new SceneFactory(AssetsService, TimeService, RenderService, AudioService, GuiService, Logger);
         Scenes = new SceneManager(sceneFactory, Logger);
 
         sceneFactory.SetSceneManager(Scenes);
@@ -125,7 +132,7 @@ public sealed class RenderRites : IDisposable
         nws.Flags |= ContextFlags.Debug;
 
         Logger.LogInfo($"Starting RenderRites window: '{title}' ({RenderConstants.DefaultWindowWidth}x{RenderConstants.DefaultWindowHeight})");
-        Window = new Window(gws, nws, Scenes, Logger);
+        Window = new Window(gws, nws, Scenes, GuiService, Logger);
         Window.Run();
         Logger.LogInfo("Window closed, disposing resources");
         Scenes.Dispose();
@@ -135,6 +142,7 @@ public sealed class RenderRites : IDisposable
         }
         AudioService.Dispose();
         AssetsService.Dispose();
+        GuiService.Dispose();
     }
 
     public void Dispose()

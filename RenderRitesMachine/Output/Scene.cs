@@ -2,6 +2,7 @@ using Leopotam.EcsLite;
 using OpenTK.Windowing.Common;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Output;
 
@@ -54,21 +55,23 @@ public abstract class Scene : IDisposable
     private bool _isLoaded;
     private readonly ITimeService _timeService;
     private readonly SystemSharedObject _shared;
+    protected IGuiService Gui { get; }
 
-    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, ISceneManager sceneManager, ILogger logger)
-        : this(name, assetsService, timeService, renderService, audioService, sceneManager, logger, new PerspectiveCamera())
+    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+        : this(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger, new PerspectiveCamera())
     {
     }
 
-    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, ISceneManager sceneManager, ILogger logger, ICamera camera)
+    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger, ICamera camera)
     {
         ArgumentNullException.ThrowIfNull(camera);
 
         _timeService = timeService;
+        Gui = guiService;
         Camera = camera;
         Assets = assetsService;
         Audio = audioService;
-        _shared = new SystemSharedObject(Camera, _timeService, Assets, renderService, audioService, sceneManager, logger);
+        _shared = new SystemSharedObject(Camera, _timeService, Assets, renderService, audioService, guiService, sceneManager, logger);
 
         Name = name;
         World = new EcsWorld();

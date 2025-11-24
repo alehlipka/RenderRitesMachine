@@ -6,11 +6,12 @@ using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesDemo.Scenes.Demo;
 
-internal sealed class DemoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, ISceneManager sceneManager, ILogger logger)
-    : Scene(name, assetsService, timeService, renderService, audioService, sceneManager, logger)
+internal sealed class DemoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+    : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
 {
     private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly string _assetsRoot = Path.Combine(AppContext.BaseDirectory, "Assets");
