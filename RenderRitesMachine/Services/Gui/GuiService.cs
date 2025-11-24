@@ -9,6 +9,7 @@ public sealed class GuiService : IGuiService
 {
     private readonly GuiSurface _surface = new();
     private readonly IGuiRenderer _renderer;
+    private readonly GuiTextRenderer _textRenderer = new();
     private readonly ILogger _logger;
     private bool _initialized;
     private bool _frameInProgress;
@@ -125,6 +126,13 @@ public sealed class GuiService : IGuiService
     {
         EnsureFrame();
         _surface.DrawPixel(x, y, color);
+        _hasDrawCommands = true;
+    }
+
+    public void DrawText(GuiFont font, string text, int x, int y, Color4 color)
+    {
+        EnsureFrame();
+        _textRenderer.DrawText(_surface, font, text, x, y, color);
         _hasDrawCommands = true;
     }
 

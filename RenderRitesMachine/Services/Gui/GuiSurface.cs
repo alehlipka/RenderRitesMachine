@@ -135,6 +135,41 @@ public sealed class GuiSurface
         IsDirty = false;
     }
 
+    public void BlendPixel(int x, int y, Color4 color, float alpha)
+    {
+        EnsureInitialized();
+
+        if (!IsInside(x, y) || alpha <= 0f)
+        {
+            return;
+        }
+
+        float srcAlpha = Math.Clamp(color.A * alpha, 0f, 1f);
+        if (srcAlpha <= 0f)
+        {
+            return;
+        }
+
+        int index = (y * Width + x) * 4;
+        float invAlpha = 1f - srcAlpha;
+
+        float srcR = color.R * 255f;
+        float srcG = color.G * 255f;
+        float srcB = color.B * 255f;
+
+        float dstR = _buffer[index];
+        float dstG = _buffer[index + 1];
+        float dstB = _buffer[index + 2];
+        float dstA = _buffer[index + 3] / 255f;
+
+        _buffer[index] = (byte)Math.Clamp((srcR * srcAlpha) + (dstR * invAlpha), 0f, 255f);
+        _buffer[index + 1] = (byte)Math.Clamp((srcG * srcAlpha) + (dstG * invAlpha), 0f, 255f);
+        _buffer[index + 2] = (byte)Math.Clamp((srcB * srcAlpha) + (dstB * invAlpha), 0f, 255f);
+
+        float outAlpha = srcAlpha + (dstA * invAlpha);
+        _buffer[index + 3] = (byte)Math.Clamp(outAlpha * 255f, 0f, 255f);
+    }
+
     private void EnsureInitialized()
     {
         if (Width == 0 || Height == 0 || _buffer.Length == 0)

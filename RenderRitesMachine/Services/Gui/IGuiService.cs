@@ -73,5 +73,10 @@ public interface IGuiService : IDisposable
     /// Draws a single pixel on the GUI surface.
     /// </summary>
     void DrawPixel(int x, int y, Color4 color);
+
+    /// <summary>
+    /// Renders text using the provided font at the specified location.
+    /// </summary>
+    void DrawText(GuiFont font, string text, int x, int y, Color4 color);
 }
 

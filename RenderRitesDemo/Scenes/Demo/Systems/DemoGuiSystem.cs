@@ -2,80 +2,100 @@ using Leopotam.EcsLite;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.Services;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Gui.Components;
 
 namespace RenderRitesDemo.Scenes.Demo.Systems;
 
-/// <summary>
-/// Simple HUD overlay that demonstrates how to use the GUI surface.
-/// </summary>
 internal sealed class DemoGuiSystem : IEcsRunSystem
 {
-    private const int PanelWidth = 240;
-    private const int PanelHeight = 30;
     private const int PanelMargin = 16;
-    private const int PanelPadding = 10;
-    private const int LegendSize = 10;
-    private const int BarHeight = 8;
+    private readonly Panel _rootPanel;
+    private readonly Label _fpsLabel;
+    private readonly Label _objectsLabel;
+    private readonly Label _frameTimeLabel;
+    private readonly Button _toggleCrosshairButton;
+    private readonly List<GuiEvent> _eventBuffer = new();
+    private bool _showCrosshair = true;
 
-    private static readonly Color4 PanelBackground = new(0.2f, 0.2f, 0.2f, 0.65f);
-    private static readonly Color4 PanelBorder = new(1f, 1f, 1f, 0.35f);
-    private static readonly Color4 FpsColor = new(0.55f, 0.95f, 0.55f, 1f);
-    private static readonly Color4 BarBackground = new(1f, 1f, 1f, 0.1f);
+    public DemoGuiSystem(GuiFont font)
+    {
+        ArgumentNullException.ThrowIfNull(font);
+
+        _rootPanel = new Panel
+        {
+            Width = 260,
+            Height = 110,
+            BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
+            BorderColor = new Color4(1f, 1f, 1f, 0.35f)
+        };
+
+        _fpsLabel = new Label(font)
+        {
+            Position = new Vector2i(10, 10),
+            TextColor = Color4.White
+        };
+
+        _objectsLabel = new Label(font)
+        {
+            Position = new Vector2i(10, 30),
+            TextColor = Color4.White
+        };
+
+        _frameTimeLabel = new Label(font)
+        {
+            Position = new Vector2i(10, 50),
+            TextColor = Color4.White
+        };
+
+        _toggleCrosshairButton = new Button(font)
+        {
+            Position = new Vector2i(10, 70),
+            Width = 200,
+            Height = 26,
+            Text = "Toggle crosshair",
+            BackgroundColor = new Color4(0.25f, 0.25f, 0.25f, 0.7f),
+            HoverBackgroundColor = new Color4(0.35f, 0.35f, 0.35f, 0.85f),
+            PressedBackgroundColor = new Color4(0.18f, 0.18f, 0.18f, 0.95f)
+        };
+        _toggleCrosshairButton.Clicked += () => _showCrosshair = !_showCrosshair;
+
+        _rootPanel.AddChild(_fpsLabel);
+        _rootPanel.AddChild(_objectsLabel);
+        _rootPanel.AddChild(_frameTimeLabel);
+        _rootPanel.AddChild(_toggleCrosshairButton);
+    }
 
     public void Run(IEcsSystems systems)
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
         IGuiService gui = shared.Gui;
-        ILogger logger = shared.Logger;
 
         if (gui.Width == 0 || gui.Height == 0)
         {
             return;
         }
 
-        int panelX = PanelMargin;
-        int panelY = Math.Max(PanelMargin, gui.Height - PanelHeight - PanelMargin);
+        int panelY = Math.Max(PanelMargin, gui.Height - _rootPanel.Height - PanelMargin);
+        _rootPanel.Position = new Vector2i(PanelMargin, panelY);
 
-        DrawPanel(gui, panelX, panelY);
-        DrawBars(gui, panelX, panelY, logger);
-        DrawCrosshair(gui);
-    }
+        RenderStatistics stats = shared.RenderStats;
+        _fpsLabel.Text = $"FPS: {FpsCounter.GetFps():F0}";
+        _objectsLabel.Text = $"Objects: {stats.RenderedObjects}/{stats.TotalObjects}";
+        _frameTimeLabel.Text = $"Frame: {shared.Time.RenderDeltaTime * 1000f:F2} ms";
 
-    private static void DrawPanel(IGuiService gui, int x, int y)
-    {
-        gui.FillRectangle(x, y, PanelWidth, PanelHeight, PanelBackground);
+        IReadOnlyList<GuiEvent> events = gui.Events.DrainToList(_eventBuffer);
+        foreach (GuiEvent evt in events)
+        {
+            _rootPanel.HandleEvent(evt);
+        }
 
-        gui.DrawHorizontalLine(x, y, PanelWidth, 1, PanelBorder);
-        gui.DrawHorizontalLine(x, y + PanelHeight - 1, PanelWidth, 1, PanelBorder);
-        gui.DrawVerticalLine(x, y, PanelHeight, 1, PanelBorder);
-        gui.DrawVerticalLine(x + PanelWidth - 1, y, PanelHeight, 1, PanelBorder);
-    }
+        _rootPanel.Render(gui);
 
-    private static void DrawBars(IGuiService gui, int panelX, int panelY, ILogger logger)
-    {
-        int barWidth = PanelWidth - (PanelPadding * 2) - LegendSize - 6;
-        int cursorX = panelX + PanelPadding;
-        int cursorY = panelY + PanelPadding;
-
-        float fpsRatio = Math.Clamp((float)(FpsCounter.GetFps() / 144f), 0f, 1f);
-        DrawBar(gui, cursorX, ref cursorY, barWidth, FpsColor, fpsRatio);
-    }
-
-    private static void DrawBar(IGuiService gui, int cursorX, ref int cursorY, int barWidth, Color4 color, float value)
-    {
-        value = Math.Clamp(value, 0f, 1f);
-
-        gui.FillRectangle(cursorX, cursorY, LegendSize, LegendSize, color);
-
-        int barX = cursorX + LegendSize + 6;
-        int barY = cursorY + (LegendSize - BarHeight) / 2;
-
-        gui.FillRectangle(barX, barY, barWidth, BarHeight, BarBackground);
-        gui.FillRectangle(barX, barY, Math.Max(1, (int)(barWidth * value)), BarHeight, color);
-
-        cursorY += LegendSize + 12;
+        if (_showCrosshair)
+        {
+            DrawCrosshair(gui);
+        }
     }
 
     private static void DrawCrosshair(IGuiService gui)
