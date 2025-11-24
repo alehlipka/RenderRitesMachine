@@ -17,7 +17,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
     private readonly Label _frameTimeLabel;
     private readonly Button _toggleCrosshairButton;
     private readonly TextBox _textBox;
-    private readonly List<GuiEvent> _eventBuffer = new();
+    private readonly List<GuiEvent> _eventBuffer = [];
     private bool _showCrosshair = true;
 
     public DemoGuiSystem(GuiFont font)

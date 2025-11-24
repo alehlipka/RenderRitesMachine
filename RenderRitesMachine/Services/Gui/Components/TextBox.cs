@@ -189,8 +189,8 @@ public sealed class TextBox : Panel
             case Keys.Backspace:
                 if (_cursorPosition > 0)
                 {
-                    Text = _text.Remove(_cursorPosition - 1, 1);
                     _cursorPosition--;
+                    Text = _text.Remove(_cursorPosition, 1);
                     UpdateScrollOffset();
                 }
 

@@ -140,6 +140,20 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
         }
     }
 
+    protected override void OnKeyDown(KeyboardKeyEventArgs e)
+    {
+        base.OnKeyDown(e);
+
+        _guiService.Events.Enqueue(GuiEvent.KeyDown(e.Key));
+    }
+
+    protected override void OnKeyUp(KeyboardKeyEventArgs e)
+    {
+        base.OnKeyUp(e);
+
+        _guiService.Events.Enqueue(GuiEvent.KeyUp(e.Key));
+    }
+
     private void PumpGuiInput()
     {
         KeyboardState currentKeyboard = KeyboardState;
