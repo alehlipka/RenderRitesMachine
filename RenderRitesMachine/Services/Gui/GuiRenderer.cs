@@ -31,11 +31,11 @@ internal sealed class GuiRenderer : IGuiRenderer
 
         float[] vertices =
         {
-            // positions   // tex coords
-            -1f,  1f,      0f, 1f,
-            -1f, -1f,      0f, 0f,
-             1f, -1f,      1f, 0f,
-             1f,  1f,      1f, 1f
+            // positions   // tex coords (flip Y to match top-left origin surface)
+            -1f,  1f,      0f, 0f,
+            -1f, -1f,      0f, 1f,
+             1f, -1f,      1f, 1f,
+             1f,  1f,      1f, 0f
         };
 
         uint[] indices = { 0, 1, 2, 0, 2, 3 };

@@ -63,8 +63,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
-        Title = $"RenderRites Machine FPS: {FpsCounter.GetFps():F0}";
-
         Scene? currentScene = _sceneManager.Current;
         string? currentSceneName = currentScene?.Name;
 

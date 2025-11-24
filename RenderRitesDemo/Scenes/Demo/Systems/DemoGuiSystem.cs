@@ -76,8 +76,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
             return;
         }
 
-        int panelY = Math.Max(PanelMargin, gui.Height - _rootPanel.Height - PanelMargin);
-        _rootPanel.Position = new Vector2i(PanelMargin, panelY);
+        _rootPanel.Position = new Vector2i(PanelMargin);
 
         RenderStatistics stats = shared.RenderStats;
         _fpsLabel.Text = $"FPS: {FpsCounter.GetFps():F0}";
