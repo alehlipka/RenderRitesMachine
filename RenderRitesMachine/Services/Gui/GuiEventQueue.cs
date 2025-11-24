@@ -10,7 +10,7 @@ public sealed class GuiEventQueue
 
     public GuiEventQueue(int capacity = 1024)
     {
-        Capacity = Math.Clamp(capacity, 32, 16384);
+        Capacity = Math.Clamp(capacity, 1, 16384);
     }
 
     public int Capacity { get; }

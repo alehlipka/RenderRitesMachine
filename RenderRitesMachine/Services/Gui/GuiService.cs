@@ -8,16 +8,17 @@ namespace RenderRitesMachine.Services.Gui;
 public sealed class GuiService : IGuiService
 {
     private readonly GuiSurface _surface = new();
-    private readonly GuiRenderer _renderer = new();
+    private readonly IGuiRenderer _renderer;
     private readonly ILogger _logger;
     private bool _initialized;
     private bool _frameInProgress;
     private bool _frameUploaded;
     private bool _hasDrawCommands;
 
-    public GuiService(ILogger logger)
+    public GuiService(ILogger logger, IGuiRenderer? renderer = null)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _renderer = renderer ?? new GuiRenderer();
         Events = new GuiEventQueue();
     }
 

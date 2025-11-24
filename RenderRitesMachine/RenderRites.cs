@@ -132,7 +132,7 @@ public sealed class RenderRites : IDisposable
         nws.Flags |= ContextFlags.Debug;
 
         Logger.LogInfo($"Starting RenderRites window: '{title}' ({RenderConstants.DefaultWindowWidth}x{RenderConstants.DefaultWindowHeight})");
-        Window = new Window(gws, nws, Scenes, GuiService, Logger);
+        Window = new Window(gws, nws, Scenes, GuiService, RenderService, Logger);
         Window.Run();
         Logger.LogInfo("Window closed, disposing resources");
         Scenes.Dispose();

@@ -46,4 +46,11 @@ public class RenderService : IRenderService
 
         GL.DrawElements(primitiveType, indicesCount, DrawElementsType.UnsignedInt, 0);
     }
+
+    public void ResetStateCache()
+    {
+        _currentShaderId = -1;
+        _currentTextureId = -1;
+        _currentVao = -1;
+    }
 }

@@ -9,10 +9,11 @@ using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Output;
 
-public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManager sceneManager, IGuiService guiService, ILogger? logger = null) : GameWindow(gws, nws)
+public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManager sceneManager, IGuiService guiService, IRenderService renderService, ILogger? logger = null) : GameWindow(gws, nws)
 {
     private readonly SceneManager _sceneManager = sceneManager;
     private readonly IGuiService _guiService = guiService;
+    private readonly IRenderService _renderService = renderService;
     private readonly ILogger? _logger = logger;
     private KeyboardState _previousKeyboardState = null!;
     private MouseState _previousMouseState = null!;
@@ -98,6 +99,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
         if (_guiService.HasContent)
         {
             _guiService.Render();
+            _renderService.ResetStateCache();
         }
 
         SwapBuffers();

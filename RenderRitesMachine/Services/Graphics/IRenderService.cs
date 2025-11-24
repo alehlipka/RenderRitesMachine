@@ -19,4 +19,9 @@ public interface IRenderService
     /// <param name="texture">Текстура (опционально, null для bounding boxes)</param>
     /// <param name="primitiveType">Тип примитива (Triangles для мешей, Lines для bounding boxes)</param>
     void Render(int vao, int indicesCount, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset? texture, PrimitiveType primitiveType);
+
+    /// <summary>
+    /// Сбрасывает кэшированное состояние (VAO/шейдер/текстуру), чтобы синхронизироваться с внешними GL вызовами.
+    /// </summary>
+    void ResetStateCache();
 }

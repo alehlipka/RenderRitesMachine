@@ -5,7 +5,7 @@ namespace RenderRitesMachine.Services.Gui;
 /// <summary>
 /// Uploads the GUI surface to the GPU and draws it as a fullscreen quad.
 /// </summary>
-internal sealed class GuiRenderer : IDisposable
+internal sealed class GuiRenderer : IGuiRenderer
 {
     private int _vao;
     private int _vbo;
