@@ -1,4 +1,3 @@
-using System;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -128,6 +127,8 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
 
         foreach (Keys key in TrackedKeys)
         {
+            if (key.Equals(Keys.Unknown)) continue;
+            
             bool isDown = currentKeyboard.IsKeyDown(key);
             bool wasDown = _previousKeyboardState.IsKeyDown(key);
 
