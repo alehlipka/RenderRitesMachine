@@ -1,22 +1,22 @@
 namespace RenderRitesMachine.Debug;
 
 /// <summary>
-/// Статистика рендеринга для отладки и мониторинга производительности.
+/// Rendering statistics used for debugging and performance monitoring.
 /// </summary>
 public class RenderStatistics
 {
     /// <summary>
-    /// Общее количество объектов, прошедших проверку видимости.
+    /// Total number of objects processed for visibility.
     /// </summary>
     public int TotalObjects { get; set; }
 
     /// <summary>
-    /// Количество объектов, которые были отрендерены.
+    /// Number of objects actually rendered.
     /// </summary>
     public int RenderedObjects { get; set; }
 
     /// <summary>
-    /// Сбрасывает статистику для нового кадра.
+    /// Resets statistics for a new frame.
     /// </summary>
     public void Reset()
     {

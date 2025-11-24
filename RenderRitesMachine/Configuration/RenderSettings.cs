@@ -3,7 +3,7 @@ using OpenTK.Windowing.Common;
 namespace RenderRitesMachine.Configuration;
 
 /// <summary>
-/// Пользовательские настройки движка с валидацией значений.
+/// User-facing engine settings with built-in validation.
 /// </summary>
 public sealed record RenderSettings
 {
@@ -27,9 +27,9 @@ public sealed record RenderSettings
     public WindowState DefaultWindowState { get; init; } = WindowState.Normal;
 
     /// <summary>
-    /// Проверяет, что все значения лежат в допустимых пределах.
+    /// Ensures all values fall within supported ranges.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Если найдено некорректное значение.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when an invalid value is detected.</exception>
     public void Validate()
     {
         if (MaxStencilValue is < 1 or > 255)

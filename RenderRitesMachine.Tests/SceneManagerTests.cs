@@ -6,7 +6,7 @@ using RenderRitesMachine.Services.Gui;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса SceneManager.
+/// Tests for <see cref="SceneManager"/>.
 /// </summary>
 public sealed class SceneManagerTests
 {

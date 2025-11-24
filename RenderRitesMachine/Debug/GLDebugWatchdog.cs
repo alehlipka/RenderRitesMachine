@@ -45,11 +45,10 @@ internal static class GlDebugWatchdog
     }
 
     /// <summary>
-    /// Проверяет наличие ошибок OpenGL и выбрасывает исключение, если ошибка обнаружена.
-    /// Используется для проверки критических операций OpenGL.
+    /// Checks for OpenGL errors and throws when one is detected. Use around critical operations.
     /// </summary>
-    /// <param name="operation">Название операции для сообщения об ошибке.</param>
-    /// <exception cref="OpenGLErrorException">Выбрасывается, если обнаружена ошибка OpenGL.</exception>
+    /// <param name="operation">Operation name for diagnostics.</param>
+    /// <exception cref="OpenGLErrorException">Thrown when an OpenGL error occurs.</exception>
     internal static void CheckGLError(string operation)
     {
         ErrorCode error = GL.GetError();

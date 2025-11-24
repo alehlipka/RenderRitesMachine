@@ -7,48 +7,48 @@ using RenderRitesMachine.Services.Gui;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Базовый класс для всех сцен в приложении. Предоставляет ECS мир, системы обновления и рендеринга,
-/// камеру и сервис управления ресурсами.
+/// Base class for all application scenes. Provides an ECS world, update/render/resize systems,
+/// a camera, and shared services.
 /// </summary>
 public abstract class Scene : IDisposable
 {
     /// <summary>
-    /// Имя сцены.
+    /// Scene name.
     /// </summary>
     public string Name { get; }
 
     /// <summary>
-    /// ECS мир для управления сущностями и компонентами.
+    /// ECS world that stores entities and components.
     /// </summary>
     protected readonly EcsWorld World;
 
     /// <summary>
-    /// Системы обновления, выполняющиеся каждый кадр.
+    /// Systems executed during the update phase each frame.
     /// </summary>
     protected readonly EcsSystems UpdateSystems;
 
     /// <summary>
-    /// Системы рендеринга, выполняющиеся каждый кадр.
+    /// Systems executed during the render phase each frame.
     /// </summary>
     protected readonly EcsSystems RenderSystems;
 
     /// <summary>
-    /// Системы обработки изменения размера окна.
+    /// Systems executed when the window is resized.
     /// </summary>
     protected readonly EcsSystems ResizeSystems;
 
     /// <summary>
-    /// Камера сцены для управления видом и проекцией.
+    /// Scene camera responsible for view/projection transforms.
     /// </summary>
     protected readonly ICamera Camera;
 
     /// <summary>
-    /// Сервис управления ресурсами (меши, шейдеры, текстуры).
+    /// Assets service that loads meshes, shaders, and textures.
     /// </summary>
     protected readonly IAssetsService Assets;
 
     /// <summary>
-    /// Сервис управления аудио.
+    /// Audio service shared across the scene.
     /// </summary>
     protected readonly IAudioService Audio;
 
@@ -81,16 +81,16 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Устанавливает окно для доступа из систем через SystemSharedObject.
+    /// Assigns the window instance so systems can access it via <see cref="SystemSharedObject"/>.
     /// </summary>
-    /// <param name="window">Окно приложения.</param>
+    /// <param name="window">Application window.</param>
     public void SetWindow(Window window)
     {
         _shared.Window = window;
     }
 
     /// <summary>
-    /// Инициализирует сцену. Вызывается автоматически при первом использовании.
+    /// Initializes the scene. Called automatically on the first use.
     /// </summary>
     public void Initialize()
     {
@@ -108,9 +108,9 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Обновляет сцену. Вызывается каждый кадр перед рендерингом.
+    /// Updates the scene each frame before rendering.
     /// </summary>
-    /// <param name="args">Аргументы кадра с информацией о времени.</param>
+    /// <param name="args">Frame timing arguments.</param>
     public void UpdateScene(FrameEventArgs args)
     {
         if (!_isLoaded)
@@ -123,9 +123,9 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Рендерит сцену. Вызывается каждый кадр.
+    /// Renders the scene each frame.
     /// </summary>
-    /// <param name="args">Аргументы кадра с информацией о времени.</param>
+    /// <param name="args">Frame timing arguments.</param>
     public void RenderScene(FrameEventArgs args)
     {
         if (!_isLoaded)
@@ -140,9 +140,9 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Обрабатывает изменение размера окна.
+    /// Handles window resize events.
     /// </summary>
-    /// <param name="e">Аргументы события изменения размера.</param>
+    /// <param name="e">Resize event arguments.</param>
     public void ResizeScene(ResizeEventArgs e)
     {
         if (!_isLoaded)
@@ -180,8 +180,7 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Вызывается при инициализации сцены. Переопределите этот метод для загрузки ресурсов
-    /// и настройки сцены.
+    /// Called during scene initialization. Override to load resources and configure entities.
     /// </summary>
     protected abstract void OnLoad();
 }

@@ -5,9 +5,8 @@ using RenderRitesMachine.Services;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса AudioService.
-/// Примечание: Полное тестирование аудио функциональности требует OpenAL контекста и аудио устройства,
-/// поэтому некоторые тесты могут пропускаться в окружениях без аудио оборудования.
+/// Tests for <see cref="AudioService"/>.
+/// Note: full coverage requires an OpenAL context and audio hardware, so some tests may be skipped in headless environments.
 /// </summary>
 public sealed class AudioServiceTests : IDisposable
 {
@@ -1013,7 +1012,7 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Создает временный аудио файл для тестирования.
+    /// Creates a temporary audio file for testing.
     /// </summary>
     private static string CreateTempAudioFile()
     {
@@ -1029,7 +1028,7 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Получает путь к тестовому аудио файлу, если он доступен.
+    /// Returns the path to the demo audio file if it exists.
     /// </summary>
     private static string? GetTestAudioFile()
     {
@@ -1044,7 +1043,7 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Создает новый экземпляр AudioService для тестирования.
+    /// Creates a new <see cref="AudioService"/> instance for testing.
     /// </summary>
     private AudioService CreateService(ILogger? logger = null)
     {
@@ -1054,8 +1053,8 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Пытается создать новый экземпляр AudioService для тестирования.
-    /// Возвращает null, если инициализация не удалась.
+    /// Attempts to create a new <see cref="AudioService"/> for testing.
+    /// Returns null if initialization fails.
     /// </summary>
     private AudioService? TryCreateService(ILogger? logger = null)
     {

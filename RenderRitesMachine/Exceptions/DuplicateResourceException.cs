@@ -1,25 +1,25 @@
 namespace RenderRitesMachine.Exceptions;
 
 /// <summary>
-/// Исключение, которое выбрасывается при попытке добавить ресурс с уже существующим именем.
+/// Thrown when attempting to add a resource with an existing name.
 /// </summary>
 public class DuplicateResourceException : Exception
 {
     /// <summary>
-    /// Имя ресурса, которое уже существует.
+    /// Name of the resource that already exists.
     /// </summary>
     public string ResourceName { get; } = string.Empty;
 
     /// <summary>
-    /// Тип ресурса (например, "mesh", "shader", "texture", "bounding box").
+    /// Resource type (e.g., mesh, shader, texture, bounding box).
     /// </summary>
     public string ResourceType { get; } = string.Empty;
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="DuplicateResourceException"/>.
+    /// Initializes a new instance of the <see cref="DuplicateResourceException"/> class.
     /// </summary>
-    /// <param name="resourceType">Тип ресурса (например, "mesh", "shader", "texture", "bounding box").</param>
-    /// <param name="resourceName">Имя ресурса, которое уже существует.</param>
+    /// <param name="resourceType">Resource type (e.g., mesh, shader, texture, bounding box).</param>
+    /// <param name="resourceName">Name of the resource that already exists.</param>
     public DuplicateResourceException(string resourceType, string resourceName)
         : base($"A {resourceType} with the name '{resourceName}' already exists.")
     {
@@ -28,9 +28,9 @@ public class DuplicateResourceException : Exception
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="DuplicateResourceException"/> с указанным сообщением об ошибке.
+    /// Initializes a new instance with a custom error message.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
+    /// <param name="message">Error description.</param>
     public DuplicateResourceException(string message) : base(message)
     {
         ResourceType = string.Empty;
@@ -38,10 +38,10 @@ public class DuplicateResourceException : Exception
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="DuplicateResourceException"/> с указанным сообщением об ошибке и ссылкой на внутреннее исключение.
+    /// Initializes a new instance with a custom error message and inner exception.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
-    /// <param name="innerException">Исключение, являющееся причиной текущего исключения.</param>
+    /// <param name="message">Error description.</param>
+    /// <param name="innerException">Underlying exception.</param>
     public DuplicateResourceException(string message, Exception innerException) : base(message, innerException)
     {
         ResourceType = string.Empty;

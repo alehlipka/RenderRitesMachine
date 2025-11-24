@@ -3,57 +3,57 @@ using RenderRitesMachine.Assets;
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Интерфейс для сервиса управления ресурсами (меши, шейдеры, текстуры, bounding boxes).
+/// Service interface for managing meshes, shaders, textures, and bounding boxes.
 /// </summary>
 public interface IAssetsService : IDisposable
 {
     /// <summary>
-    /// Получает меш по имени.
+    /// Returns a mesh by name.
     /// </summary>
     MeshAsset GetMesh(string name);
 
     /// <summary>
-    /// Получает шейдер по имени.
+    /// Returns a shader by name.
     /// </summary>
     ShaderAsset GetShader(string name);
 
     /// <summary>
-    /// Получает коллекцию всех загруженных шейдеров.
+    /// Returns all loaded shaders.
     /// </summary>
     IReadOnlyCollection<ShaderAsset> GetAllShaders();
 
     /// <summary>
-    /// Получает текстуру по имени.
+    /// Returns a texture by name.
     /// </summary>
     TextureAsset GetTexture(string name);
 
     /// <summary>
-    /// Получает bounding box по имени меша.
+    /// Returns a bounding box by mesh name.
     /// </summary>
     BoundingBoxAsset GetBoundingBox(string name);
 
     /// <summary>
-    /// Создает и добавляет bounding box для указанного меша.
+    /// Creates and adds a bounding box for the specified mesh.
     /// </summary>
     void AddBoundingBox(string meshName);
 
     /// <summary>
-    /// Загружает и добавляет текстуру из файла.
+    /// Loads and registers a texture from disk.
     /// </summary>
     void AddTexture(string name, TextureType type, string path);
 
     /// <summary>
-    /// Загружает и компилирует шейдерную программу из файлов vertex.glsl и fragment.glsl.
+    /// Loads and compiles a shader program from vertex/fragment files.
     /// </summary>
     void AddShader(string name, string path);
 
     /// <summary>
-    /// Загружает меш из файла 3D-модели.
+    /// Loads a mesh from a 3D model file.
     /// </summary>
     void AddMeshFromFile(string name, string path);
 
     /// <summary>
-    /// Создает и добавляет сферический меш.
+    /// Creates and adds a procedural sphere mesh.
     /// </summary>
     void AddSphere(string name, float radius, int sectors, int stacks);
 }

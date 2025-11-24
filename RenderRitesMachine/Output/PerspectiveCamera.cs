@@ -4,16 +4,16 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Представляет перспективную камеру с возможностью управления позицией, ориентацией и параметрами проекции.
+/// Perspective camera with adjustable position, orientation, and projection parameters.
 /// </summary>
 public class PerspectiveCamera : CameraBase
 {
     private float _fov = MathHelper.PiOver2;
 
     /// <summary>
-    /// Поле зрения камеры (Field of View) в градусах. Ограничено диапазоном от 1 до 90 градусов.
+    /// Field of view in degrees, clamped between 1 and 90.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Выбрасывается, если значение вне допустимого диапазона.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is outside the allowed range.</exception>
     public float Fov
     {
         get => MathHelper.RadiansToDegrees(_fov);

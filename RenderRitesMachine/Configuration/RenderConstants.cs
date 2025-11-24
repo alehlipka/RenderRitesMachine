@@ -3,17 +3,17 @@ using OpenTK.Windowing.Common;
 namespace RenderRitesMachine.Configuration;
 
 /// <summary>
-/// Глобальная точка доступа к настройкам рендеринга с поддержкой переопределения.
+/// Global access point for render settings with override support.
 /// </summary>
 public static class RenderConstants
 {
     /// <summary>
-    /// Текущие настройки движка.
+    /// Current engine settings.
     /// </summary>
     public static RenderSettings Settings { get; private set; } = new();
 
     /// <summary>
-    /// Сбрасывает настройки к значениям по умолчанию.
+    /// Resets settings to their defaults.
     /// </summary>
     public static void Reset()
     {
@@ -21,7 +21,7 @@ public static class RenderConstants
     }
 
     /// <summary>
-    /// Полностью переопределяет настройки.
+    /// Replaces the settings with a new instance.
     /// </summary>
     public static void Configure(RenderSettings settings)
     {
@@ -31,7 +31,7 @@ public static class RenderConstants
     }
 
     /// <summary>
-    /// Обновляет настройки на основе текущего состояния.
+    /// Updates the settings based on the current values.
     /// </summary>
     public static void Configure(Func<RenderSettings, RenderSettings> configure)
     {

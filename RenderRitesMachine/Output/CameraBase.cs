@@ -4,7 +4,7 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Базовая реализация камеры, содержащая общий функционал для перспективных и ортографических проекций.
+/// Base camera implementation that houses shared logic for perspective and orthographic projections.
 /// </summary>
 public abstract class CameraBase : ICamera
 {
@@ -135,7 +135,7 @@ public abstract class CameraBase : ICamera
     }
 
     /// <summary>
-    /// Создает матрицу проекции, специфичную для конкретного типа камеры.
+    /// Creates the projection matrix specific to the concrete camera type.
     /// </summary>
     protected abstract Matrix4 CreateProjectionMatrix();
 }

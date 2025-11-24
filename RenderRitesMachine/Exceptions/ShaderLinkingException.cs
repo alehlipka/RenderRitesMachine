@@ -1,25 +1,25 @@
 namespace RenderRitesMachine.Exceptions;
 
 /// <summary>
-/// Исключение, которое выбрасывается при ошибке линковки шейдерной программы.
+/// Thrown when a shader program fails to link.
 /// </summary>
 public class ShaderLinkingException : Exception
 {
     /// <summary>
-    /// Имя шейдерной программы, которая не удалось слинковать.
+    /// Name of the shader program that failed to link.
     /// </summary>
     public string ShaderName { get; } = string.Empty;
 
     /// <summary>
-    /// Лог ошибки линковки от OpenGL.
+    /// OpenGL linking log.
     /// </summary>
     public string LinkingLog { get; } = string.Empty;
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="ShaderLinkingException"/>.
+    /// Initializes a new instance of the <see cref="ShaderLinkingException"/> class.
     /// </summary>
-    /// <param name="shaderName">Имя шейдерной программы.</param>
-    /// <param name="linkingLog">Лог ошибки линковки от OpenGL.</param>
+    /// <param name="shaderName">Shader program name.</param>
+    /// <param name="linkingLog">OpenGL linking log.</param>
     public ShaderLinkingException(string shaderName, string linkingLog)
         : base($"Shader link error for '{shaderName}': {linkingLog}")
     {
@@ -28,9 +28,9 @@ public class ShaderLinkingException : Exception
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="ShaderLinkingException"/> с указанным сообщением об ошибке.
+    /// Initializes a new instance with a custom error message.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
+    /// <param name="message">Error description.</param>
     public ShaderLinkingException(string message) : base(message)
     {
         ShaderName = string.Empty;
@@ -38,10 +38,10 @@ public class ShaderLinkingException : Exception
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="ShaderLinkingException"/> с указанным сообщением об ошибке и ссылкой на внутреннее исключение.
+    /// Initializes a new instance with a custom message and inner exception.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
-    /// <param name="innerException">Исключение, являющееся причиной текущего исключения.</param>
+    /// <param name="message">Error description.</param>
+    /// <param name="innerException">Underlying exception.</param>
     public ShaderLinkingException(string message, Exception innerException) : base(message, innerException)
     {
         ShaderName = string.Empty;

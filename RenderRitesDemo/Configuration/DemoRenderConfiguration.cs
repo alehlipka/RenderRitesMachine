@@ -4,7 +4,7 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesDemo.Configuration;
 
 /// <summary>
-/// Набор пользовательских настроек рендера для демо-приложения.
+/// Demo-specific render settings.
 /// </summary>
 internal static class DemoRenderConfiguration
 {

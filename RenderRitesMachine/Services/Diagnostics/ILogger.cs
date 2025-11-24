@@ -1,88 +1,88 @@
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Уровни логирования.
+/// Logging levels.
 /// </summary>
 public enum LogLevel
 {
     /// <summary>
-    /// Отладочная информация для разработчиков.
+    /// Diagnostic information for developers.
     /// </summary>
     Debug,
 
     /// <summary>
-    /// Общая информационная информация о работе приложения.
+    /// General information about normal application behavior.
     /// </summary>
     Info,
 
     /// <summary>
-    /// Предупреждения о потенциальных проблемах.
+    /// Warnings about potential problems.
     /// </summary>
     Warning,
 
     /// <summary>
-    /// Ошибки, которые не останавливают работу приложения.
+    /// Errors that do not stop application execution.
     /// </summary>
     Error,
 
     /// <summary>
-    /// Критические ошибки, которые могут привести к остановке приложения.
+    /// Critical errors that can stop the application.
     /// </summary>
     Critical
 }
 
 /// <summary>
-/// Интерфейс для системы логирования.
+/// Logging interface.
 /// </summary>
 public interface ILogger
 {
     /// <summary>
-    /// Минимальный уровень логирования. Сообщения ниже этого уровня не будут выводиться.
+    /// Minimal logging level. Messages below this level are ignored.
     /// </summary>
     LogLevel MinimumLevel { get; set; }
 
     /// <summary>
-    /// Записывает сообщение уровня Debug.
+    /// Writes a debug-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     void LogDebug(string message);
 
     /// <summary>
-    /// Записывает сообщение уровня Info.
+    /// Writes an info-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     void LogInfo(string message);
 
     /// <summary>
-    /// Записывает сообщение уровня Warning.
+    /// Writes a warning-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     void LogWarning(string message);
 
     /// <summary>
-    /// Записывает сообщение уровня Error.
+    /// Writes an error-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     void LogError(string message);
 
     /// <summary>
-    /// Записывает сообщение уровня Critical.
+    /// Writes a critical-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     void LogCritical(string message);
 
     /// <summary>
-    /// Записывает исключение с указанным уровнем логирования.
+    /// Logs an exception at the specified level.
     /// </summary>
-    /// <param name="level">Уровень логирования.</param>
-    /// <param name="exception">Исключение для логирования.</param>
-    /// <param name="message">Дополнительное сообщение. Может быть null.</param>
+    /// <param name="level">Logging level.</param>
+    /// <param name="exception">Exception to log.</param>
+    /// <param name="message">Optional additional message.</param>
     void LogException(LogLevel level, Exception exception, string? message = null);
 
     /// <summary>
-    /// Записывает сообщение с указанным уровнем логирования.
+    /// Writes a message with the specified level.
     /// </summary>
-    /// <param name="level">Уровень логирования.</param>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="level">Logging level.</param>
+    /// <param name="message">Message to log.</param>
     void Log(LogLevel level, string message);
 }

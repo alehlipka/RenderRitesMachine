@@ -1,17 +1,17 @@
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Интерфейс для сервиса времени, предоставляющего информацию о времени между кадрами.
+/// Time service interface that exposes per-frame delta values.
 /// </summary>
 public interface ITimeService
 {
     /// <summary>
-    /// Время между кадрами обновления.
+    /// Delta time between update frames.
     /// </summary>
     float UpdateDeltaTime { get; set; }
 
     /// <summary>
-    /// Время между кадрами рендеринга.
+    /// Delta time between render frames.
     /// </summary>
     float RenderDeltaTime { get; set; }
 }

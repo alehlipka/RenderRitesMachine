@@ -4,14 +4,14 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Камера с ортографической проекцией, удобная для 2D сцен или изометрического вида.
+/// Orthographic camera suited for 2D scenes or isometric views.
 /// </summary>
 public class OrthographicCamera : CameraBase
 {
     private float _height = 10.0f;
 
     /// <summary>
-    /// Высота ортографического объема (единицы мира). Ширина вычисляется на основе <see cref="CameraBase.AspectRatio"/>.
+    /// Height of the orthographic volume (world units). Width is derived from <see cref="CameraBase.AspectRatio"/>.
     /// </summary>
     public float Height
     {
@@ -32,7 +32,7 @@ public class OrthographicCamera : CameraBase
     }
 
     /// <summary>
-    /// Ширина ортографического объема (единицы мира).
+    /// Width of the orthographic volume (world units).
     /// </summary>
     public float Width => _height * AspectRatio;
 

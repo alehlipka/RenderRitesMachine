@@ -5,7 +5,7 @@ using RenderRitesMachine.Services.Gui;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Реализация фабрики сцен, которая инжектирует зависимости.
+/// Scene factory implementation that wires all required dependencies.
 /// </summary>
 public class SceneFactory(IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ILogger logger) : ISceneFactory
 {
@@ -18,7 +18,7 @@ public class SceneFactory(IAssetsService assetsService, ITimeService timeService
     private ISceneManager? _sceneManager;
 
     /// <summary>
-    /// Устанавливает менеджер сцен. Должен быть вызван после создания SceneManager.
+    /// Assigns the scene manager. Must be called after <see cref="SceneManager"/> creation.
     /// </summary>
     public void SetSceneManager(ISceneManager sceneManager)
     {

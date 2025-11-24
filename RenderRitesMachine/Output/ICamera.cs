@@ -3,62 +3,62 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Минимальный контракт камеры, обеспечивающий построение матриц вида и проекции.
+/// Minimal camera contract that exposes view and projection matrices.
 /// </summary>
 public interface ICamera
 {
     /// <summary>
-    /// Позиция камеры в мировом пространстве.
+    /// Camera position in world space.
     /// </summary>
     Vector3 Position { get; set; }
 
     /// <summary>
-    /// Нормализованный вектор направления взгляда.
+    /// Normalized view direction.
     /// </summary>
     Vector3 Front { get; }
 
     /// <summary>
-    /// Нормализованный вектор "вверх".
+    /// Normalized up vector.
     /// </summary>
     Vector3 Up { get; }
 
     /// <summary>
-    /// Нормализованный вектор "вправо".
+    /// Normalized right vector.
     /// </summary>
     Vector3 Right { get; }
 
     /// <summary>
-    /// Скорость поступательного движения.
+    /// Translation speed.
     /// </summary>
     float Speed { get; set; }
 
     /// <summary>
-    /// Скорость вращения.
+    /// Rotation speed.
     /// </summary>
     float AngularSpeed { get; set; }
 
     /// <summary>
-    /// Соотношение сторон окна (ширина / высота).
+    /// Window aspect ratio (width / height).
     /// </summary>
     float AspectRatio { get; set; }
 
     /// <summary>
-    /// Текущий угол наклона по оси X (в градусах).
+    /// Current pitch (degrees around the X axis).
     /// </summary>
     float Pitch { get; set; }
 
     /// <summary>
-    /// Текущий угол поворота по оси Y (в градусах).
+    /// Current yaw (degrees around the Y axis).
     /// </summary>
     float Yaw { get; set; }
 
     /// <summary>
-    /// Матрица вида.
+    /// View matrix.
     /// </summary>
     Matrix4 ViewMatrix { get; }
 
     /// <summary>
-    /// Матрица проекции.
+    /// Projection matrix.
     /// </summary>
     Matrix4 ProjectionMatrix { get; }
 }

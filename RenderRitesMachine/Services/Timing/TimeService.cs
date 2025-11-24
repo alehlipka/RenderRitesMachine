@@ -1,7 +1,7 @@
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Сервис для управления временем между кадрами.
+/// Tracks delta times between update and render frames.
 /// </summary>
 public class TimeService : ITimeService
 {

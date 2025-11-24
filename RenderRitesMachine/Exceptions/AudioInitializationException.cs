@@ -1,23 +1,23 @@
 namespace RenderRitesMachine.Exceptions;
 
 /// <summary>
-/// Исключение, которое выбрасывается при ошибке инициализации аудио сервиса.
+/// Thrown when the audio service fails to initialize.
 /// </summary>
 public class AudioInitializationException : Exception
 {
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="AudioInitializationException"/> с указанным сообщением об ошибке.
+    /// Initializes a new instance with a custom error message.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
+    /// <param name="message">Error description.</param>
     public AudioInitializationException(string message) : base(message)
     {
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="AudioInitializationException"/> с указанным сообщением об ошибке и ссылкой на внутреннее исключение.
+    /// Initializes a new instance with a custom message and inner exception.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
-    /// <param name="innerException">Исключение, являющееся причиной текущего исключения.</param>
+    /// <param name="message">Error description.</param>
+    /// <param name="innerException">Underlying exception.</param>
     public AudioInitializationException(string message, Exception innerException) : base(message, innerException)
     {
     }

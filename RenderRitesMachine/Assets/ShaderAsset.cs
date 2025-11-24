@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.Assets;
 
 /// <summary>
-/// Ресурс шейдерной программы. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// Shader program resource that disposes its OpenGL handle.
 /// </summary>
 public sealed class ShaderAsset : IDisposable
 {

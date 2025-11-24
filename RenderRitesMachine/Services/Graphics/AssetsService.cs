@@ -28,8 +28,7 @@ using VertexAttribPointerType = OpenTK.Graphics.OpenGL4.VertexAttribPointerType;
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Сервис для управления ресурсами (меши, шейдеры, текстуры, bounding boxes).
-/// Предоставляет методы для загрузки и получения ресурсов OpenGL.
+/// Manages meshes, shaders, textures, and bounding boxes, exposing helpers to load and retrieve OpenGL resources.
 /// </summary>
 public class AssetsService : IAssetsService
 {
@@ -41,21 +40,21 @@ public class AssetsService : IAssetsService
     private bool _disposed;
 
     /// <summary>
-    /// Создает новый экземпляр сервиса управления ресурсами.
+    /// Creates a new instance of the assets service.
     /// </summary>
-    /// <param name="logger">Логгер для записи сообщений или null, чтобы отключить журналирование.</param>
+    /// <param name="logger">Logger for diagnostics, or null to disable logging.</param>
     public AssetsService(ILogger? logger = null)
     {
         _logger = logger;
     }
 
     /// <summary>
-    /// Получает меш по имени.
+    /// Retrieves a mesh by name.
     /// </summary>
-    /// <param name="name">Имя меша.</param>
-    /// <returns>Меш с указанным именем.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
-    /// <exception cref="KeyNotFoundException">Выбрасывается, если меш с указанным именем не найден.</exception>
+    /// <param name="name">Mesh identifier.</param>
+    /// <returns>Mesh asset with the specified name.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown when the mesh cannot be found.</exception>
     public MeshAsset GetMesh(string name)
     {
         return string.IsNullOrWhiteSpace(name)
@@ -66,12 +65,12 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Получает шейдер по имени.
+    /// Retrieves a shader by name.
     /// </summary>
-    /// <param name="name">Имя шейдера.</param>
-    /// <returns>Шейдер с указанным именем.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
-    /// <exception cref="KeyNotFoundException">Выбрасывается, если шейдер с указанным именем не найден.</exception>
+    /// <param name="name">Shader identifier.</param>
+    /// <returns>Shader asset with the specified name.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown when the shader cannot be found.</exception>
     public ShaderAsset GetShader(string name)
     {
         return string.IsNullOrWhiteSpace(name)
@@ -82,21 +81,21 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Получает коллекцию всех загруженных шейдеров.
+    /// Returns all loaded shaders.
     /// </summary>
-    /// <returns>Неизменяемая коллекция всех шейдеров.</returns>
+    /// <returns>An immutable collection of shaders.</returns>
     public IReadOnlyCollection<ShaderAsset> GetAllShaders()
     {
         return _shaders.Values;
     }
 
     /// <summary>
-    /// Получает текстуру по имени.
+    /// Retrieves a texture by name.
     /// </summary>
-    /// <param name="name">Имя текстуры.</param>
-    /// <returns>Текстура с указанным именем.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
-    /// <exception cref="KeyNotFoundException">Выбрасывается, если текстура с указанным именем не найдена.</exception>
+    /// <param name="name">Texture identifier.</param>
+    /// <returns>Texture asset with the specified name.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown when the texture cannot be found.</exception>
     public TextureAsset GetTexture(string name)
     {
         return string.IsNullOrWhiteSpace(name)
@@ -107,12 +106,12 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Получает bounding box по имени меша.
+    /// Retrieves a bounding box for the given mesh.
     /// </summary>
-    /// <param name="name">Имя меша, для которого создан bounding box.</param>
-    /// <returns>Bounding box для указанного меша.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
-    /// <exception cref="KeyNotFoundException">Выбрасывается, если bounding box с указанным именем не найден.</exception>
+    /// <param name="name">Mesh name associated with the bounding box.</param>
+    /// <returns>Bounding box asset for the mesh.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown when the bounding box cannot be found.</exception>
     public BoundingBoxAsset GetBoundingBox(string name)
     {
         return string.IsNullOrWhiteSpace(name)
@@ -123,12 +122,12 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Создает и добавляет bounding box для указанного меша.
+    /// Generates and stores a bounding box for the specified mesh.
     /// </summary>
-    /// <param name="meshName">Имя меша, для которого создается bounding box.</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если meshName равен null.</exception>
-    /// <exception cref="KeyNotFoundException">Выбрасывается, если меш с указанным именем не найден.</exception>
-    /// <exception cref="DuplicateResourceException">Выбрасывается при попытке добавить bounding box с уже существующим именем.</exception>
+    /// <param name="meshName">Mesh name used for the bounding box.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="meshName"/> is null or empty.</exception>
+    /// <exception cref="KeyNotFoundException">Thrown when the mesh cannot be found.</exception>
+    /// <exception cref="DuplicateResourceException">Thrown when the bounding box already exists.</exception>
     public void AddBoundingBox(string meshName)
     {
         if (string.IsNullOrWhiteSpace(meshName))
@@ -176,16 +175,16 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Загружает и добавляет текстуру из файла.
+    /// Loads a texture from disk and registers it.
     /// </summary>
-    /// <param name="name">Имя текстуры для последующего доступа.</param>
-    /// <param name="type">Тип текстуры.</param>
-    /// <param name="path">Путь к файлу текстуры.</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name или path равны null.</exception>
-    /// <exception cref="FileNotFoundException">Выбрасывается, если файл не найден.</exception>
-    /// <exception cref="InvalidDataException">Выбрасывается, если не удалось загрузить изображение.</exception>
-    /// <exception cref="IOException">Выбрасывается при ошибке чтения файла.</exception>
-    /// <exception cref="DuplicateResourceException">Выбрасывается при попытке добавить текстуру с уже существующим именем.</exception>
+    /// <param name="name">Texture identifier used for future lookups.</param>
+    /// <param name="type">Texture type.</param>
+    /// <param name="path">Path to the texture file.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="FileNotFoundException">Thrown when the file cannot be found.</exception>
+    /// <exception cref="InvalidDataException">Thrown when the image data cannot be loaded.</exception>
+    /// <exception cref="IOException">Thrown when the file cannot be read.</exception>
+    /// <exception cref="DuplicateResourceException">Thrown when a texture with the same name already exists.</exception>
     public void AddTexture(string name, TextureType type, string path)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -258,15 +257,15 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Загружает и компилирует шейдерную программу из файлов vertex.glsl и fragment.glsl.
+    /// Loads and compiles a shader program from <c>vertex.glsl</c> and <c>fragment.glsl</c>.
     /// </summary>
-    /// <param name="name">Имя шейдера для последующего доступа.</param>
-    /// <param name="path">Путь к директории, содержащей vertex.glsl и fragment.glsl.</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name или path равны null.</exception>
-    /// <exception cref="FileNotFoundException">Выбрасывается, если файлы шейдеров не найдены.</exception>
-    /// <exception cref="ShaderCompilationException">Выбрасывается при ошибке компиляции шейдера.</exception>
-    /// <exception cref="ShaderLinkingException">Выбрасывается при ошибке линковки шейдерной программы.</exception>
-    /// <exception cref="DuplicateResourceException">Выбрасывается при попытке добавить шейдер с уже существующим именем.</exception>
+    /// <param name="name">Shader identifier.</param>
+    /// <param name="path">Directory containing the shader files.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="FileNotFoundException">Thrown when shader files cannot be found.</exception>
+    /// <exception cref="ShaderCompilationException">Thrown when compilation fails.</exception>
+    /// <exception cref="ShaderLinkingException">Thrown when linking fails.</exception>
+    /// <exception cref="DuplicateResourceException">Thrown when a shader with the same name already exists.</exception>
     public void AddShader(string name, string path)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -350,14 +349,14 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Загружает меш из файла 3D-модели (поддерживаются форматы, поддерживаемые Assimp).
+    /// Loads a mesh from a 3D model file (any format supported by Assimp).
     /// </summary>
-    /// <param name="name">Имя меша для последующего доступа.</param>
-    /// <param name="path">Путь к файлу 3D-модели.</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name или path равны null.</exception>
-    /// <exception cref="FileNotFoundException">Выбрасывается, если файл не найден.</exception>
-    /// <exception cref="InvalidOperationException">Выбрасывается при ошибке загрузки модели или отсутствии мешей в файле.</exception>
-    /// <exception cref="DuplicateResourceException">Выбрасывается при попытке добавить меш с уже существующим именем.</exception>
+    /// <param name="name">Mesh identifier.</param>
+    /// <param name="path">Path to the model file.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="FileNotFoundException">Thrown when the file cannot be found.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when loading fails or the file contains no meshes.</exception>
+    /// <exception cref="DuplicateResourceException">Thrown when a mesh with the same name already exists.</exception>
     public void AddMeshFromFile(string name, string path)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -444,15 +443,15 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Создает и добавляет сферический меш.
+    /// Creates and registers a procedural sphere mesh.
     /// </summary>
-    /// <param name="name">Имя меша для последующего доступа.</param>
-    /// <param name="radius">Радиус сферы.</param>
-    /// <param name="sectors">Количество секторов (сегментов по горизонтали).</param>
-    /// <param name="stacks">Количество стеков (сегментов по вертикали).</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Выбрасывается, если radius, sectors или stacks имеют недопустимые значения.</exception>
-    /// <exception cref="DuplicateResourceException">Выбрасывается при попытке добавить меш с уже существующим именем.</exception>
+    /// <param name="name">Mesh identifier.</param>
+    /// <param name="radius">Sphere radius.</param>
+    /// <param name="sectors">Number of horizontal segments.</param>
+    /// <param name="stacks">Number of vertical segments.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when radius, sectors, or stacks are invalid.</exception>
+    /// <exception cref="DuplicateResourceException">Thrown when a mesh with the same name already exists.</exception>
     public void AddSphere(string name, float radius, int sectors, int stacks)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -620,7 +619,7 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Освобождает все загруженные ресурсы OpenGL.
+    /// Releases all loaded OpenGL resources.
     /// </summary>
     public void Dispose()
     {

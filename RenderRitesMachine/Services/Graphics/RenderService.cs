@@ -5,7 +5,7 @@ using RenderRitesMachine.Assets;
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Сервис для рендеринга различных объектов (меши, bounding boxes, контуры).
+/// Rendering service that draws meshes, bounding boxes, and other primitives.
 /// </summary>
 public class RenderService : IRenderService
 {

@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.ECS;
 
 /// <summary>
-/// Реализация IOpenGLWrapper, использующая реальные OpenGL вызовы.
+/// Real OpenGL implementation of <see cref="IOpenGLWrapper"/>.
 /// </summary>
 public class OpenGLWrapper : IOpenGLWrapper
 {

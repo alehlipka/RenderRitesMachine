@@ -7,7 +7,7 @@ using RenderRitesMachine.Services.Gui;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса SceneFactory (edge cases).
+/// Edge-case tests for <see cref="SceneFactory"/>.
 /// </summary>
 public sealed class SceneFactoryTests
 {

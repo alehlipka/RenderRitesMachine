@@ -8,7 +8,7 @@ using RenderRitesMachine.Services.Gui;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса SystemSharedObject.
+/// Tests for <see cref="SystemSharedObject"/>.
 /// </summary>
 public sealed class SystemSharedObjectTests
 {

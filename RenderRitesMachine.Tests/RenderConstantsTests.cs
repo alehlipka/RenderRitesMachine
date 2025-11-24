@@ -3,7 +3,7 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса RenderConstants.
+/// Tests for <see cref="RenderConstants"/>.
 /// </summary>
 public sealed class RenderConstantsTests : IDisposable
 {

@@ -9,54 +9,54 @@ using RenderRitesMachine.Services.Gui;
 namespace RenderRitesMachine;
 
 /// <summary>
-/// Главный класс движка RenderRites. Предоставляет точку входа для создания и управления окном рендеринга.
+/// Core class of the RenderRites engine. Provides the entry point for creating and controlling the rendering window.
 /// </summary>
 public sealed class RenderRites : IDisposable
 {
     private static readonly Lazy<RenderRites> LazyMachine = new(() => new RenderRites());
 
     /// <summary>
-    /// Единственный экземпляр движка RenderRites (Singleton).
+    /// The single RenderRites instance (singleton).
     /// </summary>
     public static RenderRites Machine => LazyMachine.Value;
 
     /// <summary>
-    /// Текущее окно рендеринга. Может быть null до вызова RunWindow.
+    /// Current rendering window. May be null until <see cref="RunWindow"/> is called.
     /// </summary>
     public Window? Window { get; private set; }
 
     /// <summary>
-    /// Менеджер сцен для управления различными сценами приложения.
+    /// Scene manager responsible for handling application scenes.
     /// </summary>
     public readonly SceneManager Scenes;
 
     /// <summary>
-    /// Общий сервис управления ресурсами для всех сцен.
+    /// Shared assets service used by every scene.
     /// </summary>
     public readonly IAssetsService AssetsService;
 
     /// <summary>
-    /// Общий сервис времени для всех сцен.
+    /// Shared time service used by every scene.
     /// </summary>
     public readonly ITimeService TimeService;
 
     /// <summary>
-    /// Общий сервис рендеринга для всех сцен.
+    /// Shared render service used by every scene.
     /// </summary>
     public readonly IRenderService RenderService;
 
     /// <summary>
-    /// Сервис логирования для записи сообщений и ошибок.
+    /// Logger used to write informational messages and errors.
     /// </summary>
     public readonly ILogger Logger;
 
     /// <summary>
-    /// Сервис управления аудио для всех сцен.
+    /// Shared audio service used by every scene.
     /// </summary>
     public readonly IAudioService AudioService;
 
     /// <summary>
-    /// Сервис GUI, предоставляющий поверхность и события.
+    /// GUI service that provides a software surface and input events.
     /// </summary>
     public readonly IGuiService GuiService;
 
@@ -76,10 +76,10 @@ public sealed class RenderRites : IDisposable
     }
 
     /// <summary>
-    /// Переопределяет настройки рендеринга для текущего экземпляра движка.
+    /// Overrides rendering settings for the current engine instance.
     /// </summary>
-    /// <param name="settings">Полный набор пользовательских настроек.</param>
-    /// <returns>Текущий экземпляр RenderRites для fluent-конфигурации.</returns>
+    /// <param name="settings">Complete user-provided configuration.</param>
+    /// <returns>The same <see cref="RenderRites"/> instance to allow fluent configuration.</returns>
     public RenderRites ConfigureRenderSettings(RenderSettings settings)
     {
         RenderConstants.Configure(settings);
@@ -87,10 +87,10 @@ public sealed class RenderRites : IDisposable
     }
 
     /// <summary>
-    /// Переопределяет настройки рендеринга на основе текущих значений.
+    /// Overrides rendering settings based on the current values.
     /// </summary>
-    /// <param name="configure">Функция, возвращающая изменённую копию настроек.</param>
-    /// <returns>Текущий экземпляр RenderRites для fluent-конфигурации.</returns>
+    /// <param name="configure">Function that receives the current settings and returns a modified copy.</param>
+    /// <returns>The same <see cref="RenderRites"/> instance to allow fluent configuration.</returns>
     public RenderRites ConfigureRenderSettings(Func<RenderSettings, RenderSettings> configure)
     {
         RenderConstants.Configure(configure);
@@ -98,9 +98,9 @@ public sealed class RenderRites : IDisposable
     }
 
     /// <summary>
-    /// Создает и запускает окно рендеринга, используя заданный заголовок или значение по умолчанию.
+    /// Creates and runs the rendering window using the provided or default title.
     /// </summary>
-    /// <param name="title">Желаемый заголовок окна или null, чтобы использовать стандартное значение.</param>
+    /// <param name="title">Desired window title or null to use the default value.</param>
     public void RunWindow(string? title)
     {
         if (string.IsNullOrWhiteSpace(title))

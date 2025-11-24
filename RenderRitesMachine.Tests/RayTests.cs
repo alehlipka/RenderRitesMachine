@@ -4,7 +4,7 @@ using RenderRitesMachine.Utilities;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса Ray (edge cases).
+/// Edge-case tests for <see cref="Ray"/>.
 /// </summary>
 public sealed class RayTests
 {
