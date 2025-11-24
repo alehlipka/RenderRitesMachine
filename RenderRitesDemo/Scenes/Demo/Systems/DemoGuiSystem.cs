@@ -73,8 +73,6 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
             TextColor = Color4.White,
             FocusBorderColor = new Color4(0.2f, 0.6f, 1f, 1f)
         };
-        // _textBox.TextChanged += (text) => System.Diagnostics.Debug.WriteLine($"TextBox text changed: {text}");
-        // _textBox.EnterPressed += () => System.Diagnostics.Debug.WriteLine("Enter pressed in TextBox");
 
         _rootPanel.AddChild(_fpsLabel);
         _rootPanel.AddChild(_objectsLabel);

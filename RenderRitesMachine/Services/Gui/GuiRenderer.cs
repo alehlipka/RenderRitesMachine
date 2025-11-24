@@ -31,7 +31,6 @@ internal sealed class GuiRenderer : IGuiRenderer
 
         float[] vertices =
         {
-            // positions   // tex coords (flip Y to match top-left origin surface)
             -1f,  1f,      0f, 0f,
             -1f, -1f,      0f, 1f,
              1f, -1f,      1f, 1f,

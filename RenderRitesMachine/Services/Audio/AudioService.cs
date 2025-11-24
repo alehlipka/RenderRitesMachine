@@ -59,8 +59,6 @@ public sealed class AudioService : IAudioService
             var up = new Vector3(0, 1, 0);
             AL.Listener(ALListenerfv.Orientation, ref forward, ref up);
             AL.Listener(ALListenerf.Gain, _masterVolume);
-
-            _logger?.LogDebug("AudioService initialized successfully");
         }
         catch (Exception ex)
         {
