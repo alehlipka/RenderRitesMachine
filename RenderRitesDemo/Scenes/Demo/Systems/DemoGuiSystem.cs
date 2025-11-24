@@ -2,6 +2,7 @@ using Leopotam.EcsLite;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.ECS;
+using RenderRitesMachine.Services;
 using RenderRitesMachine.Services.Gui;
 using RenderRitesMachine.Services.Gui.Components;
 
@@ -15,6 +16,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
     private readonly Label _objectsLabel;
     private readonly Label _frameTimeLabel;
     private readonly Button _toggleCrosshairButton;
+    private readonly TextBox _textBox;
     private readonly List<GuiEvent> _eventBuffer = new();
     private bool _showCrosshair = true;
 
@@ -25,7 +27,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
         _rootPanel = new Panel
         {
             Width = 260,
-            Height = 120,
+            Height = 165,
             BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
             BorderColor = new Color4(1f, 1f, 1f, 0.35f)
         };
@@ -60,16 +62,32 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
         };
         _toggleCrosshairButton.Clicked += () => _showCrosshair = !_showCrosshair;
 
+        _textBox = new TextBox(font)
+        {
+            Position = new Vector2i(10, 115),
+            Width = 240,
+            Height = 38,
+            PlaceholderText = "Enter text here...",
+            BackgroundColor = new Color4(0.15f, 0.15f, 0.15f, 0.9f),
+            BorderColor = new Color4(0.5f, 0.5f, 0.5f, 0.8f),
+            TextColor = Color4.White,
+            FocusBorderColor = new Color4(0.2f, 0.6f, 1f, 1f)
+        };
+        // _textBox.TextChanged += (text) => System.Diagnostics.Debug.WriteLine($"TextBox text changed: {text}");
+        // _textBox.EnterPressed += () => System.Diagnostics.Debug.WriteLine("Enter pressed in TextBox");
+
         _rootPanel.AddChild(_fpsLabel);
         _rootPanel.AddChild(_objectsLabel);
         _rootPanel.AddChild(_frameTimeLabel);
         _rootPanel.AddChild(_toggleCrosshairButton);
+        _rootPanel.AddChild(_textBox);
     }
 
     public void Run(IEcsSystems systems)
     {
         SystemSharedObject shared = systems.GetShared<SystemSharedObject>();
         IGuiService gui = shared.Gui;
+        ITimeService time = shared.Time;
 
         if (gui.Width == 0 || gui.Height == 0)
         {
@@ -89,7 +107,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
             _rootPanel.HandleEvent(evt);
         }
 
-        _rootPanel.Render(gui);
+        _rootPanel.Render(gui, time);
 
         if (_showCrosshair)
         {

@@ -8,9 +8,9 @@ public class Panel : GuiElement
     public Color4 BorderColor { get; set; } = Color4.Transparent;
     public int BorderThickness { get; set; } = 1;
 
-    public override void Render(IGuiService gui)
+    public override void Render(IGuiService gui, ITimeService time)
     {
-        if (!Visible)
+        if (!IsVisible)
         {
             return;
         }
@@ -32,7 +32,7 @@ public class Panel : GuiElement
             gui.DrawVerticalLine(x + Width - thickness, y, Height, thickness, border);
         }
 
-        base.Render(gui);
+        base.Render(gui, time);
     }
 
     protected virtual Color4 ResolveBackgroundColor() => BackgroundColor;

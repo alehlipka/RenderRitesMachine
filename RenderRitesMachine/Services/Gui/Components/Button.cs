@@ -47,7 +47,7 @@ public sealed class Button : Panel
 
     public override void HandleEvent(GuiEvent evt)
     {
-        if (!Visible)
+        if (!IsVisible)
         {
             return;
         }
@@ -86,14 +86,14 @@ public sealed class Button : Panel
         base.HandleEvent(evt);
     }
 
-    public override void Render(IGuiService gui)
+    public override void Render(IGuiService gui, ITimeService time)
     {
-        if (!Visible)
+        if (!IsVisible)
         {
             return;
         }
 
-        base.Render(gui);
+        base.Render(gui, time);
 
         (int x, int y) = GetGlobalPosition();
         Vector2 textSize = Font.MeasureText(Text);

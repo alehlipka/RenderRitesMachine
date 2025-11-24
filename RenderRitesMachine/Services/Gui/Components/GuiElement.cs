@@ -9,7 +9,7 @@ public abstract class GuiElement
     public Vector2i Position { get; set; }
     public int Width { get; set; }
     public int Height { get; set; }
-    public bool Visible { get; set; } = true;
+    public bool IsVisible { get; set; } = true;
 
     protected IReadOnlyList<GuiElement> Children => _children;
     protected GuiElement? Parent { get; private set; }
@@ -41,22 +41,22 @@ public abstract class GuiElement
         }
     }
 
-    public virtual void Render(IGuiService gui)
+    public virtual void Render(IGuiService gui, ITimeService time)
     {
-        if (!Visible)
+        if (!IsVisible)
         {
             return;
         }
 
         foreach (GuiElement child in _children)
         {
-            child.Render(gui);
+            child.Render(gui, time);
         }
     }
 
     public virtual void HandleEvent(GuiEvent evt)
     {
-        if (!Visible)
+        if (!IsVisible)
         {
             return;
         }

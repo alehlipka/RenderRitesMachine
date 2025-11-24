@@ -22,9 +22,9 @@ public sealed class Label : GuiElement
         set => _text = value ?? string.Empty;
     }
 
-    public override void Render(IGuiService gui)
+    public override void Render(IGuiService gui, ITimeService time)
     {
-        if (!Visible)
+        if (!IsVisible)
         {
             return;
         }
@@ -39,7 +39,7 @@ public sealed class Label : GuiElement
         }
 
         gui.DrawText(Font, Text, x, y, TextColor);
-        base.Render(gui);
+        base.Render(gui, time);
     }
 }
 
