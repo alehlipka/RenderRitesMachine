@@ -14,6 +14,11 @@ public interface IGuiService : IDisposable
     GuiEventQueue Events { get; }
 
     /// <summary>
+    /// Indicates whether the current frame contains any draw commands.
+    /// </summary>
+    bool HasContent { get; }
+
+    /// <summary>
     /// Width of the underlying GUI surface in pixels.
     /// </summary>
     int Width { get; }

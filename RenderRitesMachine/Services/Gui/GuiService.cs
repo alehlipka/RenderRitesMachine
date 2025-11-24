@@ -13,6 +13,7 @@ public sealed class GuiService : IGuiService
     private bool _initialized;
     private bool _frameInProgress;
     private bool _frameUploaded;
+    private bool _hasDrawCommands;
 
     public GuiService(ILogger logger)
     {
@@ -21,6 +22,8 @@ public sealed class GuiService : IGuiService
     }
 
     public GuiEventQueue Events { get; }
+
+    public bool HasContent => _hasDrawCommands && _frameUploaded;
 
     public int Width => _surface.Width;
 
@@ -63,12 +66,21 @@ public sealed class GuiService : IGuiService
         _surface.Clear(clearColor);
         _frameInProgress = true;
         _frameUploaded = false;
+        _hasDrawCommands = false;
     }
 
     public void EndFrame()
     {
         if (!_frameInProgress)
         {
+            return;
+        }
+
+        if (!_hasDrawCommands)
+        {
+            _surface.MarkClean();
+            _frameInProgress = false;
+            _frameUploaded = false;
             return;
         }
 
@@ -79,7 +91,7 @@ public sealed class GuiService : IGuiService
 
     public void Render()
     {
-        if (!_frameUploaded)
+        if (!HasContent)
         {
             return;
         }
@@ -91,24 +103,28 @@ public sealed class GuiService : IGuiService
     {
         EnsureFrame();
         _surface.FillRectangle(x, y, width, height, color);
+        _hasDrawCommands = true;
     }
 
     public void DrawHorizontalLine(int x, int y, int length, int thickness, Color4 color)
     {
         EnsureFrame();
         _surface.DrawHorizontalLine(x, y, length, thickness, color);
+        _hasDrawCommands = true;
     }
 
     public void DrawVerticalLine(int x, int y, int length, int thickness, Color4 color)
     {
         EnsureFrame();
         _surface.DrawVerticalLine(x, y, length, thickness, color);
+        _hasDrawCommands = true;
     }
 
     public void DrawPixel(int x, int y, Color4 color)
     {
         EnsureFrame();
         _surface.DrawPixel(x, y, color);
+        _hasDrawCommands = true;
     }
 
     public void Dispose()

@@ -48,7 +48,8 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
             .Add(new FloatingAnimationSystem());
 
         _ = RenderSystems
-            .Add(new MainRenderSystem());
+            .Add(new MainRenderSystem())
+            .Add(new DemoGuiSystem());
 
         _ = ResizeSystems
             .Add(new MainResizeSystem());

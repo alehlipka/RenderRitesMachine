@@ -95,7 +95,10 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
         _guiService.BeginFrame(Color4.Transparent);
         _sceneManager.Current?.RenderScene(args);
         _guiService.EndFrame();
-        _guiService.Render();
+        if (_guiService.HasContent)
+        {
+            _guiService.Render();
+        }
 
         SwapBuffers();
     }
@@ -128,7 +131,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
         foreach (Keys key in TrackedKeys)
         {
             if (key.Equals(Keys.Unknown)) continue;
-            
+
             bool isDown = currentKeyboard.IsKeyDown(key);
             bool wasDown = _previousKeyboardState.IsKeyDown(key);
 
