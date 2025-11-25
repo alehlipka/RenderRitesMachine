@@ -71,18 +71,23 @@ public sealed class GuiFont
                     {
                         char ch = (char)(FirstChar + i);
                         StbTrueType.stbtt_bakedchar baked = bakedChars[i];
-                        if (baked.x1 > baked.x0 && baked.y1 > baked.y0)
+
+                        bool hasBitmap = baked.x1 > baked.x0 && baked.y1 > baked.y0;
+                        bool hasAdvance = Math.Abs(baked.xadvance) > float.Epsilon;
+                        if (!hasBitmap && !hasAdvance)
                         {
-                            glyphs[ch] = new Glyph(
-                                baked.x0,
-                                baked.y0,
-                                baked.x1,
-                                baked.y1,
-                                baked.xoff,
-                                baked.yoff,
-                                baked.xadvance
-                            );
+                            continue;
                         }
+
+                        glyphs[ch] = new Glyph(
+                            baked.x0,
+                            baked.y0,
+                            baked.x1,
+                            baked.y1,
+                            baked.xoff,
+                            baked.yoff,
+                            baked.xadvance
+                        );
                     }
                 }
             }
