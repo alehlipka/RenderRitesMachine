@@ -57,4 +57,5 @@ public static class RenderConstants
     public static VSyncMode DefaultVSyncMode => Settings.DefaultVSyncMode;
     public static int DefaultSamples => Settings.DefaultSamples;
     public static WindowState DefaultWindowState => Settings.DefaultWindowState;
+    public static double UpdateFrequency => Settings.UpdateFrequency;
 }

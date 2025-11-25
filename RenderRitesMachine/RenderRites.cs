@@ -112,7 +112,7 @@ public sealed class RenderRites : IDisposable
 
         GameWindowSettings gws = new()
         {
-            UpdateFrequency = 0.0
+            UpdateFrequency = RenderConstants.UpdateFrequency
         };
 
         NativeWindowSettings nws = new()

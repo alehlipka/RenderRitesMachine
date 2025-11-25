@@ -12,7 +12,7 @@ public static class FpsCounter
     static FpsCounter()
     {
         Stopwatch = new Stopwatch();
-        Stopwatch.StartNew();
+        Stopwatch.Start();
     }
 
     public static void Update()

@@ -25,7 +25,7 @@ public sealed record RenderSettings
     public VSyncMode DefaultVSyncMode { get; init; } = VSyncMode.Off;
     public int DefaultSamples { get; init; } = 4;
     public WindowState DefaultWindowState { get; init; } = WindowState.Normal;
-
+    public double UpdateFrequency { get; init; } = 120.0;
     /// <summary>
     /// Ensures all values fall within supported ranges.
     /// </summary>
@@ -115,6 +115,11 @@ public sealed record RenderSettings
         if (DefaultSamples is < 1 or > 16)
         {
             throw new ArgumentOutOfRangeException(nameof(DefaultSamples), DefaultSamples, "Samples must be in range [1,16].");
+        }
+
+        if (UpdateFrequency <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(UpdateFrequency), UpdateFrequency, "Update frequency must be positive.");
         }
     }
 }
