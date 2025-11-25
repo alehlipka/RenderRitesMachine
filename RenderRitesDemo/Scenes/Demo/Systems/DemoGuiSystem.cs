@@ -97,7 +97,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
         RenderStatistics stats = shared.RenderStats;
         _fpsLabel.Text = $"FPS: {FpsCounter.GetFps():F0}";
         _objectsLabel.Text = $"Objects: {stats.RenderedObjects}/{stats.TotalObjects}";
-        _frameTimeLabel.Text = $"Frame: {shared.Time.RenderDeltaTime * 1000f:F2} ms";
+        _frameTimeLabel.Text = $"Frame time: {FrameTimeCounter.GetFrameTimeMilliseconds():F4} ms";
 
         IReadOnlyList<GuiEvent> events = gui.Events.DrainToList(_eventBuffer);
         foreach (GuiEvent evt in events)

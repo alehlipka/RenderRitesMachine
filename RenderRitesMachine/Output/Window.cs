@@ -21,7 +21,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
     protected override void OnLoad()
     {
         _logger?.LogInfo($"Window initialized: {ClientSize.X}x{ClientSize.Y}");
-        FpsCounter.Initialize();
         GlDebugWatchdog.Initialize(_logger);
         _logger?.LogDebug("FPS counter and OpenGL debug watchdog initialized");
 
@@ -86,6 +85,7 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
     protected override void OnRenderFrame(FrameEventArgs args)
     {
         FpsCounter.Update();
+        FrameTimeCounter.Update();
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
         _guiService.BeginFrame(Color4.Transparent);

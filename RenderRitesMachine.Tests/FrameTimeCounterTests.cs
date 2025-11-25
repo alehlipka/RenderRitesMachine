@@ -4,39 +4,39 @@ using RenderRitesMachine.Debug;
 
 namespace RenderRitesMachine.Tests;
 
-public sealed class FpsCounterTests
+public class FrameTimeCounterTests
 {
-    public FpsCounterTests()
+    public FrameTimeCounterTests()
     {
         ResetCounter();
     }
 
     [Fact]
-    public void GetFpsBeforeUpdatesReturnsZero()
+    public void GetFrameTimeBeforeUpdateReturnsZero()
     {
-        double fps = FpsCounter.GetFps();
+        double frameTime = FrameTimeCounter.GetFrameTimeMilliseconds();
 
-        Assert.Equal(0d, fps);
+        Assert.Equal(0d, frameTime);
     }
 
     [Fact]
-    public void UpdateAfterElapsedTimeProducesPositiveFps()
+    public void UpdateAfterElapsedTimeReportsPositiveFrameTime()
     {
         var sw = Stopwatch.StartNew();
         while (sw.Elapsed < TimeSpan.FromMilliseconds(600))
         {
-            FpsCounter.Update();
+            FrameTimeCounter.Update();
             Thread.Sleep(5);
         }
 
-        double fps = FpsCounter.GetFps();
+        double frameTime = FrameTimeCounter.GetFrameTimeMilliseconds();
 
-        Assert.True(fps > 0d);
+        Assert.True(frameTime > 0d);
     }
 
     private static void ResetCounter()
     {
-        Type type = typeof(FpsCounter);
+        Type type = typeof(FrameTimeCounter);
 
         FieldInfo? stopwatchField = type.GetField("Stopwatch", BindingFlags.NonPublic | BindingFlags.Static);
         var stopwatch = stopwatchField?.GetValue(null) as Stopwatch;
@@ -49,8 +49,8 @@ public sealed class FpsCounterTests
         FieldInfo? totalTimeField = type.GetField("_totalTime", BindingFlags.NonPublic | BindingFlags.Static);
         totalTimeField?.SetValue(null, 0d);
 
-        FieldInfo? averageFpsField = type.GetField("_averageFps", BindingFlags.NonPublic | BindingFlags.Static);
-        averageFpsField?.SetValue(null, 0d);
+        FieldInfo? averageField = type.GetField("_averageFrameTimeMs", BindingFlags.NonPublic | BindingFlags.Static);
+        averageField?.SetValue(null, 0d);
     }
 }
 
