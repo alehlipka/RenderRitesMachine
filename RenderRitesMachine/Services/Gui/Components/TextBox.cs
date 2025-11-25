@@ -163,17 +163,7 @@ public sealed class TextBox : Panel
 
         if (!string.IsNullOrEmpty(displayText))
         {
-            float textWidth = Font.MeasureText(displayText).X;
-            int visibleWidth = Width - (Padding * 2);
-
-            if (textWidth > visibleWidth && _scrollOffset > 0)
-            {
-                gui.DrawText(Font, displayText, textX - (int)_scrollOffset, textY, displayColor);
-            }
-            else
-            {
-                gui.DrawText(Font, displayText, textX, textY, displayColor);
-            }
+            RenderVisibleText(gui, displayText, displayColor, textX, textY);
         }
 
         if (_hasFocus && _cursorVisible)
@@ -344,6 +334,82 @@ public sealed class TextBox : Panel
         int cursorY = textY + (int)Font.Baseline;
 
         gui.DrawVerticalLine(cursorPixelX, cursorY - cursorHeight + Padding, cursorHeight, 1, CursorColor);
+    }
+
+    private void RenderVisibleText(IGuiService gui, string text, Color4 color, int textX, int textY)
+    {
+        int visibleWidth = Math.Max(0, Width - (Padding * 2));
+        if (visibleWidth <= 0)
+        {
+            return;
+        }
+
+        float fullWidth = Font.MeasureText(text).X;
+        if (fullWidth <= visibleWidth && _scrollOffset <= 0f)
+        {
+            gui.DrawText(Font, text, textX, textY, color);
+            return;
+        }
+
+        (int startIndex, int endIndex, float startOffset) = GetVisibleSubstringBounds(text, visibleWidth);
+        if (startIndex >= endIndex)
+        {
+            return;
+        }
+
+        string visibleText = text.Substring(startIndex, endIndex - startIndex);
+        int drawX = textX - (int)MathF.Round(_scrollOffset - startOffset);
+        gui.DrawText(Font, visibleText, drawX, textY, color);
+    }
+
+    private (int Start, int End, float StartOffset) GetVisibleSubstringBounds(string text, int visibleWidth)
+    {
+        float scrollStart = MathF.Max(0f, _scrollOffset);
+        float scrollEnd = scrollStart + visibleWidth;
+
+        float currentOffset = 0f;
+        int startIndex = 0;
+        int endIndex = text.Length;
+        float startOffset = 0f;
+        bool startFound = false;
+
+        for (int i = 0; i < text.Length; i++)
+        {
+            float advance = GetGlyphAdvance(text[i]);
+            float charStart = currentOffset;
+            float charEnd = charStart + advance;
+
+            if (!startFound && charEnd >= scrollStart)
+            {
+                startIndex = i;
+                startOffset = charStart;
+                startFound = true;
+            }
+
+            if (startFound && charStart >= scrollEnd)
+            {
+                endIndex = i;
+                break;
+            }
+
+            currentOffset = charEnd;
+        }
+
+        if (!startFound)
+        {
+            startIndex = text.Length;
+            startOffset = currentOffset;
+        }
+
+        startIndex = Math.Clamp(startIndex, 0, text.Length);
+        endIndex = Math.Clamp(endIndex, startIndex, text.Length);
+
+        return (startIndex, endIndex, startOffset);
+    }
+
+    private float GetGlyphAdvance(char ch)
+    {
+        return Font.TryGetGlyph(ch, out GuiFont.Glyph glyph) ? glyph.XAdvance : 0f;
     }
 }
 

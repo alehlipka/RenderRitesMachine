@@ -117,7 +117,7 @@ public sealed record RenderSettings
             throw new ArgumentOutOfRangeException(nameof(DefaultSamples), DefaultSamples, "Samples must be in range [1,16].");
         }
 
-        if (UpdateFrequency <= 0)
+        if (UpdateFrequency < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(UpdateFrequency), UpdateFrequency, "Update frequency must be positive.");
         }

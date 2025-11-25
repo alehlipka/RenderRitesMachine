@@ -17,9 +17,9 @@ internal static class DemoRenderConfiguration
             DefaultWindowWidth = 1024,
             DefaultWindowHeight = 768,
             DefaultWindowState = WindowState.Normal,
-            DefaultVSyncMode = VSyncMode.On,
+            DefaultVSyncMode = VSyncMode.Off,
             DefaultSamples = 4,
-            UpdateFrequency = 144.0
+            UpdateFrequency = 0.0
         };
     }
 }

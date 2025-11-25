@@ -1,4 +1,6 @@
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using RenderRitesMachine.Services;
 using RenderRitesMachine.Services.Gui;
 using RenderRitesMachine.Services.Gui.Components;
 
@@ -312,6 +314,113 @@ public sealed class TextBoxTests
 
         Assert.Equal(string.Empty, textBox.Text);
         Assert.Equal("Enter text...", textBox.PlaceholderText);
+    }
+
+    [Fact]
+    public void Render_LongText_IsClippedWithinBounds()
+    {
+        GuiFont font = CreateMockFont();
+        TextBox textBox = new(font)
+        {
+            Width = 80,
+            Height = 30,
+            Padding = 4
+        };
+
+        textBox.SetFocus(true);
+        string longText = new string('A', 64);
+        foreach (char ch in longText)
+        {
+            textBox.HandleEvent(GuiEvent.TextInput(ch));
+        }
+
+        var gui = new RecordingGuiService();
+        textBox.Render(gui, new FakeTimeService());
+
+        Assert.NotNull(gui.LastDrawText);
+        Assert.NotEqual(longText, gui.LastDrawText!.Value.Text);
+        Assert.True(gui.LastDrawText!.Value.Text.Length < longText.Length);
+    }
+
+    [Fact]
+    public void Render_LongPlaceholder_IsClippedEvenWithoutScroll()
+    {
+        GuiFont font = CreateMockFont();
+        TextBox textBox = new(font)
+        {
+            Width = 70,
+            Height = 28,
+            Padding = 4,
+            PlaceholderText = new string('B', 40)
+        };
+
+        var gui = new RecordingGuiService();
+        textBox.Render(gui, new FakeTimeService());
+
+        Assert.NotNull(gui.LastDrawText);
+        Assert.NotEqual(textBox.PlaceholderText, gui.LastDrawText!.Value.Text);
+        Assert.True(gui.LastDrawText!.Value.Text.Length < textBox.PlaceholderText.Length);
+    }
+
+    private sealed class RecordingGuiService : IGuiService
+    {
+        public (GuiFont Font, string Text, int X, int Y, Color4 Color)? LastDrawText { get; private set; }
+
+        public GuiEventQueue Events { get; } = new();
+        public bool HasContent => false;
+        public int Width => 0;
+        public int Height => 0;
+
+        public void BeginFrame(Color4 clearColor)
+        {
+        }
+
+        public void Dispose()
+        {
+        }
+
+        public void DrawHorizontalLine(int x, int y, int length, int thickness, Color4 color)
+        {
+        }
+
+        public void DrawPixel(int x, int y, Color4 color)
+        {
+        }
+
+        public void DrawText(GuiFont font, string text, int x, int y, Color4 color)
+        {
+            LastDrawText = (font, text, x, y, color);
+        }
+
+        public void DrawVerticalLine(int x, int y, int length, int thickness, Color4 color)
+        {
+        }
+
+        public void EnsureInitialized(int width, int height)
+        {
+        }
+
+        public void EndFrame()
+        {
+        }
+
+        public void FillRectangle(int x, int y, int width, int height, Color4 color)
+        {
+        }
+
+        public void Render()
+        {
+        }
+
+        public void Resize(int width, int height)
+        {
+        }
+    }
+
+    private sealed class FakeTimeService : ITimeService
+    {
+        public float UpdateDeltaTime { get; set; }
+        public float RenderDeltaTime { get; set; }
     }
 }
 
