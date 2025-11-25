@@ -9,9 +9,10 @@ namespace RenderRitesMachine.Services.Gui;
 public sealed class GuiFont
 {
     private const int FirstChar = 32;
-    private const int CharCount = 96;
+    private const int LastChar = 0x04FF; // 1279
+    private const int CharCount = LastChar - FirstChar + 1; // 1248 characters
 
-    private readonly Glyph[] _glyphs;
+    private readonly Dictionary<char, Glyph> _glyphs;
     internal byte[] Atlas { get; }
 
     public int PixelHeight { get; }
@@ -20,7 +21,7 @@ public sealed class GuiFont
     public float LineHeight { get; }
     public float Baseline { get; }
 
-    private GuiFont(int pixelHeight, int atlasWidth, int atlasHeight, byte[] atlas, Glyph[] glyphs, float lineHeight, float baseline)
+    private GuiFont(int pixelHeight, int atlasWidth, int atlasHeight, byte[] atlas, Dictionary<char, Glyph> glyphs, float lineHeight, float baseline)
     {
         PixelHeight = pixelHeight;
         AtlasWidth = atlasWidth;
@@ -31,7 +32,7 @@ public sealed class GuiFont
         Baseline = baseline;
     }
 
-    public static GuiFont LoadFromFile(string path, int pixelHeight = 20, int atlasWidth = 512, int atlasHeight = 512)
+    public static GuiFont LoadFromFile(string path, int pixelHeight = 20, int atlasWidth = 1024, int atlasHeight = 1024)
     {
         if (!File.Exists(path))
         {
@@ -42,12 +43,12 @@ public sealed class GuiFont
         return LoadFromMemory(fontData, pixelHeight, atlasWidth, atlasHeight);
     }
 
-    public static GuiFont LoadFromMemory(byte[] fontData, int pixelHeight = 20, int atlasWidth = 512, int atlasHeight = 512)
+    public static GuiFont LoadFromMemory(byte[] fontData, int pixelHeight = 20, int atlasWidth = 1024, int atlasHeight = 1024)
     {
         ArgumentNullException.ThrowIfNull(fontData);
 
         byte[] atlas = new byte[atlasWidth * atlasHeight];
-        var glyphs = new Glyph[CharCount];
+        var glyphs = new Dictionary<char, Glyph>();
 
         float lineHeight = pixelHeight * 1.25f;
         float baseline = pixelHeight;
@@ -68,16 +69,20 @@ public sealed class GuiFont
 
                     for (int i = 0; i < CharCount; i++)
                     {
+                        char ch = (char)(FirstChar + i);
                         StbTrueType.stbtt_bakedchar baked = bakedChars[i];
-                        glyphs[i] = new Glyph(
-                            baked.x0,
-                            baked.y0,
-                            baked.x1,
-                            baked.y1,
-                            baked.xoff,
-                            baked.yoff,
-                            baked.xadvance
-                        );
+                        if (baked.x1 > baked.x0 && baked.y1 > baked.y0)
+                        {
+                            glyphs[ch] = new Glyph(
+                                baked.x0,
+                                baked.y0,
+                                baked.x1,
+                                baked.y1,
+                                baked.xoff,
+                                baked.yoff,
+                                baked.xadvance
+                            );
+                        }
                     }
                 }
             }
@@ -120,15 +125,7 @@ public sealed class GuiFont
 
     internal bool TryGetGlyph(char character, out Glyph glyph)
     {
-        int index = character - FirstChar;
-        if ((uint)index >= _glyphs.Length)
-        {
-            glyph = default;
-            return false;
-        }
-
-        glyph = _glyphs[index];
-        return true;
+        return _glyphs.TryGetValue(character, out glyph);
     }
 
     internal readonly struct Glyph
@@ -155,4 +152,3 @@ public sealed class GuiFont
         public int Height => Y1 - Y0;
     }
 }
-
