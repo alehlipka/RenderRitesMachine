@@ -17,12 +17,12 @@ public struct GuiPadding
     {
     }
 
-    public GuiPadding(int horizontal, int vertical)
+    public GuiPadding(int vertical, int horizontal)
         : this(horizontal, vertical, horizontal, vertical)
     {
     }
 
-    public GuiPadding(int left, int top, int right, int bottom)
+    public GuiPadding(int top, int right, int bottom, int left)
     {
         Left = left;
         Top = top;

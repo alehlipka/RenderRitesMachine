@@ -8,12 +8,16 @@ public abstract class GuiElement
     private Vector2i _position;
     private Vector2i _resolvedPosition;
     private bool _hasResolvedPosition;
+    private bool _debug = false;
     private GuiMargins _margin = GuiMargins.Zero;
+    private GuiPadding _padding = GuiPadding.Zero;
     private GuiHorizontalAnchor _horizontalAnchor = GuiHorizontalAnchor.Left;
     private GuiVerticalAnchor _verticalAnchor = GuiVerticalAnchor.Top;
     private float _relativeWidth = 1f;
     private float _relativeHeight = 1f;
-    private GuiPadding _padding = GuiPadding.Zero;
+    private Color4 _debugColorBorder = Color4.YellowGreen;
+    private Color4 _debugColorMargin = Color4.MediumVioletRed;
+    private Color4 _debugColorPadding = Color4.Orange;
 
     public Vector2i Position
     {
@@ -82,6 +86,12 @@ public abstract class GuiElement
         set => _relativeHeight = Math.Clamp(value, 0f, 1f);
     }
 
+    public bool Debug
+    {
+        get => _debug;
+        set => _debug = value;
+    }
+
     protected IReadOnlyList<GuiElement> Children => _children;
     protected GuiElement? Parent { get; private set; }
 
@@ -129,6 +139,14 @@ public abstract class GuiElement
         {
             child.Render(gui, time);
         }
+
+        if (Debug)
+        {
+            (int x, int y) = GetGlobalPosition();
+            gui.DrawRectangle(x - Margin.Left, y - Margin.Top, Width + Margin.Horizontal, Height + Margin.Vertical, 1, _debugColorMargin);
+            gui.DrawRectangle(x, y, Width, Height, 1, _debugColorBorder);
+            gui.DrawRectangle(x + Padding.Left, y + Padding.Top, Width - Padding.Horizontal, Height - Padding.Vertical, 1, _debugColorPadding);
+        }
     }
 
     public virtual void HandleEvent(GuiEvent evt)
@@ -148,7 +166,7 @@ public abstract class GuiElement
     {
         Vector2i parentSize = Parent == null
             ? viewportSize
-            : new Vector2i(Math.Max(0, Parent.Width), Math.Max(0, Parent.Height));
+            : new Vector2i(Math.Max(0, Parent.Width - Parent.Padding.Horizontal), Math.Max(0, Parent.Height - Parent.Padding.Vertical));
 
         ApplyAdaptiveLayout(parentSize);
 

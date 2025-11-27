@@ -17,12 +17,12 @@ public struct GuiMargins
     {
     }
 
-    public GuiMargins(int horizontal, int vertical)
+    public GuiMargins(int vertical, int horizontal)
         : this(horizontal, vertical, horizontal, vertical)
     {
     }
 
-    public GuiMargins(int left, int top, int right, int bottom)
+    public GuiMargins(int top, int right, int bottom, int left)
     {
         Left = left;
         Top = top;

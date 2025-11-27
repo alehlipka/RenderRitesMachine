@@ -122,6 +122,22 @@ public sealed class GuiService : IGuiService
         _hasDrawCommands = true;
     }
 
+    public void DrawRectangle(int x, int y, int width, int height, int thickness, Color4 color)
+    {
+        EnsureFrame();
+
+        if (width <= 0 || height <= 0 || thickness <= 0)
+        {
+            return;
+        }
+
+        _surface.DrawHorizontalLine(x, y, width, thickness, color);
+        _surface.DrawHorizontalLine(x, y + height - thickness, width, thickness, color);
+        _surface.DrawVerticalLine(x, y, height, thickness, color);
+        _surface.DrawVerticalLine(x + width - thickness, y, height, thickness, color);
+        _hasDrawCommands = true;
+    }
+
     public void DrawPixel(int x, int y, Color4 color)
     {
         EnsureFrame();

@@ -70,6 +70,11 @@ public interface IGuiService : IDisposable
     void DrawVerticalLine(int x, int y, int length, int thickness, Color4 color);
 
     /// <summary>
+    /// Draws a rectangle border with the specified thickness.
+    /// </summary>
+    void DrawRectangle(int x, int y, int width, int height, int thickness, Color4 color);
+
+    /// <summary>
     /// Draws a single pixel on the GUI surface.
     /// </summary>
     void DrawPixel(int x, int y, Color4 color);

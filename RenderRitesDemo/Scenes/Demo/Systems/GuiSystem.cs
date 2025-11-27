@@ -29,52 +29,51 @@ internal sealed class GuiSystem : IEcsRunSystem
             Height = 165,
             BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
             BorderColor = new Color4(1f, 1f, 1f, 0.35f),
-            Margin = new GuiMargins(10),
-            Padding = new GuiPadding(10)
+            Margin = new GuiMargins(50),
+            Padding = new GuiPadding(10),
+            Debug = true
         };
 
         _fpsLabel = new Label(font)
         {
-            Position = new Vector2i(10, 10),
+            Position = new Vector2i(0, 0),
             TextColor = Color4.White
         };
 
         _objectsLabel = new Label(font)
         {
-            Position = new Vector2i(10, 30),
+            Position = new Vector2i(0, 20),
             TextColor = Color4.White
         };
 
         _frameTimeLabel = new Label(font)
         {
-            Position = new Vector2i(10, 50),
+            Position = new Vector2i(0, 40),
             TextColor = Color4.White
         };
 
         _toggleCrosshairButton = new Button(font)
         {
-            Position = new Vector2i(0, 75),
-            Height = 36,
+            Position = new Vector2i(0, 65),
+            Height = 30,
+            Width = _rootPanel.Width - _rootPanel.Padding.Horizontal,
             Text = "Toggle crosshair",
             BackgroundColor = new Color4(0.25f, 0.25f, 0.25f, 0.7f),
             HoverBackgroundColor = new Color4(0.35f, 0.35f, 0.35f, 0.85f),
-            PressedBackgroundColor = new Color4(0.18f, 0.18f, 0.18f, 0.95f),
-            HorizontalAnchor = GuiHorizontalAnchor.Stretch,
-            Margin = new GuiMargins(10)
+            PressedBackgroundColor = new Color4(0.18f, 0.18f, 0.18f, 0.95f)
         };
         _toggleCrosshairButton.Clicked += () => _showCrosshair = !_showCrosshair;
 
         _textBox = new TextBox(font)
         {
-            Position = new Vector2i(0, 115),
+            Position = new Vector2i(0, 105),
             Height = 38,
             PlaceholderText = "Enter text here...",
             BackgroundColor = new Color4(0.15f, 0.15f, 0.15f, 0.9f),
             BorderColor = new Color4(0.5f, 0.5f, 0.5f, 0.8f),
             TextColor = Color4.White,
             FocusBorderColor = new Color4(0.2f, 0.6f, 1f, 1f),
-            HorizontalAnchor = GuiHorizontalAnchor.Stretch,
-            Margin = new GuiMargins(10)
+            HorizontalAnchor = GuiHorizontalAnchor.Stretch
         };
 
         _rootPanel.AddChild(_fpsLabel);

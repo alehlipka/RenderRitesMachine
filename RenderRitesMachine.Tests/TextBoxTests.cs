@@ -415,6 +415,11 @@ public sealed class TextBoxTests
         public void Resize(int width, int height)
         {
         }
+
+        public void DrawRectangle(int x, int y, int width, int height, int thickness, Color4 color)
+        {
+
+        }
     }
 
     private sealed class FakeTimeService : ITimeService
