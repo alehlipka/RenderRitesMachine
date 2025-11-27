@@ -12,7 +12,9 @@ internal sealed class Shader(string path, ShaderType type)
 
     internal void Create()
     {
-        GL.ShaderSource(Handle, File.ReadAllText(_path));
+        string source = File.Exists(_path) ? File.ReadAllText(_path) : _path;
+
+        GL.ShaderSource(Handle, source);
         GL.CompileShader(Handle);
 
         GL.GetShader(Handle, ShaderParameter.CompileStatus, out int compiled);

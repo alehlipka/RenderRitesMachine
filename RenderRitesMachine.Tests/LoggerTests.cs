@@ -3,7 +3,7 @@ using RenderRitesMachine.Services;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса Logger.
+/// Tests for <see cref="Logger"/>.
 /// </summary>
 public sealed class LoggerTests
 {
@@ -301,7 +301,7 @@ public sealed class LoggerTests
     }
 
     /// <summary>
-    /// Перехватывает вывод Console и возвращает его как строку.
+    /// Captures console output and returns it as a string.
     /// </summary>
     private static string CaptureConsoleOutput(Action action)
     {

@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 namespace RenderRitesMachine.Assets;
 
 /// <summary>
-/// Ресурс bounding box, содержащий VAO, VBO, EBO. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// Bounding box resource that encapsulates VAO/VBO/EBO handles and disposes OpenGL objects.
 /// </summary>
 public sealed class BoundingBoxAsset : IDisposable
 {

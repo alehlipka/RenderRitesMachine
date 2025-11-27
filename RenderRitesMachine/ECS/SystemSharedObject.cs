@@ -2,6 +2,7 @@ using OpenTK.Mathematics;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.ECS;
 
@@ -11,6 +12,7 @@ public class SystemSharedObject(
     IAssetsService assets,
     IRenderService render,
     IAudioService audio,
+    IGuiService gui,
     ISceneManager sceneManager,
     ILogger logger,
     IOpenGLWrapper? openGLWrapper = null)
@@ -20,6 +22,7 @@ public class SystemSharedObject(
     public IAssetsService Assets { get; } = assets;
     public IRenderService Render { get; } = render;
     public IAudioService Audio { get; } = audio;
+    public IGuiService Gui { get; } = gui;
     public ISceneManager SceneManager { get; } = sceneManager;
     public ILogger Logger { get; } = logger;
     public Window? Window { get; set; }

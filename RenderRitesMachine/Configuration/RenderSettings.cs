@@ -3,7 +3,7 @@ using OpenTK.Windowing.Common;
 namespace RenderRitesMachine.Configuration;
 
 /// <summary>
-/// Пользовательские настройки движка с валидацией значений.
+/// User-facing engine settings with built-in validation.
 /// </summary>
 public sealed record RenderSettings
 {
@@ -25,11 +25,11 @@ public sealed record RenderSettings
     public VSyncMode DefaultVSyncMode { get; init; } = VSyncMode.Off;
     public int DefaultSamples { get; init; } = 4;
     public WindowState DefaultWindowState { get; init; } = WindowState.Normal;
-
+    public double UpdateFrequency { get; init; } = 120.0;
     /// <summary>
-    /// Проверяет, что все значения лежат в допустимых пределах.
+    /// Ensures all values fall within supported ranges.
     /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">Если найдено некорректное значение.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when an invalid value is detected.</exception>
     public void Validate()
     {
         if (MaxStencilValue is < 1 or > 255)
@@ -115,6 +115,11 @@ public sealed record RenderSettings
         if (DefaultSamples is < 1 or > 16)
         {
             throw new ArgumentOutOfRangeException(nameof(DefaultSamples), DefaultSamples, "Samples must be in range [1,16].");
+        }
+
+        if (UpdateFrequency < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(UpdateFrequency), UpdateFrequency, "Update frequency must be positive.");
         }
     }
 }

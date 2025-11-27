@@ -5,7 +5,7 @@ using RenderRitesMachine.Assets;
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Сервис для рендеринга различных объектов (меши, bounding boxes, контуры).
+/// Rendering service that draws meshes, bounding boxes, and other primitives.
 /// </summary>
 public class RenderService : IRenderService
 {
@@ -45,5 +45,12 @@ public class RenderService : IRenderService
         }
 
         GL.DrawElements(primitiveType, indicesCount, DrawElementsType.UnsignedInt, 0);
+    }
+
+    public void ResetStateCache()
+    {
+        _currentShaderId = -1;
+        _currentTextureId = -1;
+        _currentVao = -1;
     }
 }

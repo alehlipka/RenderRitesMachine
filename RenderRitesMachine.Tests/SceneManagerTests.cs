@@ -1,11 +1,12 @@
 using Moq;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса SceneManager.
+/// Tests for <see cref="SceneManager"/>.
 /// </summary>
 public sealed class SceneManagerTests
 {
@@ -23,6 +24,7 @@ public sealed class SceneManagerTests
             Mock.Of<ITimeService>(),
             Mock.Of<IRenderService>(),
             Mock.Of<IAudioService>(),
+            Mock.Of<IGuiService>(),
             Mock.Of<ISceneManager>(),
             Mock.Of<ILogger>()
         );
@@ -221,7 +223,8 @@ public sealed class SceneManagerTests
     }
 
     private sealed class TestScene(string name, IAssetsService assetsService, ITimeService timeService,
-        IRenderService renderService, IAudioService audioService, ISceneManager sceneManager, ILogger logger) : Scene(name, assetsService, timeService, renderService, audioService, sceneManager, logger)
+        IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+        : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
     {
         protected override void OnLoad()
         {

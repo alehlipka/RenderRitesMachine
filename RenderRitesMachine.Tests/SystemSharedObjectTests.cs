@@ -3,11 +3,12 @@ using OpenTK.Mathematics;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса SystemSharedObject.
+/// Tests for <see cref="SystemSharedObject"/>.
 /// </summary>
 public sealed class SystemSharedObjectTests
 {
@@ -18,6 +19,7 @@ public sealed class SystemSharedObjectTests
         IAssetsService assetsService = Mock.Of<IAssetsService>();
         IRenderService renderService = Mock.Of<IRenderService>();
         IAudioService audioService = Mock.Of<IAudioService>();
+        IGuiService guiService = Mock.Of<IGuiService>();
         ISceneManager sceneManager = Mock.Of<ISceneManager>();
         ILogger logger = Mock.Of<ILogger>();
 
@@ -27,6 +29,7 @@ public sealed class SystemSharedObjectTests
             assetsService,
             renderService,
             audioService,
+            guiService,
             sceneManager,
             logger,
             openGLWrapper
@@ -41,6 +44,7 @@ public sealed class SystemSharedObjectTests
         IAssetsService assetsService = Mock.Of<IAssetsService>();
         IRenderService renderService = Mock.Of<IRenderService>();
         IAudioService audioService = Mock.Of<IAudioService>();
+        IGuiService guiService = Mock.Of<IGuiService>();
         ISceneManager sceneManager = Mock.Of<ISceneManager>();
         ILogger logger = Mock.Of<ILogger>();
 
@@ -50,6 +54,7 @@ public sealed class SystemSharedObjectTests
             assetsService,
             renderService,
             audioService,
+            guiService,
             sceneManager,
             logger
         );
@@ -58,6 +63,7 @@ public sealed class SystemSharedObjectTests
         Assert.Same(timeService, shared.Time);
         Assert.Same(assetsService, shared.Assets);
         Assert.Same(renderService, shared.Render);
+        Assert.Same(guiService, shared.Gui);
         Assert.Same(sceneManager, shared.SceneManager);
         Assert.Same(logger, shared.Logger);
         Assert.Null(shared.Window);

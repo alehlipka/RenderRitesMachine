@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 namespace RenderRitesMachine.Assets;
 
 /// <summary>
-/// Ресурс текстуры. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// Texture resource that releases its OpenGL handle when disposed.
 /// </summary>
 public sealed class TextureAsset : IDisposable
 {

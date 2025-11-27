@@ -3,25 +3,33 @@ using RenderRitesMachine.Services;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Менеджер для управления сценами приложения. Позволяет добавлять, переключать и управлять сценами.
+/// Manages application scenes: add, iterate, and switch between them.
 /// </summary>
-/// <remarks>
-/// Создает новый менеджер сцен с указанной фабрикой сцен.
-/// </remarks>
-public class SceneManager(ISceneFactory sceneFactory, ILogger? logger = null) : ISceneManager, IDisposable
+public class SceneManager : ISceneManager, IDisposable
 {
     private readonly Dictionary<string, Scene> _items = [];
     private bool _isInitialized;
-    private readonly ISceneFactory _sceneFactory = sceneFactory;
-    private readonly ILogger? _logger = logger;
+    private readonly ISceneFactory _sceneFactory;
+    private readonly ILogger? _logger;
 
     /// <summary>
-    /// Текущая активная сцена. Может быть null, если сцена не установлена.
+    /// Creates a scene manager with the provided factory and optional logger.
+    /// </summary>
+    /// <param name="sceneFactory">Factory used to instantiate scenes.</param>
+    /// <param name="logger">Logger for diagnostics, or null to disable logging.</param>
+    public SceneManager(ISceneFactory sceneFactory, ILogger? logger = null)
+    {
+        _sceneFactory = sceneFactory ?? throw new ArgumentNullException(nameof(sceneFactory));
+        _logger = logger;
+    }
+
+    /// <summary>
+    /// Currently active scene. May be null if none has been selected yet.
     /// </summary>
     public Scene? Current { get; private set; }
 
     /// <summary>
-    /// Инициализирует менеджер сцен после добавления пользовательских сцен.
+    /// Initializes the manager after scenes have been registered.
     /// </summary>
     internal void Initialize()
     {
@@ -42,12 +50,12 @@ public class SceneManager(ISceneFactory sceneFactory, ILogger? logger = null) : 
     }
 
     /// <summary>
-    /// Добавляет сцену указанного типа в менеджер, создавая её через фабрику.
+    /// Adds a scene of the given type by creating it through the factory.
     /// </summary>
-    /// <typeparam name="T">Тип сцены для создания.</typeparam>
-    /// <param name="name">Имя сцены.</param>
-    /// <returns>Текущий экземпляр SceneManager для цепочки вызовов.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null или пустой.</exception>
+    /// <typeparam name="T">Scene type to create.</typeparam>
+    /// <param name="name">Scene name.</param>
+    /// <returns>The current <see cref="SceneManager"/> for chaining.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
     public SceneManager AddScene<T>(string name) where T : Scene
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -69,10 +77,10 @@ public class SceneManager(ISceneFactory sceneFactory, ILogger? logger = null) : 
     }
 
     /// <summary>
-    /// Выполняет действие для каждой сцены в менеджере.
+    /// Executes an action for every registered scene.
     /// </summary>
-    /// <param name="action">Действие для выполнения над каждой сценой.</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если action равен null.</exception>
+    /// <param name="action">Action to execute for each scene.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="action"/> is null.</exception>
     public void ForEach(Action<Scene> action)
     {
         if (action == null)
@@ -87,12 +95,12 @@ public class SceneManager(ISceneFactory sceneFactory, ILogger? logger = null) : 
     }
 
     /// <summary>
-    /// Проецирует каждую сцену в результат с помощью указанной функции.
+    /// Projects each scene into a result using the provided selector.
     /// </summary>
-    /// <typeparam name="TResult">Тип результата проекции.</typeparam>
-    /// <param name="selector">Функция для преобразования сцены в результат.</param>
-    /// <returns>Последовательность результатов проекции.</returns>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если selector равен null.</exception>
+    /// <typeparam name="TResult">Result type.</typeparam>
+    /// <param name="selector">Function converting a scene into a result.</param>
+    /// <returns>An enumerable of projection results.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="selector"/> is null.</exception>
     public IEnumerable<TResult> Select<TResult>(Func<Scene, TResult> selector)
     {
         return selector == null
@@ -101,12 +109,11 @@ public class SceneManager(ISceneFactory sceneFactory, ILogger? logger = null) : 
     }
 
     /// <summary>
-    /// Переключает текущую активную сцену на указанную по имени во время выполнения приложения.
-    /// Начальная сцена устанавливается автоматически при инициализации движка.
+    /// Switches to the scene with the specified name at runtime. The initial scene is set automatically.
     /// </summary>
-    /// <param name="name">Имя сцены для переключения.</param>
-    /// <exception cref="ArgumentNullException">Выбрасывается, если name равен null или пустой.</exception>
-    /// <exception cref="ArgumentException">Выбрасывается, если сцена с указанным именем не найдена.</exception>
+    /// <param name="name">Name of the scene to activate.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when the scene cannot be found.</exception>
     public void SwitchTo(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

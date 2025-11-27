@@ -2,68 +2,68 @@
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Реализация системы логирования с выводом в консоль.
+/// Console-based logger implementation.
 /// </summary>
 public class Logger : ILogger
 {
     private static readonly Lock _lockObject = new();
 
     /// <summary>
-    /// Минимальный уровень логирования. Сообщения ниже этого уровня не будут выводиться.
+    /// Minimal logging level. Messages below this level are ignored.
     /// </summary>
     public LogLevel MinimumLevel { get; set; } = LogLevel.Debug;
 
     /// <summary>
-    /// Записывает сообщение уровня Debug.
+    /// Writes a debug-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     public void LogDebug(string message)
     {
         Log(LogLevel.Debug, message);
     }
 
     /// <summary>
-    /// Записывает сообщение уровня Info.
+    /// Writes an info-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     public void LogInfo(string message)
     {
         Log(LogLevel.Info, message);
     }
 
     /// <summary>
-    /// Записывает сообщение уровня Warning.
+    /// Writes a warning-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     public void LogWarning(string message)
     {
         Log(LogLevel.Warning, message);
     }
 
     /// <summary>
-    /// Записывает сообщение уровня Error.
+    /// Writes an error-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     public void LogError(string message)
     {
         Log(LogLevel.Error, message);
     }
 
     /// <summary>
-    /// Записывает сообщение уровня Critical.
+    /// Writes a critical-level message.
     /// </summary>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="message">Message to log.</param>
     public void LogCritical(string message)
     {
         Log(LogLevel.Critical, message);
     }
 
     /// <summary>
-    /// Записывает исключение с указанным уровнем логирования.
+    /// Logs an exception at the specified level.
     /// </summary>
-    /// <param name="level">Уровень логирования.</param>
-    /// <param name="exception">Исключение для логирования.</param>
-    /// <param name="message">Дополнительное сообщение. Может быть null.</param>
+    /// <param name="level">Logging level.</param>
+    /// <param name="exception">Exception to log.</param>
+    /// <param name="message">Optional additional message.</param>
     public void LogException(LogLevel level, Exception exception, string? message = null)
     {
         if (level < MinimumLevel)
@@ -82,10 +82,10 @@ public class Logger : ILogger
     }
 
     /// <summary>
-    /// Записывает сообщение с указанным уровнем логирования.
+    /// Logs a message with the specified level.
     /// </summary>
-    /// <param name="level">Уровень логирования.</param>
-    /// <param name="message">Сообщение для логирования.</param>
+    /// <param name="level">Logging level.</param>
+    /// <param name="message">Message to log.</param>
     public void Log(LogLevel level, string message)
     {
         if (level < MinimumLevel)

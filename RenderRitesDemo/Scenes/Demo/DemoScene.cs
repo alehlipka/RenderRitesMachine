@@ -6,11 +6,12 @@ using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
 using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesDemo.Scenes.Demo;
 
-internal sealed class DemoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, ISceneManager sceneManager, ILogger logger)
-    : Scene(name, assetsService, timeService, renderService, audioService, sceneManager, logger)
+internal sealed class DemoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+    : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
 {
     private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     private readonly string _assetsRoot = Path.Combine(AppContext.BaseDirectory, "Assets");
@@ -21,10 +22,12 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
     private const string AmbientAudioName = "demo/ambient-loop";
 
     private int? _ambientSourceId;
+    private GuiFont? _guiFont;
 
     protected override void OnLoad()
     {
         ConfigureCamera();
+        LoadGuiResources();
         RegisterSystems();
         LoadDemoAssets();
         SpawnDemoEntities();
@@ -46,11 +49,25 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
             .Add(new RotationAnimationSystem())
             .Add(new FloatingAnimationSystem());
 
+        GuiFont font = _guiFont ?? throw new InvalidOperationException("GUI font is not loaded.");
+
         _ = RenderSystems
-            .Add(new MainRenderSystem());
+            .Add(new MainRenderSystem())
+            .Add(new GuiSystem(font));
 
         _ = ResizeSystems
             .Add(new MainResizeSystem());
+    }
+
+    private void LoadGuiResources()
+    {
+        string fontPath = Path.Combine(_assetsRoot, "Fonts", "arial.ttf");
+        if (!File.Exists(fontPath))
+        {
+            throw new FileNotFoundException($"Demo font not found at '{fontPath}'.");
+        }
+
+        _guiFont = GuiFont.LoadFromFile(fontPath, 15);
     }
 
     private void LoadDemoAssets()

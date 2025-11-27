@@ -4,7 +4,7 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.Assets;
 
 /// <summary>
-/// Ресурс меша, содержащий VAO, VBO, EBO и метаданные. Реализует IDisposable для правильного освобождения ресурсов OpenGL.
+/// Mesh resource that stores VAO/VBO/EBO handles and metadata, disposing OpenGL resources as needed.
 /// </summary>
 public sealed class MeshAsset : IDisposable
 {

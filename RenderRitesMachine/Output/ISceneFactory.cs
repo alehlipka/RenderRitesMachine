@@ -1,12 +1,12 @@
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Фабрика для создания сцен с правильными зависимостями.
+/// Factory responsible for creating fully wired scenes.
 /// </summary>
 public interface ISceneFactory
 {
     /// <summary>
-    /// Создает сцену указанного типа с именем.
+    /// Creates a scene of the specified type.
     /// </summary>
     T CreateScene<T>(string name) where T : Scene;
 }

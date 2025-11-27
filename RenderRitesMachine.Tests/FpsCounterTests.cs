@@ -22,8 +22,6 @@ public sealed class FpsCounterTests
     [Fact]
     public void UpdateAfterElapsedTimeProducesPositiveFps()
     {
-        FpsCounter.Initialize();
-
         var sw = Stopwatch.StartNew();
         while (sw.Elapsed < TimeSpan.FromMilliseconds(600))
         {
@@ -43,7 +41,7 @@ public sealed class FpsCounterTests
         FieldInfo? stopwatchField = type.GetField("Stopwatch", BindingFlags.NonPublic | BindingFlags.Static);
         var stopwatch = stopwatchField?.GetValue(null) as Stopwatch;
         stopwatch?.Reset();
-        stopwatch?.Stop();
+        stopwatch?.Start();
 
         FieldInfo? frameCountField = type.GetField("_frameCount", BindingFlags.NonPublic | BindingFlags.Static);
         frameCountField?.SetValue(null, 0);

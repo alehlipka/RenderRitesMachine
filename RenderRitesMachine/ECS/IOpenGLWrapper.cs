@@ -3,22 +3,22 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.ECS;
 
 /// <summary>
-/// Абстракция для OpenGL вызовов, позволяющая тестировать код без реального OpenGL контекста.
+/// Abstraction over OpenGL calls to enable testing without a real context.
 /// </summary>
 public interface IOpenGLWrapper
 {
     /// <summary>
-    /// Активирует шейдерную программу.
+    /// Activates a shader program.
     /// </summary>
     void UseProgram(int program);
 
     /// <summary>
-    /// Получает расположение uniform переменной в шейдере.
+    /// Retrieves the location of a uniform variable.
     /// </summary>
     int GetUniformLocation(int program, string name);
 
     /// <summary>
-    /// Устанавливает значение матрицы 4x4 для uniform переменной.
+    /// Sets the value of a 4x4 uniform matrix.
     /// </summary>
     void UniformMatrix4(int location, bool transpose, ref Matrix4 matrix);
 }

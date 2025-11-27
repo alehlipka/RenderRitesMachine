@@ -6,8 +6,7 @@ using RenderRitesMachine.Exceptions;
 namespace RenderRitesMachine.Services;
 
 /// <summary>
-/// Сервис для управления аудио через OpenAL.
-/// Поддерживает 3D позиционирование звуков, управление громкостью и позицией слушателя.
+/// OpenAL-based audio service with 3D positioning, volume control, and listener management.
 /// </summary>
 public sealed class AudioService : IAudioService
 {
@@ -22,9 +21,9 @@ public sealed class AudioService : IAudioService
     private readonly ILogger? _logger;
 
     /// <summary>
-    /// Создает новый экземпляр AudioService.
+    /// Creates a new <see cref="AudioService"/>.
     /// </summary>
-    /// <param name="logger">Логгер для записи сообщений. Может быть null.</param>
+    /// <param name="logger">Logger used for diagnostics, or null.</param>
     public AudioService(ILogger? logger = null)
     {
         _logger = logger;
@@ -60,8 +59,6 @@ public sealed class AudioService : IAudioService
             var up = new Vector3(0, 1, 0);
             AL.Listener(ALListenerfv.Orientation, ref forward, ref up);
             AL.Listener(ALListenerf.Gain, _masterVolume);
-
-            _logger?.LogDebug("AudioService initialized successfully");
         }
         catch (Exception ex)
         {

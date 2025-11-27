@@ -4,9 +4,8 @@ using RenderRitesMachine.Services;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Тесты для класса AssetsService (валидация входных данных).
-/// Примечание: Полное тестирование загрузки ресурсов требует OpenGL контекста,
-/// поэтому здесь тестируется только валидация входных данных.
+/// Input-validation tests for <see cref="AssetsService"/>.
+/// Note: full resource loading tests require an OpenGL context, so this suite focuses on validation only.
 /// </summary>
 public sealed class AssetsServiceTests
 {

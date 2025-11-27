@@ -3,25 +3,25 @@ using OpenTK.Graphics.OpenGL4;
 namespace RenderRitesMachine.Exceptions;
 
 /// <summary>
-/// Исключение, которое выбрасывается при обнаружении ошибки OpenGL.
+/// Thrown when an OpenGL error is detected.
 /// </summary>
 public class OpenGLErrorException : Exception
 {
     /// <summary>
-    /// Код ошибки OpenGL.
+    /// OpenGL error code.
     /// </summary>
     public ErrorCode ErrorCode { get; }
 
     /// <summary>
-    /// Название операции, во время которой произошла ошибка.
+    /// Name of the operation during which the error occurred.
     /// </summary>
     public string Operation { get; } = string.Empty;
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="OpenGLErrorException"/>.
+    /// Initializes a new instance of the <see cref="OpenGLErrorException"/> class.
     /// </summary>
-    /// <param name="operation">Название операции, во время которой произошла ошибка.</param>
-    /// <param name="errorCode">Код ошибки OpenGL.</param>
+    /// <param name="operation">Operation name where the error occurred.</param>
+    /// <param name="errorCode">OpenGL error code.</param>
     public OpenGLErrorException(string operation, ErrorCode errorCode)
         : base($"OpenGL error during {operation}: {errorCode}")
     {
@@ -30,9 +30,9 @@ public class OpenGLErrorException : Exception
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="OpenGLErrorException"/> с указанным сообщением об ошибке.
+    /// Initializes a new instance with a custom error message.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
+    /// <param name="message">Error description.</param>
     public OpenGLErrorException(string message) : base(message)
     {
         Operation = string.Empty;
@@ -40,10 +40,10 @@ public class OpenGLErrorException : Exception
     }
 
     /// <summary>
-    /// Инициализирует новый экземпляр класса <see cref="OpenGLErrorException"/> с указанным сообщением об ошибке и ссылкой на внутреннее исключение.
+    /// Initializes a new instance with a custom error message and inner exception.
     /// </summary>
-    /// <param name="message">Сообщение, описывающее ошибку.</param>
-    /// <param name="innerException">Исключение, являющееся причиной текущего исключения.</param>
+    /// <param name="message">Error description.</param>
+    /// <param name="innerException">Underlying exception.</param>
     public OpenGLErrorException(string message, Exception innerException) : base(message, innerException)
     {
         Operation = string.Empty;

@@ -4,7 +4,7 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesDemo.Configuration;
 
 /// <summary>
-/// Набор пользовательских настроек рендера для демо-приложения.
+/// Demo-specific render settings.
 /// </summary>
 internal static class DemoRenderConfiguration
 {
@@ -14,11 +14,12 @@ internal static class DemoRenderConfiguration
         {
             MinWindowWidth = 800,
             MinWindowHeight = 600,
-            DefaultWindowWidth = 800,
-            DefaultWindowHeight = 600,
+            DefaultWindowWidth = 1024,
+            DefaultWindowHeight = 768,
             DefaultWindowState = WindowState.Normal,
             DefaultVSyncMode = VSyncMode.Off,
-            DefaultSamples = 8
+            DefaultSamples = 4,
+            UpdateFrequency = 0.0
         };
     }
 }

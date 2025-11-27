@@ -1,26 +1,26 @@
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Интерфейс для менеджера сцен, предоставляющего управление сценами приложения.
+/// Scene manager interface that controls application scenes.
 /// </summary>
 public interface ISceneManager
 {
     /// <summary>
-    /// Текущая активная сцена. Может быть null, если сцена не установлена.
+    /// Currently active scene. May be null when none is set.
     /// </summary>
     Scene? Current { get; }
 
     /// <summary>
-    /// Переключает текущую активную сцену на указанную по имени.
+    /// Switches the active scene by name.
     /// </summary>
-    /// <param name="name">Имя сцены для переключения.</param>
+    /// <param name="name">Name of the scene to activate.</param>
     void SwitchTo(string name);
 
     /// <summary>
-    /// Проецирует каждую сцену в результат с помощью указанной функции.
+    /// Projects each scene into a custom result using the provided selector.
     /// </summary>
-    /// <typeparam name="TResult">Тип результата проекции.</typeparam>
-    /// <param name="selector">Функция для преобразования сцены в результат.</param>
-    /// <returns>Последовательность результатов проекции.</returns>
+    /// <typeparam name="TResult">Projection result type.</typeparam>
+    /// <param name="selector">Function that converts a scene into a result.</param>
+    /// <returns>Sequence of projection results.</returns>
     IEnumerable<TResult> Select<TResult>(Func<Scene, TResult> selector);
 }
