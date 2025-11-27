@@ -26,10 +26,10 @@ internal sealed class GuiSystem : IEcsRunSystem
         _rootPanel = new Panel
         {
             Width = 260,
-            Height = 165,
+            Height = 155,
             BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
             BorderColor = new Color4(1f, 1f, 1f, 0.35f),
-            Margin = new GuiMargins(50),
+            Margin = new GuiMargins(10),
             Padding = new GuiPadding(10)
         };
 
@@ -65,8 +65,8 @@ internal sealed class GuiSystem : IEcsRunSystem
 
         _textBox = new TextBox(font)
         {
+            Height = 30,
             Position = new Vector2i(0, 105),
-            Height = 38,
             PlaceholderText = "Enter text here...",
             BackgroundColor = new Color4(0.15f, 0.15f, 0.15f, 0.9f),
             BorderColor = new Color4(0.5f, 0.5f, 0.5f, 0.8f),

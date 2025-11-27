@@ -1,4 +1,5 @@
 using OpenTK.Graphics.OpenGL4;
+using RenderRitesMachine.Output;
 
 namespace RenderRitesMachine.Services.Gui;
 
@@ -171,67 +172,49 @@ internal sealed class GuiRenderer : IGuiRenderer
 
     private static int CompileShader()
     {
-        const string vertexSource = @"#version 330 core
-layout (location = 0) in vec2 aPos;
-layout (location = 1) in vec2 aTexCoord;
-out vec2 TexCoord;
-void main()
-{
-    TexCoord = aTexCoord;
-    gl_Position = vec4(aPos.xy, 0.0, 1.0);
-}";
-
-        const string fragmentSource = @"#version 330 core
-in vec2 TexCoord;
-out vec4 FragColor;
-uniform sampler2D uTexture;
-void main()
-{
-    FragColor = texture(uTexture, TexCoord);
-}";
-
-        int vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader, vertexSource);
-        GL.CompileShader(vertexShader);
-        GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out int vertexStatus);
-        if (vertexStatus == 0)
+        const string vertexSource = @"
+        #version 460 core
+        layout (location = 0) in vec2 aPos;
+        layout (location = 1) in vec2 aTexCoord;
+        out vec2 TexCoord;
+        void main()
         {
-            string log = GL.GetShaderInfoLog(vertexShader);
-            throw new InvalidOperationException($"Failed to compile GUI vertex shader: {log}");
+            TexCoord = aTexCoord;
+            gl_Position = vec4(aPos.xy, 0.0, 1.0);
         }
+        ";
 
-        int fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(fragmentShader, fragmentSource);
-        GL.CompileShader(fragmentShader);
-        GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out int fragmentStatus);
-        if (fragmentStatus == 0)
+        const string fragmentSource = @"
+        #version 460 core
+        in vec2 TexCoord;
+        out vec4 FragColor;
+        uniform sampler2D uTexture;
+        void main()
         {
-            string log = GL.GetShaderInfoLog(fragmentShader);
-            throw new InvalidOperationException($"Failed to compile GUI fragment shader: {log}");
+            FragColor = texture(uTexture, TexCoord);
         }
+        ";
 
-        int program = GL.CreateProgram();
-        GL.AttachShader(program, vertexShader);
-        GL.AttachShader(program, fragmentShader);
-        GL.LinkProgram(program);
-        GL.GetProgram(program, GetProgramParameterName.LinkStatus, out int linkStatus);
-        if (linkStatus == 0)
-        {
-            string log = GL.GetProgramInfoLog(program);
-            throw new InvalidOperationException($"Failed to link GUI shader program: {log}");
-        }
+        Shader vertexShader = new(vertexSource, ShaderType.VertexShader);
+        Shader fragmentShader = new(fragmentSource, ShaderType.FragmentShader);
+        ShaderProgram shaderProgram = new();
 
-        GL.DetachShader(program, vertexShader);
-        GL.DetachShader(program, fragmentShader);
-        GL.DeleteShader(vertexShader);
-        GL.DeleteShader(fragmentShader);
+        vertexShader.Create();
+        fragmentShader.Create();
+        shaderProgram.AttachShader(vertexShader);
+        shaderProgram.AttachShader(fragmentShader);
+        shaderProgram.Link();
+        shaderProgram.DetachShader(vertexShader);
+        shaderProgram.DetachShader(fragmentShader);
+        vertexShader.Delete();
+        fragmentShader.Delete();
 
-        GL.UseProgram(program);
-        int uniformLocation = GL.GetUniformLocation(program, "uTexture");
+        GL.UseProgram(shaderProgram.Handle);
+        int uniformLocation = GL.GetUniformLocation(shaderProgram.Handle, "uTexture");
         GL.Uniform1(uniformLocation, 0);
         GL.UseProgram(0);
 
-        return program;
+        return shaderProgram.Handle;
     }
 }
 

@@ -10,7 +10,6 @@ using StbImageSharp;
 using BufferTarget = OpenTK.Graphics.OpenGL4.BufferTarget;
 using BufferUsageHint = OpenTK.Graphics.OpenGL4.BufferUsageHint;
 using GenerateMipmapTarget = OpenTK.Graphics.OpenGL4.GenerateMipmapTarget;
-using GetProgramParameterName = OpenTK.Graphics.OpenGL4.GetProgramParameterName;
 using GL = OpenTK.Graphics.OpenGL4.GL;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 using PixelInternalFormat = OpenTK.Graphics.OpenGL4.PixelInternalFormat;
@@ -302,6 +301,7 @@ public class AssetsService : IAssetsService
         _logger?.LogDebug($"Loading shader '{name}' from '{path}'");
         Shader vertexShader = new(vertexShaderPath, ShaderType.VertexShader);
         Shader fragmentShader = new(fragmentShaderPath, ShaderType.FragmentShader);
+        ShaderProgram shaderProgram = new();
 
         try
         {
@@ -309,29 +309,15 @@ public class AssetsService : IAssetsService
             fragmentShader.Create();
             _logger?.LogDebug($"Shader '{name}': vertex and fragment shaders compiled successfully");
 
-            int handle = GL.CreateProgram();
-
-            GL.AttachShader(handle, vertexShader.Handle);
-            GL.AttachShader(handle, fragmentShader.Handle);
-
-            GL.LinkProgram(handle);
-
-            GL.GetProgram(handle, GetProgramParameterName.LinkStatus, out int linked);
-            if (linked != 1)
-            {
-                string infoLog = GL.GetProgramInfoLog(handle);
-                GL.DeleteProgram(handle);
-                _logger?.LogError($"Shader '{name}' linking failed: {infoLog}");
-                throw new ShaderLinkingException(name, infoLog);
-            }
-
-            GL.DetachShader(handle, vertexShader.Handle);
-            GL.DetachShader(handle, fragmentShader.Handle);
-
+            shaderProgram.AttachShader(vertexShader);
+            shaderProgram.AttachShader(fragmentShader);
+            shaderProgram.Link();
+            shaderProgram.DetachShader(vertexShader);
+            shaderProgram.DetachShader(fragmentShader);
             vertexShader.Delete();
             fragmentShader.Delete();
 
-            ShaderAsset shader = new() { Id = handle };
+            ShaderAsset shader = new() { Id = shaderProgram.Handle };
 
             _shaders.Add(name, shader);
             _logger?.LogInfo($"Shader '{name}' loaded and linked successfully");
