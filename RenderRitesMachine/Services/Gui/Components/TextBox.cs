@@ -149,7 +149,7 @@ public sealed class TextBox : Panel
 
         (int x, int y) = GetGlobalPosition();
         int textX = x + Padding.Left;
-        int textY = y + Padding.Top;
+        int textY = y + CalculateTextTopOffset();
 
         string displayText = _text;
         Color4 displayColor = TextColor;
@@ -323,16 +323,29 @@ public sealed class TextBox : Panel
         }
     }
 
+    private int CalculateTextTopOffset()
+    {
+        int contentHeight = Math.Max(0, Height - Padding.Vertical);
+        float lineHeight = Font.LineHeight;
+
+        if (contentHeight <= 0 || lineHeight <= 0f)
+        {
+            return Padding.Top;
+        }
+
+        float extraSpace = MathF.Max(0f, contentHeight - lineHeight);
+        int verticalOffset = (int)MathF.Round(extraSpace * 0.5f);
+        return Padding.Top + verticalOffset;
+    }
+
     private void DrawCursor(IGuiService gui, int textX, int textY)
     {
         string textBeforeCursor = _cursorPosition > 0 ? _text.Substring(0, _cursorPosition) : string.Empty;
         float cursorX = Font.MeasureText(textBeforeCursor).X;
 
         int cursorPixelX = textX + (int)cursorX - (int)_scrollOffset;
-        int cursorHeight = (int)Font.LineHeight;
-        int cursorY = textY + (int)Font.Baseline;
-
-        gui.DrawVerticalLine(cursorPixelX, cursorY - cursorHeight + Padding.Top, cursorHeight, 1, CursorColor);
+        int cursorHeight = Math.Max(1, (int)MathF.Round(Font.LineHeight));
+        gui.DrawVerticalLine(cursorPixelX, textY, cursorHeight, 1, CursorColor);
     }
 
     private void RenderVisibleText(IGuiService gui, string text, Color4 color, int textX, int textY)
