@@ -82,6 +82,38 @@ public sealed class GuiServiceTests
     }
 
     [Fact]
+    public void DrawRectangleMarksContentAndUploadsSurface()
+    {
+        var renderer = new FakeGuiRenderer();
+        GuiService service = CreateService(renderer);
+        service.EnsureInitialized(64, 64);
+
+        service.BeginFrame(Color4.Black);
+        service.DrawRectangle(2, 2, 20, 12, 2, Color4.White);
+        service.EndFrame();
+
+        Assert.True(service.HasContent);
+        Assert.Equal(1, renderer.UploadCalls);
+    }
+
+    [Fact]
+    public void DrawRectangleWithInvalidSizeIsIgnored()
+    {
+        var renderer = new FakeGuiRenderer();
+        GuiService service = CreateService(renderer);
+        service.EnsureInitialized(32, 32);
+
+        service.BeginFrame(Color4.Black);
+        service.DrawRectangle(0, 0, 0, 10, 2, Color4.White);
+        service.DrawRectangle(0, 0, 10, 0, 2, Color4.White);
+        service.DrawRectangle(0, 0, 10, 10, 0, Color4.White);
+        service.EndFrame();
+
+        Assert.False(service.HasContent);
+        Assert.Equal(0, renderer.UploadCalls);
+    }
+
+    [Fact]
     public void RenderWithoutContentDoesNothing()
     {
         var renderer = new FakeGuiRenderer();

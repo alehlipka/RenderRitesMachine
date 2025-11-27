@@ -30,8 +30,7 @@ internal sealed class GuiSystem : IEcsRunSystem
             BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
             BorderColor = new Color4(1f, 1f, 1f, 0.35f),
             Margin = new GuiMargins(50),
-            Padding = new GuiPadding(10),
-            Debug = true
+            Padding = new GuiPadding(10)
         };
 
         _fpsLabel = new Label(font)
