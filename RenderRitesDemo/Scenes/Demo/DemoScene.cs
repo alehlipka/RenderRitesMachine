@@ -53,7 +53,7 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
 
         _ = RenderSystems
             .Add(new MainRenderSystem())
-            .Add(new DemoGuiSystem(font));
+            .Add(new GuiSystem(font));
 
         _ = ResizeSystems
             .Add(new MainResizeSystem());
@@ -67,7 +67,7 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
             throw new FileNotFoundException($"Demo font not found at '{fontPath}'.");
         }
 
-        _guiFont = GuiFont.LoadFromFile(fontPath, 18);
+        _guiFont = GuiFont.LoadFromFile(fontPath, 15);
     }
 
     private void LoadDemoAssets()

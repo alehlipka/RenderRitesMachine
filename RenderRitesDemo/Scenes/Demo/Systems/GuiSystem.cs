@@ -8,7 +8,7 @@ using RenderRitesMachine.Services.Gui.Components;
 
 namespace RenderRitesDemo.Scenes.Demo.Systems;
 
-internal sealed class DemoGuiSystem : IEcsRunSystem
+internal sealed class GuiSystem : IEcsRunSystem
 {
     private const int PanelMargin = 16;
     private readonly Panel _rootPanel;
@@ -20,7 +20,7 @@ internal sealed class DemoGuiSystem : IEcsRunSystem
     private readonly List<GuiEvent> _eventBuffer = [];
     private bool _showCrosshair = true;
 
-    public DemoGuiSystem(GuiFont font)
+    public GuiSystem(GuiFont font)
     {
         ArgumentNullException.ThrowIfNull(font);
 
