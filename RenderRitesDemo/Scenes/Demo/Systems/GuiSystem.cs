@@ -10,7 +10,6 @@ namespace RenderRitesDemo.Scenes.Demo.Systems;
 
 internal sealed class GuiSystem : IEcsRunSystem
 {
-    private const int PanelMargin = 16;
     private readonly Panel _rootPanel;
     private readonly Label _fpsLabel;
     private readonly Label _objectsLabel;
@@ -29,7 +28,9 @@ internal sealed class GuiSystem : IEcsRunSystem
             Width = 260,
             Height = 165,
             BackgroundColor = new Color4(0.12f, 0.12f, 0.12f, 0.75f),
-            BorderColor = new Color4(1f, 1f, 1f, 0.35f)
+            BorderColor = new Color4(1f, 1f, 1f, 0.35f),
+            Margin = new GuiMargins(10),
+            Padding = new GuiPadding(10)
         };
 
         _fpsLabel = new Label(font)
@@ -52,26 +53,28 @@ internal sealed class GuiSystem : IEcsRunSystem
 
         _toggleCrosshairButton = new Button(font)
         {
-            Position = new Vector2i(10, 75),
-            Width = 240,
+            Position = new Vector2i(0, 75),
             Height = 36,
             Text = "Toggle crosshair",
             BackgroundColor = new Color4(0.25f, 0.25f, 0.25f, 0.7f),
             HoverBackgroundColor = new Color4(0.35f, 0.35f, 0.35f, 0.85f),
-            PressedBackgroundColor = new Color4(0.18f, 0.18f, 0.18f, 0.95f)
+            PressedBackgroundColor = new Color4(0.18f, 0.18f, 0.18f, 0.95f),
+            HorizontalAnchor = GuiHorizontalAnchor.Stretch,
+            Margin = new GuiMargins(10)
         };
         _toggleCrosshairButton.Clicked += () => _showCrosshair = !_showCrosshair;
 
         _textBox = new TextBox(font)
         {
-            Position = new Vector2i(10, 115),
-            Width = 240,
+            Position = new Vector2i(0, 115),
             Height = 38,
             PlaceholderText = "Enter text here...",
             BackgroundColor = new Color4(0.15f, 0.15f, 0.15f, 0.9f),
             BorderColor = new Color4(0.5f, 0.5f, 0.5f, 0.8f),
             TextColor = Color4.White,
-            FocusBorderColor = new Color4(0.2f, 0.6f, 1f, 1f)
+            FocusBorderColor = new Color4(0.2f, 0.6f, 1f, 1f),
+            HorizontalAnchor = GuiHorizontalAnchor.Stretch,
+            Margin = new GuiMargins(10)
         };
 
         _rootPanel.AddChild(_fpsLabel);
@@ -92,7 +95,7 @@ internal sealed class GuiSystem : IEcsRunSystem
             return;
         }
 
-        _rootPanel.Position = new Vector2i(PanelMargin);
+        _rootPanel.UpdateAdaptiveLayout(new Vector2i(gui.Width, gui.Height));
 
         RenderStatistics stats = shared.RenderStats;
         _fpsLabel.Text = $"FPS: {FpsCounter.GetFps():F0}";

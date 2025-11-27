@@ -14,14 +14,13 @@ public sealed class Button : Panel
         TextColor = Color4.White;
         HoverBackgroundColor = new Color4(0.35f, 0.35f, 0.35f, 0.8f);
         PressedBackgroundColor = new Color4(0.2f, 0.2f, 0.2f, 0.9f);
-        Padding = 6;
+        Padding = new GuiPadding(6);
     }
 
     public GuiFont Font { get; set; }
     public Color4 TextColor { get; set; }
     public Color4 HoverBackgroundColor { get; set; }
     public Color4 PressedBackgroundColor { get; set; }
-    public int Padding { get; set; }
     public event Action? Clicked;
 
     public string Text
@@ -98,10 +97,10 @@ public sealed class Button : Panel
         (int x, int y) = GetGlobalPosition();
         Vector2 textSize = Font.MeasureText(Text);
 
-        int contentWidth = Width - (Padding * 2);
-        int contentHeight = Height - (Padding * 2);
-        int textX = x + Padding + Math.Max(0, (contentWidth - (int)Math.Ceiling(textSize.X)) / 2);
-        int textY = y + Padding + Math.Max(0, (contentHeight - (int)Math.Ceiling(textSize.Y)) / 2);
+        int contentWidth = Math.Max(0, Width - Padding.Horizontal);
+        int contentHeight = Math.Max(0, Height - Padding.Vertical);
+        int textX = x + Padding.Left + Math.Max(0, (contentWidth - (int)Math.Ceiling(textSize.X)) / 2);
+        int textY = y + Padding.Top + Math.Max(0, (contentHeight - (int)Math.Ceiling(textSize.Y)) / 2);
 
         gui.DrawText(Font, Text, textX, textY, TextColor);
     }

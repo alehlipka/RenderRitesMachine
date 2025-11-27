@@ -22,7 +22,7 @@ public sealed class TextBox : Panel
         TextColor = Color4.White;
         CursorColor = Color4.White;
         FocusBorderColor = new Color4(0.2f, 0.5f, 1f, 1f);
-        Padding = 6;
+        Padding = new GuiPadding(6);
         _cursorPosition = 0;
     }
 
@@ -30,7 +30,6 @@ public sealed class TextBox : Panel
     public Color4 TextColor { get; set; }
     public Color4 CursorColor { get; set; }
     public Color4 FocusBorderColor { get; set; }
-    public int Padding { get; set; }
     public int MaxLength { get; set; } = 0; // 0 = unlimited
     public string PlaceholderText { get; set; } = string.Empty;
     public Color4 PlaceholderColor { get; set; } = new Color4(0.5f, 0.5f, 0.5f, 1f);
@@ -149,8 +148,8 @@ public sealed class TextBox : Panel
         BorderColor = originalBorder;
 
         (int x, int y) = GetGlobalPosition();
-        int textX = x + Padding;
-        int textY = y + Padding;
+        int textX = x + Padding.Left;
+        int textY = y + Padding.Top;
 
         string displayText = _text;
         Color4 displayColor = TextColor;
@@ -259,7 +258,7 @@ public sealed class TextBox : Panel
     private void UpdateCursorPositionFromMouse(Vector2 mousePosition)
     {
         (int x, int y) = GetGlobalPosition();
-        int textX = x + Padding;
+        int textX = x + Padding.Left;
         int relativeX = (int)mousePosition.X - textX + (int)_scrollOffset;
 
         int bestPosition = 0;
@@ -294,7 +293,7 @@ public sealed class TextBox : Panel
         string textBeforeCursor = _cursorPosition > 0 ? _text.Substring(0, _cursorPosition) : string.Empty;
         float cursorX = Font.MeasureText(textBeforeCursor).X;
 
-        int visibleWidth = Width - (Padding * 2);
+        int visibleWidth = Math.Max(0, Width - Padding.Horizontal);
         float textWidth = Font.MeasureText(_text).X;
 
         if (textWidth <= visibleWidth)
@@ -333,12 +332,12 @@ public sealed class TextBox : Panel
         int cursorHeight = (int)Font.LineHeight;
         int cursorY = textY + (int)Font.Baseline;
 
-        gui.DrawVerticalLine(cursorPixelX, cursorY - cursorHeight + Padding, cursorHeight, 1, CursorColor);
+        gui.DrawVerticalLine(cursorPixelX, cursorY - cursorHeight + Padding.Top, cursorHeight, 1, CursorColor);
     }
 
     private void RenderVisibleText(IGuiService gui, string text, Color4 color, int textX, int textY)
     {
-        int visibleWidth = Math.Max(0, Width - (Padding * 2));
+        int visibleWidth = Math.Max(0, Width - Padding.Horizontal);
         if (visibleWidth <= 0)
         {
             return;

@@ -324,7 +324,7 @@ public sealed class TextBoxTests
         {
             Width = 80,
             Height = 30,
-            Padding = 4
+            Padding = new GuiPadding(4)
         };
 
         textBox.SetFocus(true);
@@ -350,7 +350,7 @@ public sealed class TextBoxTests
         {
             Width = 70,
             Height = 28,
-            Padding = 4,
+            Padding = new GuiPadding(4),
             PlaceholderText = new string('B', 40)
         };
 
