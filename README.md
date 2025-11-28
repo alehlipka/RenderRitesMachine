@@ -4,6 +4,7 @@
 [![OpenGL](https://img.shields.io/badge/OpenGL-4.6-green.svg)](https://www.opengl.org/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg)](https://github.com/yourusername/RenderRites)
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
+[![CI](https://github.com/alehlipka/RenderRitesMachine/actions/workflows/ci.yml/badge.svg)](https://github.com/alehlipka/RenderRitesMachine/actions)
 
 **RenderRites Machine** — это современный мультиплатформенный 3D игровой движок, построенный на C# и .NET 9.0. Движок использует архитектуру Entity Component System (ECS) и предоставляет полный набор инструментов для создания 3D приложений и игр. Протестирован и работает на Windows и Linux.
 
@@ -248,6 +249,12 @@ RenderRites.Machine.ConfigureRenderSettings(settings);
 ```bash
 dotnet test
 ```
+
+## 🔄 CI/CD
+
+Проект использует **GitHub Actions** для автоматической сборки и тестирования на Windows и Linux. Каждый Pull Request в **main** автоматически проверяется на обеих платформах.
+
+Статус последних сборок можно посмотреть в разделе [Actions](https://github.com/alehlipka/RenderRitesMachine/actions) репозитория.
 
 ## 📦 Зависимости
 
