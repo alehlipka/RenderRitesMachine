@@ -4,22 +4,20 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Base camera implementation that houses shared logic for perspective and orthographic projections.
+///     Base camera implementation that houses shared logic for perspective and orthographic projections.
 /// </summary>
 public abstract class CameraBase : ICamera
 {
-    private Vector3 _position = Vector3.Zero;
-    private Vector3 _front = -Vector3.UnitZ;
-    private Vector3 _up = Vector3.UnitY;
-    private Vector3 _right = Vector3.UnitX;
-    private float _pitch;
-    private float _yaw = -MathHelper.PiOver2;
     private float _aspectRatio = 1.0f;
+    private Matrix4 _cachedProjectionMatrix;
 
     private Matrix4 _cachedViewMatrix;
-    private Matrix4 _cachedProjectionMatrix;
-    private bool _viewMatrixDirty = true;
+    private Vector3 _front = -Vector3.UnitZ;
+    private float _pitch;
+    private Vector3 _position = Vector3.Zero;
     private bool _projectionMatrixDirty = true;
+    private bool _viewMatrixDirty = true;
+    private float _yaw = -MathHelper.PiOver2;
 
     public Vector3 Position
     {
@@ -35,8 +33,9 @@ public abstract class CameraBase : ICamera
     }
 
     public Vector3 Front => _front;
-    public Vector3 Up => _up;
-    public Vector3 Right => _right;
+    public Vector3 Up { get; private set; } = Vector3.UnitY;
+
+    public Vector3 Right { get; private set; } = Vector3.UnitX;
 
     public float Speed { get; set; } = 30.0f;
     public float AngularSpeed { get; set; } = 90.0f;
@@ -96,7 +95,7 @@ public abstract class CameraBase : ICamera
         {
             if (_viewMatrixDirty)
             {
-                _cachedViewMatrix = Matrix4.LookAt(Position, Position + _front, _up);
+                _cachedViewMatrix = Matrix4.LookAt(Position, Position + _front, Up);
                 _viewMatrixDirty = false;
             }
 
@@ -118,10 +117,7 @@ public abstract class CameraBase : ICamera
         }
     }
 
-    protected void MarkProjectionMatrixDirty()
-    {
-        _projectionMatrixDirty = true;
-    }
+    protected void MarkProjectionMatrixDirty() => _projectionMatrixDirty = true;
 
     private void UpdateOrientationVectors()
     {
@@ -129,14 +125,13 @@ public abstract class CameraBase : ICamera
         _front.Y = MathF.Sin(_pitch);
         _front.Z = MathF.Cos(_pitch) * MathF.Sin(_yaw);
         _front = Vector3.Normalize(_front);
-        _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
-        _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+        Right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
+        Up = Vector3.Normalize(Vector3.Cross(Right, _front));
         _viewMatrixDirty = true;
     }
 
     /// <summary>
-    /// Creates the projection matrix specific to the concrete camera type.
+    ///     Creates the projection matrix specific to the concrete camera type.
     /// </summary>
     protected abstract Matrix4 CreateProjectionMatrix();
 }
-

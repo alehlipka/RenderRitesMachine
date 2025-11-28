@@ -9,4 +9,3 @@ public struct ColorTexture
 
     public string Name { get; set; }
 }
-

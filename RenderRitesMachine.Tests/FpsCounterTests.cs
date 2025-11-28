@@ -53,4 +53,3 @@ public sealed class FpsCounterTests
         averageFpsField?.SetValue(null, 0d);
     }
 }
-

@@ -4,55 +4,41 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.Assets;
 
 /// <summary>
-/// Shader program resource that disposes its OpenGL handle.
+///     Shader program resource that disposes its OpenGL handle.
 /// </summary>
 public sealed class ShaderAsset : IDisposable
 {
     private readonly Dictionary<string, int> _uniformLocations = [];
 
+    private bool _disposed;
+
     public int Id { get; set; }
 
-    private bool _disposed;
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
     ~ShaderAsset()
     {
         Dispose(false);
     }
 
-    public void Use()
-    {
-        GL.UseProgram(Id);
-    }
+    public void Use() => GL.UseProgram(Id);
 
-    public void SetInt(string name, int value)
-    {
-        GL.Uniform1(GetUniformLocation(name), value);
-    }
+    public void SetInt(string name, int value) => GL.Uniform1(GetUniformLocation(name), value);
 
-    public void SetFloat(string name, float value)
-    {
-        GL.Uniform1(GetUniformLocation(name), value);
-    }
+    public void SetFloat(string name, float value) => GL.Uniform1(GetUniformLocation(name), value);
 
-    public void SetVector2(string name, Vector2 vector)
-    {
-        GL.Uniform2(GetUniformLocation(name), vector);
-    }
+    public void SetVector2(string name, Vector2 vector) => GL.Uniform2(GetUniformLocation(name), vector);
 
-    public void SetVector3(string name, Vector3 vector)
-    {
-        GL.Uniform3(GetUniformLocation(name), vector);
-    }
+    public void SetVector3(string name, Vector3 vector) => GL.Uniform3(GetUniformLocation(name), vector);
 
-    public void SetMatrix4(string name, Matrix4 matrix)
-    {
+    public void SetMatrix4(string name, Matrix4 matrix) =>
         GL.UniformMatrix4(GetUniformLocation(name), true, ref matrix);
-    }
 
-    public void SetBool(string name, bool value)
-    {
-        GL.Uniform1(GetUniformLocation(name), value ? 1 : 0);
-    }
+    public void SetBool(string name, bool value) => GL.Uniform1(GetUniformLocation(name), value ? 1 : 0);
 
     private int GetUniformLocation(string name)
     {
@@ -65,12 +51,6 @@ public sealed class ShaderAsset : IDisposable
         _uniformLocations[name] = location;
 
         return location;
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     private void Dispose(bool disposing)

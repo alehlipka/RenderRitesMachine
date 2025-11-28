@@ -1,9 +1,10 @@
+using OpenTK.Windowing.Common;
 using RenderRitesMachine.Configuration;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Tests for <see cref="RenderConstants"/>.
+///     Tests for <see cref="RenderConstants" />.
 /// </summary>
 public sealed class RenderConstantsTests : IDisposable
 {
@@ -12,10 +13,7 @@ public sealed class RenderConstantsTests : IDisposable
         RenderConstants.Reset();
     }
 
-    public void Dispose()
-    {
-        RenderConstants.Reset();
-    }
+    public void Dispose() => RenderConstants.Reset();
 
     [Fact]
     public void MaxStencilValueIsValid()
@@ -25,22 +23,14 @@ public sealed class RenderConstantsTests : IDisposable
     }
 
     [Fact]
-    public void AnisotropicFilteringLevelIsPositive()
-    {
-        Assert.True(RenderConstants.AnisotropicFilteringLevel > 0);
-    }
+    public void AnisotropicFilteringLevelIsPositive() => Assert.True(RenderConstants.AnisotropicFilteringLevel > 0);
 
     [Fact]
-    public void CameraNearPlaneIsPositive()
-    {
-        Assert.True(RenderConstants.CameraNearPlane > 0);
-    }
+    public void CameraNearPlaneIsPositive() => Assert.True(RenderConstants.CameraNearPlane > 0);
 
     [Fact]
-    public void CameraFarPlaneIsGreaterThanNearPlane()
-    {
+    public void CameraFarPlaneIsGreaterThanNearPlane() =>
         Assert.True(RenderConstants.CameraFarPlane > RenderConstants.CameraNearPlane);
-    }
 
     [Fact]
     public void CameraFovRangeIsValid()
@@ -59,16 +49,10 @@ public sealed class RenderConstantsTests : IDisposable
     }
 
     [Fact]
-    public void VertexAttributeSizeIsPositive()
-    {
-        Assert.True(RenderConstants.VertexAttributeSize > 0);
-    }
+    public void VertexAttributeSizeIsPositive() => Assert.True(RenderConstants.VertexAttributeSize > 0);
 
     [Fact]
-    public void PositionAttributeSizeIsPositive()
-    {
-        Assert.True(RenderConstants.PositionAttributeSize > 0);
-    }
+    public void PositionAttributeSizeIsPositive() => Assert.True(RenderConstants.PositionAttributeSize > 0);
 
     [Fact]
     public void FloatEpsilonIsSmallPositive()
@@ -87,10 +71,8 @@ public sealed class RenderConstantsTests : IDisposable
     }
 
     [Fact]
-    public void VertexAttributeSizeIsGreaterThanPositionAttributeSize()
-    {
+    public void VertexAttributeSizeIsGreaterThanPositionAttributeSize() =>
         Assert.True(RenderConstants.VertexAttributeSize >= RenderConstants.PositionAttributeSize);
-    }
 
     [Fact]
     public void ConfigureAppliesCustomSettings()
@@ -112,9 +94,9 @@ public sealed class RenderConstantsTests : IDisposable
             MinWindowHeight = 480,
             DefaultWindowWidth = 1920,
             DefaultWindowHeight = 1080,
-            DefaultVSyncMode = OpenTK.Windowing.Common.VSyncMode.Adaptive,
+            DefaultVSyncMode = VSyncMode.Adaptive,
             DefaultSamples = 8,
-            DefaultWindowState = OpenTK.Windowing.Common.WindowState.Fullscreen
+            DefaultWindowState = WindowState.Fullscreen
         };
 
         using (new TemporaryRenderSettings(custom))
@@ -123,7 +105,7 @@ public sealed class RenderConstantsTests : IDisposable
             Assert.Equal(500f, RenderConstants.CameraFarPlane);
             Assert.Equal(1920, RenderConstants.DefaultWindowWidth);
             Assert.Equal(8, RenderConstants.DefaultSamples);
-            Assert.Equal(OpenTK.Windowing.Common.WindowState.Fullscreen, RenderConstants.DefaultWindowState);
+            Assert.Equal(WindowState.Fullscreen, RenderConstants.DefaultWindowState);
         }
     }
 
@@ -148,9 +130,6 @@ public sealed class RenderConstantsTests : IDisposable
             RenderConstants.Configure(settings);
         }
 
-        public void Dispose()
-        {
-            RenderConstants.Configure(_previous);
-        }
+        public void Dispose() => RenderConstants.Configure(_previous);
     }
 }

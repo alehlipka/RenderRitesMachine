@@ -38,4 +38,3 @@ public sealed class RenderStatisticsTests
         Assert.Equal(3, stats.RenderedObjects);
     }
 }
-

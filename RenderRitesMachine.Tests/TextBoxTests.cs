@@ -1,8 +1,8 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using RenderRitesMachine.Services;
 using RenderRitesMachine.Services.Gui;
 using RenderRitesMachine.Services.Gui.Components;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Tests;
 
@@ -15,7 +15,7 @@ public sealed class TextBoxTests
             string fontPath = Path.Combine("..", "..", "..", "..", "RenderRitesDemo", "Assets", "Fonts", "arial.ttf");
             if (File.Exists(fontPath))
             {
-                return GuiFont.LoadFromFile(fontPath, pixelHeight: 20);
+                return GuiFont.LoadFromFile(fontPath);
             }
         }
         catch
@@ -28,7 +28,7 @@ public sealed class TextBoxTests
     private static GuiFont CreateSimpleMockFont()
     {
         byte[] fontData = new byte[1024];
-        return GuiFont.LoadFromMemory(fontData, pixelHeight: 20, atlasWidth: 64, atlasHeight: 64);
+        return GuiFont.LoadFromMemory(fontData, 20, 64, 64);
     }
 
     private static TextBox CreateTextBox(GuiFont? font = null)
@@ -41,7 +41,7 @@ public sealed class TextBoxTests
     public void Constructor_InitializesWithDefaultValues()
     {
         GuiFont font = CreateMockFont();
-        TextBox textBox = new TextBox(font);
+        var textBox = new TextBox(font);
 
         Assert.Equal(string.Empty, textBox.Text);
         Assert.False(textBox.HasFocus);
@@ -50,10 +50,8 @@ public sealed class TextBoxTests
     }
 
     [Fact]
-    public void Constructor_ThrowsArgumentNullException_WhenFontIsNull()
-    {
+    public void Constructor_ThrowsArgumentNullException_WhenFontIsNull() =>
         Assert.Throws<ArgumentNullException>(() => new TextBox(null!));
-    }
 
     [Fact]
     public void TextInput_AddsCharacterAtCursor()
@@ -270,7 +268,7 @@ public sealed class TextBoxTests
         textBox.SetFocus(true);
         string? changedText = null;
 
-        textBox.TextChanged += (text) => changedText = text;
+        textBox.TextChanged += text => changedText = text;
 
         textBox.Text = "Hello";
 
@@ -328,7 +326,7 @@ public sealed class TextBoxTests
         };
 
         textBox.SetFocus(true);
-        string longText = new string('A', 64);
+        string longText = new('A', 64);
         foreach (char ch in longText)
         {
             textBox.HandleEvent(GuiEvent.TextInput(ch));
@@ -387,10 +385,8 @@ public sealed class TextBoxTests
         {
         }
 
-        public void DrawText(GuiFont font, string text, int x, int y, Color4 color)
-        {
+        public void DrawText(GuiFont font, string text, int x, int y, Color4 color) =>
             LastDrawText = (font, text, x, y, color);
-        }
 
         public void DrawVerticalLine(int x, int y, int length, int thickness, Color4 color)
         {
@@ -427,4 +423,3 @@ public sealed class TextBoxTests
         public float RenderDeltaTime { get; set; }
     }
 }
-

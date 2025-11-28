@@ -1,65 +1,49 @@
-
-namespace RenderRitesMachine.Services;
+namespace RenderRitesMachine.Services.Diagnostics;
 
 /// <summary>
-/// Console-based logger implementation.
+///     Console-based logger implementation.
 /// </summary>
 public class Logger : ILogger
 {
     private static readonly Lock _lockObject = new();
 
     /// <summary>
-    /// Minimal logging level. Messages below this level are ignored.
+    ///     Minimal logging level. Messages below this level are ignored.
     /// </summary>
     public LogLevel MinimumLevel { get; set; } = LogLevel.Debug;
 
     /// <summary>
-    /// Writes a debug-level message.
+    ///     Writes a debug-level message.
     /// </summary>
     /// <param name="message">Message to log.</param>
-    public void LogDebug(string message)
-    {
-        Log(LogLevel.Debug, message);
-    }
+    public void LogDebug(string message) => Log(LogLevel.Debug, message);
 
     /// <summary>
-    /// Writes an info-level message.
+    ///     Writes an info-level message.
     /// </summary>
     /// <param name="message">Message to log.</param>
-    public void LogInfo(string message)
-    {
-        Log(LogLevel.Info, message);
-    }
+    public void LogInfo(string message) => Log(LogLevel.Info, message);
 
     /// <summary>
-    /// Writes a warning-level message.
+    ///     Writes a warning-level message.
     /// </summary>
     /// <param name="message">Message to log.</param>
-    public void LogWarning(string message)
-    {
-        Log(LogLevel.Warning, message);
-    }
+    public void LogWarning(string message) => Log(LogLevel.Warning, message);
 
     /// <summary>
-    /// Writes an error-level message.
+    ///     Writes an error-level message.
     /// </summary>
     /// <param name="message">Message to log.</param>
-    public void LogError(string message)
-    {
-        Log(LogLevel.Error, message);
-    }
+    public void LogError(string message) => Log(LogLevel.Error, message);
 
     /// <summary>
-    /// Writes a critical-level message.
+    ///     Writes a critical-level message.
     /// </summary>
     /// <param name="message">Message to log.</param>
-    public void LogCritical(string message)
-    {
-        Log(LogLevel.Critical, message);
-    }
+    public void LogCritical(string message) => Log(LogLevel.Critical, message);
 
     /// <summary>
-    /// Logs an exception at the specified level.
+    ///     Logs an exception at the specified level.
     /// </summary>
     /// <param name="level">Logging level.</param>
     /// <param name="exception">Exception to log.</param>
@@ -82,7 +66,7 @@ public class Logger : ILogger
     }
 
     /// <summary>
-    /// Logs a message with the specified level.
+    ///     Logs a message with the specified level.
     /// </summary>
     /// <param name="level">Logging level.</param>
     /// <param name="message">Message to log.</param>

@@ -1,13 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 using Moq;
 using RenderRitesMachine.Output;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Edge-case tests for <see cref="SceneFactory"/>.
+///     Edge-case tests for <see cref="SceneFactory" />.
 /// </summary>
 public sealed class SceneFactoryTests
 {
@@ -38,7 +41,8 @@ public sealed class SceneFactoryTests
 
         var factory = new SceneFactory(assetsService, timeService, renderService, audioService, guiService, logger);
 
-        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => factory.CreateScene<TestScene>("test"));
+        InvalidOperationException exception =
+            Assert.Throws<InvalidOperationException>(() => factory.CreateScene<TestScene>("test"));
         Assert.Contains("SceneManager must be set", exception.Message, StringComparison.Ordinal);
     }
 
@@ -107,8 +111,15 @@ public sealed class SceneFactoryTests
     }
 
     [SuppressMessage("Performance", "CA1812", Justification = "Instantiated via SceneFactory.CreateScene<>")]
-    private sealed class TestScene(string name, IAssetsService assetsService, ITimeService timeService,
-        IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+    private sealed class TestScene(
+        string name,
+        IAssetsService assetsService,
+        ITimeService timeService,
+        IRenderService renderService,
+        IAudioService audioService,
+        IGuiService guiService,
+        ISceneManager sceneManager,
+        ILogger logger)
         : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
     {
         protected override void OnLoad()

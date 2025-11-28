@@ -1,11 +1,12 @@
+using System.Numerics;
 using Assimp;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 using RenderRitesMachine.Configuration;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.Exceptions;
 using RenderRitesMachine.Output;
+using RenderRitesMachine.Services.Diagnostics;
 using StbImageSharp;
 using BufferTarget = OpenTK.Graphics.OpenGL4.BufferTarget;
 using BufferUsageHint = OpenTK.Graphics.OpenGL4.BufferUsageHint;
@@ -22,24 +23,25 @@ using TextureParameterName = OpenTK.Graphics.OpenGL4.TextureParameterName;
 using TextureTarget = OpenTK.Graphics.OpenGL4.TextureTarget;
 using TextureType = RenderRitesMachine.Assets.TextureType;
 using TextureWrapMode = OpenTK.Graphics.OpenGL.TextureWrapMode;
+using Vector2 = OpenTK.Mathematics.Vector2;
 using VertexAttribPointerType = OpenTK.Graphics.OpenGL4.VertexAttribPointerType;
 
-namespace RenderRitesMachine.Services;
+namespace RenderRitesMachine.Services.Graphics;
 
 /// <summary>
-/// Manages meshes, shaders, textures, and bounding boxes, exposing helpers to load and retrieve OpenGL resources.
+///     Manages meshes, shaders, textures, and bounding boxes, exposing helpers to load and retrieve OpenGL resources.
 /// </summary>
 public class AssetsService : IAssetsService
 {
+    private readonly Dictionary<string, BoundingBoxAsset> _boundingBoxes = [];
+    private readonly ILogger? _logger;
     private readonly Dictionary<string, MeshAsset> _meshes = [];
     private readonly Dictionary<string, ShaderAsset> _shaders = [];
     private readonly Dictionary<string, TextureAsset> _textures = [];
-    private readonly Dictionary<string, BoundingBoxAsset> _boundingBoxes = [];
-    private readonly ILogger? _logger;
     private bool _disposed;
 
     /// <summary>
-    /// Creates a new instance of the assets service.
+    ///     Creates a new instance of the assets service.
     /// </summary>
     /// <param name="logger">Logger for diagnostics, or null to disable logging.</param>
     public AssetsService(ILogger? logger = null)
@@ -48,11 +50,11 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Retrieves a mesh by name.
+    ///     Retrieves a mesh by name.
     /// </summary>
     /// <param name="name">Mesh identifier.</param>
     /// <returns>Mesh asset with the specified name.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name" /> is null or empty.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the mesh cannot be found.</exception>
     public MeshAsset GetMesh(string name)
     {
@@ -71,11 +73,11 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Retrieves a shader by name.
+    ///     Retrieves a shader by name.
     /// </summary>
     /// <param name="name">Shader identifier.</param>
     /// <returns>Shader asset with the specified name.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name" /> is null or empty.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the shader cannot be found.</exception>
     public ShaderAsset GetShader(string name)
     {
@@ -94,20 +96,17 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Returns all loaded shaders.
+    ///     Returns all loaded shaders.
     /// </summary>
     /// <returns>An immutable collection of shaders.</returns>
-    public IReadOnlyCollection<ShaderAsset> GetAllShaders()
-    {
-        return _shaders.Values;
-    }
+    public IReadOnlyCollection<ShaderAsset> GetAllShaders() => _shaders.Values;
 
     /// <summary>
-    /// Retrieves a texture by name.
+    ///     Retrieves a texture by name.
     /// </summary>
     /// <param name="name">Texture identifier.</param>
     /// <returns>Texture asset with the specified name.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name" /> is null or empty.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the texture cannot be found.</exception>
     public TextureAsset GetTexture(string name)
     {
@@ -126,11 +125,11 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Retrieves a bounding box for the given mesh.
+    ///     Retrieves a bounding box for the given mesh.
     /// </summary>
     /// <param name="name">Mesh name associated with the bounding box.</param>
     /// <returns>Bounding box asset for the mesh.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name" /> is null or empty.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the bounding box cannot be found.</exception>
     public BoundingBoxAsset GetBoundingBox(string name)
     {
@@ -149,10 +148,10 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Generates and stores a bounding box for the specified mesh.
+    ///     Generates and stores a bounding box for the specified mesh.
     /// </summary>
     /// <param name="meshName">Mesh name used for the bounding box.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="meshName"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="meshName" /> is null or empty.</exception>
     /// <exception cref="KeyNotFoundException">Thrown when the mesh cannot be found.</exception>
     /// <exception cref="DuplicateResourceException">Thrown when the bounding box already exists.</exception>
     public void AddBoundingBox(string meshName)
@@ -202,12 +201,15 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Loads a texture from disk and registers it.
+    ///     Loads a texture from disk and registers it.
     /// </summary>
     /// <param name="name">Texture identifier used for future lookups.</param>
     /// <param name="type">Texture type.</param>
     /// <param name="path">Path to the texture file.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">
+    ///     Thrown when <paramref name="name" /> or <paramref name="path" /> is null or
+    ///     empty.
+    /// </exception>
     /// <exception cref="FileNotFoundException">Thrown when the file cannot be found.</exception>
     /// <exception cref="InvalidDataException">Thrown when the image data cannot be loaded.</exception>
     /// <exception cref="IOException">Thrown when the file cannot be read.</exception>
@@ -258,13 +260,17 @@ public class AssetsService : IAssetsService
                 PixelType.UnsignedByte, image.Data);
             GlDebugWatchdog.CheckGLError("texture data upload");
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
+                (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
+                (int)TextureMagFilter.Linear);
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
-            GL.TexParameter(TextureTarget.Texture2D, (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt, RenderConstants.AnisotropicFilteringLevel);
+            GL.TexParameter(TextureTarget.Texture2D,
+                (TextureParameterName)ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt,
+                RenderConstants.AnisotropicFilteringLevel);
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
             GlDebugWatchdog.CheckGLError("texture mipmap generation");
@@ -284,11 +290,14 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Loads and compiles a shader program from <c>vertex.glsl</c> and <c>fragment.glsl</c>.
+    ///     Loads and compiles a shader program from <c>vertex.glsl</c> and <c>fragment.glsl</c>.
     /// </summary>
     /// <param name="name">Shader identifier.</param>
     /// <param name="path">Directory containing the shader files.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">
+    ///     Thrown when <paramref name="name" /> or <paramref name="path" /> is null or
+    ///     empty.
+    /// </exception>
     /// <exception cref="FileNotFoundException">Thrown when shader files cannot be found.</exception>
     /// <exception cref="ShaderCompilationException">Thrown when compilation fails.</exception>
     /// <exception cref="ShaderLinkingException">Thrown when linking fails.</exception>
@@ -363,11 +372,14 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Loads a mesh from a 3D model file (any format supported by Assimp).
+    ///     Loads a mesh from a 3D model file (any format supported by Assimp).
     /// </summary>
     /// <param name="name">Mesh identifier.</param>
     /// <param name="path">Path to the model file.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="path"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">
+    ///     Thrown when <paramref name="name" /> or <paramref name="path" /> is null or
+    ///     empty.
+    /// </exception>
     /// <exception cref="FileNotFoundException">Thrown when the file cannot be found.</exception>
     /// <exception cref="InvalidOperationException">Thrown when loading fails or the file contains no meshes.</exception>
     /// <exception cref="DuplicateResourceException">Thrown when a mesh with the same name already exists.</exception>
@@ -412,12 +424,12 @@ public class AssetsService : IAssetsService
         Mesh mesh = scene.Meshes[0];
 
         List<float> floatVertices = [];
-        List<System.Numerics.Vector3>? textures = mesh.TextureCoordinateChannels[0];
+        List<Vector3>? textures = mesh.TextureCoordinateChannels[0];
 
         for (int i = 0; i < mesh.VertexCount; i++)
         {
-            Vector3 position = new(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z);
-            Vector3 normal = new(mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z);
+            OpenTK.Mathematics.Vector3 position = new(mesh.Vertices[i].X, mesh.Vertices[i].Y, mesh.Vertices[i].Z);
+            OpenTK.Mathematics.Vector3 normal = new(mesh.Normals[i].X, mesh.Normals[i].Y, mesh.Normals[i].Z);
             Vector2 texture = Vector2.Zero;
             if (mesh.HasTextureCoords(0))
             {
@@ -438,8 +450,8 @@ public class AssetsService : IAssetsService
         float[] vertices = [.. floatVertices];
 
         BoundingBox aabb = mesh.BoundingBox;
-        Vector3 min = new(aabb.Min.X, aabb.Min.Y, aabb.Min.Z);
-        Vector3 max = new(aabb.Max.X, aabb.Max.Y, aabb.Max.Z);
+        OpenTK.Mathematics.Vector3 min = new(aabb.Min.X, aabb.Min.Y, aabb.Min.Z);
+        OpenTK.Mathematics.Vector3 max = new(aabb.Max.X, aabb.Max.Y, aabb.Max.Z);
 
         (int vao, int vbo, int ebo) = GetPositionNormalTextureVao(vertices, indices);
         MeshAsset asset = new()
@@ -457,13 +469,13 @@ public class AssetsService : IAssetsService
     }
 
     /// <summary>
-    /// Creates and registers a procedural sphere mesh.
+    ///     Creates and registers a procedural sphere mesh.
     /// </summary>
     /// <param name="name">Mesh identifier.</param>
     /// <param name="radius">Sphere radius.</param>
     /// <param name="sectors">Number of horizontal segments.</param>
     /// <param name="stacks">Number of vertical segments.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name" /> is null or empty.</exception>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when radius, sectors, or stacks are invalid.</exception>
     /// <exception cref="DuplicateResourceException">Thrown when a mesh with the same name already exists.</exception>
     public void AddSphere(string name, float radius, int sectors, int stacks)
@@ -498,12 +510,12 @@ public class AssetsService : IAssetsService
 
         List<float> vertices = [];
         List<uint> indices = [];
-        Vector3 min = new(-radius);
-        Vector3 max = new(radius);
+        OpenTK.Mathematics.Vector3 min = new(-radius);
+        OpenTK.Mathematics.Vector3 max = new(radius);
 
         for (int i = 0; i <= stacks; ++i)
         {
-            double stackAngle = (Math.PI / 2) - (i * Math.PI / stacks);
+            double stackAngle = Math.PI / 2 - i * Math.PI / stacks;
             double xy = radius * Math.Cos(stackAngle);
             double z = radius * Math.Sin(stackAngle);
 
@@ -519,7 +531,7 @@ public class AssetsService : IAssetsService
                 float nz = (float)(z / radius);
 
                 float s = (float)j / sectors;
-                float t = 1.0f - ((float)i / stacks);
+                float t = 1.0f - (float)i / stacks;
 
                 vertices.Add((float)x);
                 vertices.Add((float)y);
@@ -572,68 +584,8 @@ public class AssetsService : IAssetsService
         _logger?.LogInfo($"Sphere mesh '{name}' created successfully ({indices.Count} indices)");
     }
 
-    private static (int vao, int vbo, int ebo) GetPositionNormalTextureVao(float[] vertices, uint[] indices)
-    {
-        int vao = GL.GenVertexArray();
-        int vbo = GL.GenBuffer();
-        int ebo = GL.GenBuffer();
-        GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
-
-        GL.BindVertexArray(vao);
-
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
-        GlDebugWatchdog.CheckGLError("VBO data upload");
-
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-        GlDebugWatchdog.CheckGLError("EBO data upload");
-
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 0);
-        GL.EnableVertexAttribArray(0);
-
-        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 3 * sizeof(float));
-        GL.EnableVertexAttribArray(1);
-
-        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, RenderConstants.VertexAttributeSize * sizeof(float), 6 * sizeof(float));
-        GL.EnableVertexAttribArray(2);
-
-        GL.BindVertexArray(0);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
-        return (vao, vbo, ebo);
-    }
-
-    private static (int vao, int vbo, int ebo) GetPositionVao(float[] vertices, uint[] indices)
-    {
-        int vbo = GL.GenBuffer();
-        int ebo = GL.GenBuffer();
-        int vao = GL.GenVertexArray();
-        GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
-
-        GL.BindVertexArray(vao);
-
-        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
-        GlDebugWatchdog.CheckGLError("VBO data upload");
-
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-        GlDebugWatchdog.CheckGLError("EBO data upload");
-
-        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, RenderConstants.PositionAttributeSize * sizeof(float), 0);
-        GL.EnableVertexAttribArray(0);
-
-        GL.BindVertexArray(0);
-        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
-        return (vao, vbo, ebo);
-    }
-
     /// <summary>
-    /// Releases all loaded OpenGL resources.
+    ///     Releases all loaded OpenGL resources.
     /// </summary>
     public void Dispose()
     {
@@ -676,5 +628,71 @@ public class AssetsService : IAssetsService
             _boundingBoxes.Clear();
             _disposed = true;
         }
+    }
+
+    private static (int vao, int vbo, int ebo) GetPositionNormalTextureVao(float[] vertices, uint[] indices)
+    {
+        int vao = GL.GenVertexArray();
+        int vbo = GL.GenBuffer();
+        int ebo = GL.GenBuffer();
+        GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
+
+        GL.BindVertexArray(vao);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+        GlDebugWatchdog.CheckGLError("VBO data upload");
+
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices,
+            BufferUsageHint.StaticDraw);
+        GlDebugWatchdog.CheckGLError("EBO data upload");
+
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false,
+            RenderConstants.VertexAttributeSize * sizeof(float), 0);
+        GL.EnableVertexAttribArray(0);
+
+        GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false,
+            RenderConstants.VertexAttributeSize * sizeof(float), 3 * sizeof(float));
+        GL.EnableVertexAttribArray(1);
+
+        GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false,
+            RenderConstants.VertexAttributeSize * sizeof(float), 6 * sizeof(float));
+        GL.EnableVertexAttribArray(2);
+
+        GL.BindVertexArray(0);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
+        return (vao, vbo, ebo);
+    }
+
+    private static (int vao, int vbo, int ebo) GetPositionVao(float[] vertices, uint[] indices)
+    {
+        int vbo = GL.GenBuffer();
+        int ebo = GL.GenBuffer();
+        int vao = GL.GenVertexArray();
+        GlDebugWatchdog.CheckGLError("VAO/VBO/EBO generation");
+
+        GL.BindVertexArray(vao);
+
+        GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+        GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+        GlDebugWatchdog.CheckGLError("VBO data upload");
+
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, ebo);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices,
+            BufferUsageHint.StaticDraw);
+        GlDebugWatchdog.CheckGLError("EBO data upload");
+
+        GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false,
+            RenderConstants.PositionAttributeSize * sizeof(float), 0);
+        GL.EnableVertexAttribArray(0);
+
+        GL.BindVertexArray(0);
+        GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+
+        return (vao, vbo, ebo);
     }
 }

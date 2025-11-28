@@ -44,4 +44,3 @@ public sealed class ExceptionsTests
         Assert.Equal("link error", exception.LinkingLog);
     }
 }
-

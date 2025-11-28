@@ -2,69 +2,33 @@ using NLayer;
 using OpenTK.Audio.OpenAL;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Exceptions;
+using RenderRitesMachine.Services.Diagnostics;
 
-namespace RenderRitesMachine.Services;
+namespace RenderRitesMachine.Services.Audio;
 
 /// <summary>
-/// OpenAL-based audio service with 3D positioning, volume control, and listener management.
+///     OpenAL-based audio service with 3D positioning, volume control, and listener management.
 /// </summary>
 public sealed class AudioService : IAudioService
 {
-    private ALDevice? _audioDevice;
-    private ALContext? _audioContext;
     private readonly Dictionary<string, int> _audioBuffers = [];
-    private readonly Dictionary<int, int> _sources = [];
-    private readonly Dictionary<int, float> _sourceBaseVolumes = [];
-    private int _nextSourceId = 1;
-    private float _masterVolume = 1.0f;
-    private bool _disposed;
     private readonly ILogger? _logger;
+    private readonly Dictionary<int, float> _sourceBaseVolumes = [];
+    private readonly Dictionary<int, int> _sources = [];
+    private ALContext? _audioContext;
+    private ALDevice? _audioDevice;
+    private bool _disposed;
+    private float _masterVolume = 1.0f;
+    private int _nextSourceId = 1;
 
     /// <summary>
-    /// Creates a new <see cref="AudioService"/>.
+    ///     Creates a new <see cref="AudioService" />.
     /// </summary>
     /// <param name="logger">Logger used for diagnostics, or null.</param>
     public AudioService(ILogger? logger = null)
     {
         _logger = logger;
         Initialize();
-    }
-
-    private void Initialize()
-    {
-        try
-        {
-            _audioDevice = ALC.OpenDevice(null);
-
-            if (!_audioDevice.HasValue)
-            {
-                _logger?.LogWarning("Unable to create audio device");
-                return;
-            }
-
-            _audioContext = ALC.CreateContext(_audioDevice.Value, (int[]?)null);
-            if (!_audioContext.HasValue)
-            {
-                _logger?.LogWarning("Unable to create audio context");
-                _ = ALC.CloseDevice(_audioDevice.Value);
-                _audioDevice = null;
-                return;
-            }
-
-            _ = ALC.MakeContextCurrent(_audioContext.Value);
-
-            AL.Listener(ALListener3f.Position, 0, 0, 0);
-            AL.Listener(ALListener3f.Velocity, 0, 0, 0);
-            var forward = new Vector3(0, 0, -1);
-            var up = new Vector3(0, 1, 0);
-            AL.Listener(ALListenerfv.Orientation, ref forward, ref up);
-            AL.Listener(ALListenerf.Gain, _masterVolume);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError($"Failed to initialize AudioService: {ex.Message}");
-            throw new AudioInitializationException($"Failed to initialize AudioService: {ex.Message}", ex);
-        }
     }
 
     public int LoadAudio(string name, string filePath)
@@ -130,8 +94,9 @@ public sealed class AudioService : IAudioService
                     float sample = Math.Clamp(samples[i], -1.0f, 1.0f);
                     short sample16 = (short)(sample * 32767.0f);
                     audioData[i * 2] = (byte)(sample16 & 0xFF);
-                    audioData[(i * 2) + 1] = (byte)((sample16 >> 8) & 0xFF);
+                    audioData[i * 2 + 1] = (byte)((sample16 >> 8) & 0xFF);
                 }
+
                 alFormat = ALFormat.Mono16;
             }
             else
@@ -144,15 +109,17 @@ public sealed class AudioService : IAudioService
                     float monoSample = 0.0f;
                     for (int ch = 0; ch < channels; ch++)
                     {
-                        monoSample += samples[(i * channels) + ch];
+                        monoSample += samples[i * channels + ch];
                     }
+
                     monoSample /= channels;
 
                     monoSample = Math.Clamp(monoSample, -1.0f, 1.0f);
                     short sample16 = (short)(monoSample * 32767.0f);
                     audioData[i * 2] = (byte)(sample16 & 0xFF);
-                    audioData[(i * 2) + 1] = (byte)((sample16 >> 8) & 0xFF);
+                    audioData[i * 2 + 1] = (byte)((sample16 >> 8) & 0xFF);
                 }
+
                 alFormat = ALFormat.Mono16;
             }
 
@@ -169,7 +136,8 @@ public sealed class AudioService : IAudioService
             if (alBuffer == 0)
             {
                 _logger?.LogError("OpenAL GenBuffer returned 0, which indicates an error (context may not be active)");
-                throw new InvalidOperationException("OpenAL GenBuffer returned 0, which indicates an error (context may not be active)");
+                throw new InvalidOperationException(
+                    "OpenAL GenBuffer returned 0, which indicates an error (context may not be active)");
             }
 
             AL.BufferData(alBuffer, alFormat, audioData, sampleRate);
@@ -183,7 +151,8 @@ public sealed class AudioService : IAudioService
             }
 
             _audioBuffers[name] = alBuffer;
-            _logger?.LogDebug($"Loaded audio '{name}' from '{filePath}' ({audioData.Length} bytes, {sampleRate}Hz, {channels}ch -> mono)");
+            _logger?.LogDebug(
+                $"Loaded audio '{name}' from '{filePath}' ({audioData.Length} bytes, {sampleRate}Hz, {channels}ch -> mono)");
 
             return alBuffer;
         }
@@ -404,5 +373,42 @@ public sealed class AudioService : IAudioService
         _audioDevice = null;
         _audioContext = null;
         _disposed = true;
+    }
+
+    private void Initialize()
+    {
+        try
+        {
+            _audioDevice = ALC.OpenDevice(null);
+
+            if (!_audioDevice.HasValue)
+            {
+                _logger?.LogWarning("Unable to create audio device");
+                return;
+            }
+
+            _audioContext = ALC.CreateContext(_audioDevice.Value, (int[]?)null);
+            if (!_audioContext.HasValue)
+            {
+                _logger?.LogWarning("Unable to create audio context");
+                _ = ALC.CloseDevice(_audioDevice.Value);
+                _audioDevice = null;
+                return;
+            }
+
+            _ = ALC.MakeContextCurrent(_audioContext.Value);
+
+            AL.Listener(ALListener3f.Position, 0, 0, 0);
+            AL.Listener(ALListener3f.Velocity, 0, 0, 0);
+            var forward = new Vector3(0, 0, -1);
+            var up = new Vector3(0, 1, 0);
+            AL.Listener(ALListenerfv.Orientation, ref forward, ref up);
+            AL.Listener(ALListenerf.Gain, _masterVolume);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError($"Failed to initialize AudioService: {ex.Message}");
+            throw new AudioInitializationException($"Failed to initialize AudioService: {ex.Message}", ex);
+        }
     }
 }

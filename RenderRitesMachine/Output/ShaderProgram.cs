@@ -7,10 +7,7 @@ internal sealed class ShaderProgram
 {
     internal readonly int Handle = GL.CreateProgram();
 
-    internal void AttachShader(Shader shader)
-    {
-        GL.AttachShader(Handle, shader.Handle);
-    }
+    internal void AttachShader(Shader shader) => GL.AttachShader(Handle, shader.Handle);
 
     internal void Link()
     {
@@ -24,13 +21,7 @@ internal sealed class ShaderProgram
         }
     }
 
-    internal void DetachShader(Shader shader)
-    {
-        GL.DetachShader(Handle, shader.Handle);
-    }
+    internal void DetachShader(Shader shader) => GL.DetachShader(Handle, shader.Handle);
 
-    internal void Delete()
-    {
-        GL.DeleteProgram(Handle);
-    }
+    internal void Delete() => GL.DeleteProgram(Handle);
 }

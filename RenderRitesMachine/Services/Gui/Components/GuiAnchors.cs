@@ -1,7 +1,7 @@
 namespace RenderRitesMachine.Services.Gui.Components;
 
 /// <summary>
-/// Describes how an element should anchor itself horizontally relative to its parent.
+///     Describes how an element should anchor itself horizontally relative to its parent.
 /// </summary>
 public enum GuiHorizontalAnchor
 {
@@ -12,7 +12,7 @@ public enum GuiHorizontalAnchor
 }
 
 /// <summary>
-/// Describes how an element should anchor itself vertically relative to its parent.
+///     Describes how an element should anchor itself vertically relative to its parent.
 /// </summary>
 public enum GuiVerticalAnchor
 {
@@ -21,5 +21,3 @@ public enum GuiVerticalAnchor
     Bottom,
     Stretch
 }
-
-

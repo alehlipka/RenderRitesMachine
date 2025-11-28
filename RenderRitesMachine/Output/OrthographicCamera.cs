@@ -4,14 +4,14 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Orthographic camera suited for 2D scenes or isometric views.
+///     Orthographic camera suited for 2D scenes or isometric views.
 /// </summary>
 public class OrthographicCamera : CameraBase
 {
     private float _height = 10.0f;
 
     /// <summary>
-    /// Height of the orthographic volume (world units). Width is derived from <see cref="CameraBase.AspectRatio"/>.
+    ///     Height of the orthographic volume (world units). Width is derived from <see cref="CameraBase.AspectRatio" />.
     /// </summary>
     public float Height
     {
@@ -20,7 +20,8 @@ public class OrthographicCamera : CameraBase
         {
             if (value <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(value), value, "Orthographic height must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(value), value,
+                    "Orthographic height must be greater than zero.");
             }
 
             if (Math.Abs(_height - value) > RenderConstants.FloatEpsilon)
@@ -32,7 +33,7 @@ public class OrthographicCamera : CameraBase
     }
 
     /// <summary>
-    /// Width of the orthographic volume (world units).
+    ///     Width of the orthographic volume (world units).
     /// </summary>
     public float Width => _height * AspectRatio;
 
@@ -41,7 +42,7 @@ public class OrthographicCamera : CameraBase
     {
         float width = Width;
         float height = _height;
-        return Matrix4.CreateOrthographic(width, height, RenderConstants.CameraNearPlane, RenderConstants.CameraFarPlane);
+        return Matrix4.CreateOrthographic(width, height, RenderConstants.CameraNearPlane,
+            RenderConstants.CameraFarPlane);
     }
 }
-

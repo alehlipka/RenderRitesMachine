@@ -78,6 +78,7 @@ public struct Transform : IEcsAutoReset<Transform>
                     Matrix4.CreateTranslation(_position);
                 _modelMatrixDirty = false;
             }
+
             return _cachedModelMatrix;
         }
     }
@@ -92,4 +93,3 @@ public struct Transform : IEcsAutoReset<Transform>
         c._cachedModelMatrix = Matrix4.Identity;
     }
 }
-

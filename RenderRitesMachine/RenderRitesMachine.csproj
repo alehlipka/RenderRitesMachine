@@ -8,12 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AssimpNetter" Version="6.0.2.1" />
-      <PackageReference Include="Leopotam.EcsLite" Version="1.0.1" />
-      <PackageReference Include="NLayer" Version="1.16.0" />
-      <PackageReference Include="OpenTK" Version="4.9.4" />
-      <PackageReference Include="StbImageSharp" Version="2.30.15" />
-      <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
+        <PackageReference Include="AssimpNetter" Version="6.0.2.1"/>
+        <PackageReference Include="Leopotam.EcsLite" Version="1.0.1"/>
+        <PackageReference Include="NLayer" Version="1.16.0"/>
+        <PackageReference Include="OpenTK" Version="4.9.4"/>
+        <PackageReference Include="StbImageSharp" Version="2.30.15"/>
+        <PackageReference Include="StbTrueTypeSharp" Version="1.26.12"/>
     </ItemGroup>
 
 </Project>

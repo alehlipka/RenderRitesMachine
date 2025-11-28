@@ -1,12 +1,15 @@
 using Moq;
 using RenderRitesMachine.Output;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Tests for <see cref="SceneManager"/>.
+///     Tests for <see cref="SceneManager" />.
 /// </summary>
 public sealed class SceneManagerTests
 {
@@ -222,15 +225,6 @@ public sealed class SceneManagerTests
         Assert.True(true);
     }
 
-    private sealed class TestScene(string name, IAssetsService assetsService, ITimeService timeService,
-        IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
-        : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
-    {
-        protected override void OnLoad()
-        {
-        }
-    }
-
     [Fact]
     public void SwitchToMultipleRapidSwitchesWorksCorrectly()
     {
@@ -335,5 +329,21 @@ public sealed class SceneManagerTests
         manager.Dispose();
 
         Assert.True(true);
+    }
+
+    private sealed class TestScene(
+        string name,
+        IAssetsService assetsService,
+        ITimeService timeService,
+        IRenderService renderService,
+        IAudioService audioService,
+        IGuiService guiService,
+        ISceneManager sceneManager,
+        ILogger logger)
+        : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
+    {
+        protected override void OnLoad()
+        {
+        }
     }
 }

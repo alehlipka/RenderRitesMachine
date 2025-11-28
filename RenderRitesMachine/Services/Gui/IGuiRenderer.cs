@@ -1,7 +1,7 @@
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// Abstraction over the GPU-specific GUI renderer to simplify testing.
+///     Abstraction over the GPU-specific GUI renderer to simplify testing.
 /// </summary>
 public interface IGuiRenderer : IDisposable
 {
@@ -10,4 +10,3 @@ public interface IGuiRenderer : IDisposable
     void UploadSurface(GuiSurface surface);
     void Render();
 }
-

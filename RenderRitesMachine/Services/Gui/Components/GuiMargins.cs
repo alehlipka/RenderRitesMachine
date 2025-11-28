@@ -1,7 +1,7 @@
 namespace RenderRitesMachine.Services.Gui.Components;
 
 /// <summary>
-/// Simple helper that represents outer spacing for a GUI element.
+///     Simple helper that represents outer spacing for a GUI element.
 /// </summary>
 public struct GuiMargins
 {
@@ -33,5 +33,3 @@ public struct GuiMargins
     public int Horizontal => Left + Right;
     public int Vertical => Top + Bottom;
 }
-
-

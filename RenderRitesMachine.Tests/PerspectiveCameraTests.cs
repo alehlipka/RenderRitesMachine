@@ -5,7 +5,7 @@ using RenderRitesMachine.Output;
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Tests for <see cref="PerspectiveCamera"/>.
+///     Tests for <see cref="PerspectiveCamera" />.
 /// </summary>
 public sealed class PerspectiveCameraTests
 {

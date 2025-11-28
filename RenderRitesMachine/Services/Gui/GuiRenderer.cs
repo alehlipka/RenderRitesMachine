@@ -4,18 +4,18 @@ using RenderRitesMachine.Output;
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// Uploads the GUI surface to the GPU and draws it as a fullscreen quad.
+///     Uploads the GUI surface to the GPU and draws it as a fullscreen quad.
 /// </summary>
 internal sealed class GuiRenderer : IGuiRenderer
 {
-    private int _vao;
-    private int _vbo;
     private int _ebo;
+    private bool _initialized;
     private int _program;
+    private int _textureHeight;
     private int _textureId;
     private int _textureWidth;
-    private int _textureHeight;
-    private bool _initialized;
+    private int _vao;
+    private int _vbo;
 
     public void Initialize()
     {
@@ -32,10 +32,10 @@ internal sealed class GuiRenderer : IGuiRenderer
 
         float[] vertices =
         {
-            -1f,  1f,      0f, 0f,
-            -1f, -1f,      0f, 1f,
-             1f, -1f,      1f, 1f,
-             1f,  1f,      1f, 0f
+            -1f, 1f, 0f, 0f,
+            -1f, -1f, 0f, 1f,
+            1f, -1f, 1f, 1f,
+            1f, 1f, 1f, 0f
         };
 
         uint[] indices = { 0, 1, 2, 0, 2, 3 };
@@ -44,7 +44,8 @@ internal sealed class GuiRenderer : IGuiRenderer
         GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices,
+            BufferUsageHint.StaticDraw);
 
         GL.EnableVertexAttribArray(0);
         GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 4 * sizeof(float), 0);
@@ -217,4 +218,3 @@ internal sealed class GuiRenderer : IGuiRenderer
         return shaderProgram.Handle;
     }
 }
-

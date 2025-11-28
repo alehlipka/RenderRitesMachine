@@ -3,7 +3,7 @@ using OpenTK.Windowing.Common;
 namespace RenderRitesMachine.Configuration;
 
 /// <summary>
-/// User-facing engine settings with built-in validation.
+///     User-facing engine settings with built-in validation.
 /// </summary>
 public sealed record RenderSettings
 {
@@ -26,30 +26,35 @@ public sealed record RenderSettings
     public int DefaultSamples { get; init; } = 4;
     public WindowState DefaultWindowState { get; init; } = WindowState.Normal;
     public double UpdateFrequency { get; init; } = 120.0;
+
     /// <summary>
-    /// Ensures all values fall within supported ranges.
+    ///     Ensures all values fall within supported ranges.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when an invalid value is detected.</exception>
     public void Validate()
     {
         if (MaxStencilValue is < 1 or > 255)
         {
-            throw new ArgumentOutOfRangeException(nameof(MaxStencilValue), MaxStencilValue, "Stencil value must be in range [1,255].");
+            throw new ArgumentOutOfRangeException(nameof(MaxStencilValue), MaxStencilValue,
+                "Stencil value must be in range [1,255].");
         }
 
         if (AnisotropicFilteringLevel <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(AnisotropicFilteringLevel), AnisotropicFilteringLevel, "Anisotropic filtering level must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(AnisotropicFilteringLevel), AnisotropicFilteringLevel,
+                "Anisotropic filtering level must be positive.");
         }
 
         if (CameraNearPlane <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(CameraNearPlane), CameraNearPlane, "Near plane must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(CameraNearPlane), CameraNearPlane,
+                "Near plane must be greater than zero.");
         }
 
         if (CameraFarPlane <= CameraNearPlane)
         {
-            throw new ArgumentOutOfRangeException(nameof(CameraFarPlane), CameraFarPlane, "Far plane must be greater than near plane.");
+            throw new ArgumentOutOfRangeException(nameof(CameraFarPlane), CameraFarPlane,
+                "Far plane must be greater than near plane.");
         }
 
         if (CameraMinFov <= 0)
@@ -59,7 +64,8 @@ public sealed record RenderSettings
 
         if (CameraMaxFov <= CameraMinFov || CameraMaxFov > 90.0f)
         {
-            throw new ArgumentOutOfRangeException(nameof(CameraMaxFov), CameraMaxFov, "Max FOV must be > Min FOV and <= 90.");
+            throw new ArgumentOutOfRangeException(nameof(CameraMaxFov), CameraMaxFov,
+                "Max FOV must be > Min FOV and <= 90.");
         }
 
         if (CameraMinPitch < -90.0f)
@@ -69,57 +75,68 @@ public sealed record RenderSettings
 
         if (CameraMaxPitch > 90.0f || CameraMaxPitch <= CameraMinPitch)
         {
-            throw new ArgumentOutOfRangeException(nameof(CameraMaxPitch), CameraMaxPitch, "Max pitch must be <= 90 and greater than min.");
+            throw new ArgumentOutOfRangeException(nameof(CameraMaxPitch), CameraMaxPitch,
+                "Max pitch must be <= 90 and greater than min.");
         }
 
         if (VertexAttributeSize <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(VertexAttributeSize), VertexAttributeSize, "Vertex attribute size must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(VertexAttributeSize), VertexAttributeSize,
+                "Vertex attribute size must be positive.");
         }
 
         if (PositionAttributeSize <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(PositionAttributeSize), PositionAttributeSize, "Position attribute size must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(PositionAttributeSize), PositionAttributeSize,
+                "Position attribute size must be positive.");
         }
 
         if (VertexAttributeSize < PositionAttributeSize)
         {
-            throw new ArgumentOutOfRangeException(nameof(VertexAttributeSize), VertexAttributeSize, "Vertex attribute size must be >= position attribute size.");
+            throw new ArgumentOutOfRangeException(nameof(VertexAttributeSize), VertexAttributeSize,
+                "Vertex attribute size must be >= position attribute size.");
         }
 
         if (FloatEpsilon is <= 0 or >= 0.001f)
         {
-            throw new ArgumentOutOfRangeException(nameof(FloatEpsilon), FloatEpsilon, "Float epsilon must be in range (0, 0.001).");
+            throw new ArgumentOutOfRangeException(nameof(FloatEpsilon), FloatEpsilon,
+                "Float epsilon must be in range (0, 0.001).");
         }
 
         if (MinWindowWidth <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(MinWindowWidth), MinWindowWidth, "Min window width must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(MinWindowWidth), MinWindowWidth,
+                "Min window width must be positive.");
         }
 
         if (MinWindowHeight <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(MinWindowHeight), MinWindowHeight, "Min window height must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(MinWindowHeight), MinWindowHeight,
+                "Min window height must be positive.");
         }
 
         if (DefaultWindowWidth < MinWindowWidth)
         {
-            throw new ArgumentOutOfRangeException(nameof(DefaultWindowWidth), DefaultWindowWidth, "Default width must be >= minimal width.");
+            throw new ArgumentOutOfRangeException(nameof(DefaultWindowWidth), DefaultWindowWidth,
+                "Default width must be >= minimal width.");
         }
 
         if (DefaultWindowHeight < MinWindowHeight)
         {
-            throw new ArgumentOutOfRangeException(nameof(DefaultWindowHeight), DefaultWindowHeight, "Default height must be >= minimal height.");
+            throw new ArgumentOutOfRangeException(nameof(DefaultWindowHeight), DefaultWindowHeight,
+                "Default height must be >= minimal height.");
         }
 
         if (DefaultSamples is < 1 or > 16)
         {
-            throw new ArgumentOutOfRangeException(nameof(DefaultSamples), DefaultSamples, "Samples must be in range [1,16].");
+            throw new ArgumentOutOfRangeException(nameof(DefaultSamples), DefaultSamples,
+                "Samples must be in range [1,16].");
         }
 
         if (UpdateFrequency < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(UpdateFrequency), UpdateFrequency, "Update frequency must be positive.");
+            throw new ArgumentOutOfRangeException(nameof(UpdateFrequency), UpdateFrequency,
+                "Update frequency must be positive.");
         }
     }
 }

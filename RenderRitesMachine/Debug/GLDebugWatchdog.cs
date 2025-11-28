@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL4;
 using RenderRitesMachine.Exceptions;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Diagnostics;
 
 namespace RenderRitesMachine.Debug;
 
@@ -45,7 +45,7 @@ internal static class GlDebugWatchdog
     }
 
     /// <summary>
-    /// Checks for OpenGL errors and throws when one is detected. Use around critical operations.
+    ///     Checks for OpenGL errors and throws when one is detected. Use around critical operations.
     /// </summary>
     /// <param name="operation">Operation name for diagnostics.</param>
     /// <exception cref="OpenGLErrorException">Thrown when an OpenGL error occurs.</exception>

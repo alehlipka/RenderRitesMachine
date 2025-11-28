@@ -1,9 +1,9 @@
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Diagnostics;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Tests for <see cref="Logger"/>.
+///     Tests for <see cref="Logger" />.
 /// </summary>
 public sealed class LoggerTests
 {
@@ -239,7 +239,8 @@ public sealed class LoggerTests
         var logger = new Logger { MinimumLevel = LogLevel.Error };
         var exception = new InvalidOperationException("Test exception");
 
-        string output = CaptureConsoleOutput(() => logger.LogException(LogLevel.Warning, exception, "Warning exception"));
+        string output =
+            CaptureConsoleOutput(() => logger.LogException(LogLevel.Warning, exception, "Warning exception"));
 
         Assert.DoesNotContain("Warning exception", output, StringComparison.Ordinal);
     }
@@ -301,7 +302,7 @@ public sealed class LoggerTests
     }
 
     /// <summary>
-    /// Captures console output and returns it as a string.
+    ///     Captures console output and returns it as a string.
     /// </summary>
     private static string CaptureConsoleOutput(Action action)
     {
@@ -370,7 +371,7 @@ public sealed class LoggerTests
         var logger = new Logger();
         var exception = new InvalidOperationException("Test exception");
 
-        string output = CaptureConsoleOutput(() => logger.LogException(LogLevel.Error, exception, null));
+        string output = CaptureConsoleOutput(() => logger.LogException(LogLevel.Error, exception));
 
         Assert.Contains("ERROR", output, StringComparison.Ordinal);
         Assert.Contains("InvalidOperationException", output, StringComparison.Ordinal);

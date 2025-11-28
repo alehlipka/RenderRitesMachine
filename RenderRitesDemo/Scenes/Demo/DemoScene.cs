@@ -5,21 +5,31 @@ using RenderRitesMachine.Assets;
 using RenderRitesMachine.ECS.Components;
 using RenderRitesMachine.ECS.Systems;
 using RenderRitesMachine.Output;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesDemo.Scenes.Demo;
 
-internal sealed class DemoScene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+internal sealed class DemoScene(
+    string name,
+    IAssetsService assetsService,
+    ITimeService timeService,
+    IRenderService renderService,
+    IAudioService audioService,
+    IGuiService guiService,
+    ISceneManager sceneManager,
+    ILogger logger)
     : Scene(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger)
 {
-    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    private readonly string _assetsRoot = Path.Combine(AppContext.BaseDirectory, "Assets");
-
     private const string DemoShaderName = "demo/demo-shader";
     private const string TestMeshName = "demo/test";
     private const string TestTextureName = "demo/test-texture";
     private const string AmbientAudioName = "demo/ambient-loop";
+    private readonly string _assetsRoot = Path.Combine(AppContext.BaseDirectory, "Assets");
+    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     private int? _ambientSourceId;
     private GuiFont? _guiFont;
@@ -45,7 +55,7 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
     private void RegisterSystems()
     {
         _ = UpdateSystems
-            .Add(new CameraOrbitSystem(Vector3.Zero, radius: 6.0f, height: 1.8f, speed: 0.35f))
+            .Add(new CameraOrbitSystem(Vector3.Zero, 6.0f, 1.8f, 0.35f))
             .Add(new RotationAnimationSystem())
             .Add(new FloatingAnimationSystem());
 
@@ -85,30 +95,30 @@ internal sealed class DemoScene(string name, IAssetsService assetsService, ITime
     private void SpawnDemoEntities()
     {
         CreateTestEntity(
-            position: new Vector3(0f, -0.5f, 0f),
-            scale: new Vector3(0.9f),
-            rotationSpeed: 0.65f,
-            floatAmplitude: 0.25f,
-            floatFrequency: 0.4f,
-            floatPhase: 0f
+            new Vector3(0f, -0.5f, 0f),
+            new Vector3(0.9f),
+            0.65f,
+            0.25f,
+            0.4f,
+            0f
         );
 
         CreateTestEntity(
-            position: new Vector3(2.0f, -0.4f, -1.8f),
-            scale: new Vector3(0.75f),
-            rotationSpeed: -0.45f,
-            floatAmplitude: 0.15f,
-            floatFrequency: 0.55f,
-            floatPhase: MathF.PI / 2f
+            new Vector3(2.0f, -0.4f, -1.8f),
+            new Vector3(0.75f),
+            -0.45f,
+            0.15f,
+            0.55f,
+            MathF.PI / 2f
         );
 
         CreateTestEntity(
-            position: new Vector3(-2.4f, -0.45f, 1.6f),
-            scale: new Vector3(0.8f),
-            rotationSpeed: 0.9f,
-            floatAmplitude: 0.2f,
-            floatFrequency: 0.7f,
-            floatPhase: MathF.PI
+            new Vector3(-2.4f, -0.45f, 1.6f),
+            new Vector3(0.8f),
+            0.9f,
+            0.2f,
+            0.7f,
+            MathF.PI
         );
     }
 

@@ -5,14 +5,11 @@ namespace RenderRitesMachine.Output;
 
 internal sealed class Shader(string path, ShaderType type)
 {
-    private readonly string _path = path;
-    private readonly ShaderType _type = type;
-
     internal readonly int Handle = GL.CreateShader(type);
 
     internal void Create()
     {
-        string source = File.Exists(_path) ? File.ReadAllText(_path) : _path;
+        string source = File.Exists(path) ? File.ReadAllText(path) : path;
 
         GL.ShaderSource(Handle, source);
         GL.CompileShader(Handle);
@@ -24,11 +21,8 @@ internal sealed class Shader(string path, ShaderType type)
         }
 
         string infoLog = GL.GetShaderInfoLog(Handle);
-        throw new ShaderCompilationException(_type.ToString(), _path, infoLog);
+        throw new ShaderCompilationException(type.ToString(), path, infoLog);
     }
 
-    internal void Delete()
-    {
-        GL.DeleteShader(Handle);
-    }
+    internal void Delete() => GL.DeleteShader(Handle);
 }

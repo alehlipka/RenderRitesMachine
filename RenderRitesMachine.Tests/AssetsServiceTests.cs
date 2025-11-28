@@ -1,11 +1,11 @@
 using RenderRitesMachine.Assets;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Graphics;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Input-validation tests for <see cref="AssetsService"/>.
-/// Note: full resource loading tests require an OpenGL context, so this suite focuses on validation only.
+///     Input-validation tests for <see cref="AssetsService" />.
+///     Note: full resource loading tests require an OpenGL context, so this suite focuses on validation only.
 /// </summary>
 public sealed class AssetsServiceTests
 {
@@ -109,7 +109,8 @@ public sealed class AssetsServiceTests
     {
         using var service = new AssetsService();
 
-        KeyNotFoundException exception = Assert.Throws<KeyNotFoundException>(() => service.GetBoundingBox("nonexistent"));
+        KeyNotFoundException exception =
+            Assert.Throws<KeyNotFoundException>(() => service.GetBoundingBox("nonexistent"));
         Assert.Contains("nonexistent", exception.Message, StringComparison.Ordinal);
     }
 
@@ -173,7 +174,7 @@ public sealed class AssetsServiceTests
     public void AddTextureWithNonExistentFileThrowsFileNotFoundException()
     {
         using var service = new AssetsService();
-        string nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".png");
+        string nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
 
         _ = Assert.Throws<FileNotFoundException>(() =>
             service.AddTexture("texture", TextureType.ColorMap, nonExistentPath));
@@ -341,7 +342,7 @@ public sealed class AssetsServiceTests
     public void AddMeshFromFileWithNonExistentFileThrowsFileNotFoundException()
     {
         using var service = new AssetsService();
-        string nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".obj");
+        string nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".obj");
 
         _ = Assert.Throws<FileNotFoundException>(() =>
             service.AddMeshFromFile("mesh", nonExistentPath));

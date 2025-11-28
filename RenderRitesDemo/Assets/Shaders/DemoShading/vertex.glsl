@@ -16,9 +16,9 @@ void main()
 {
     gl_Position = vec4(aPosition, 1.0) * model * view * projection;
     vFragPos = vec3(vec4(aPosition, 1.0) * model * view);
-    
+
     mat4 invModelMatrix = inverse(model);
     vNormal = normalize(vec3(invModelMatrix * vec4(aNormal, 0.0)));
-    
+
     vTexCoord = aTexCoord;
 }

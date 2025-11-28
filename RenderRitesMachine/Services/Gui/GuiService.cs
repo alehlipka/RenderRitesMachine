@@ -1,20 +1,21 @@
 using OpenTK.Mathematics;
+using RenderRitesMachine.Services.Diagnostics;
 
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// Default GUI service implementation that exposes a software surface, input events, and rendering pipeline.
+///     Default GUI service implementation that exposes a software surface, input events, and rendering pipeline.
 /// </summary>
 public sealed class GuiService : IGuiService
 {
-    private readonly GuiSurface _surface = new();
-    private readonly IGuiRenderer _renderer;
-    private readonly GuiTextRenderer _textRenderer = new();
     private readonly ILogger _logger;
-    private bool _initialized;
+    private readonly IGuiRenderer _renderer;
+    private readonly GuiSurface _surface = new();
+    private readonly GuiTextRenderer _textRenderer = new();
     private bool _frameInProgress;
     private bool _frameUploaded;
     private bool _hasDrawCommands;
+    private bool _initialized;
 
     public GuiService(ILogger logger, IGuiRenderer? renderer = null)
     {
@@ -153,10 +154,7 @@ public sealed class GuiService : IGuiService
         _hasDrawCommands = true;
     }
 
-    public void Dispose()
-    {
-        _renderer.Dispose();
-    }
+    public void Dispose() => _renderer.Dispose();
 
     private void ThrowIfNotInitialized()
     {
@@ -178,4 +176,3 @@ public sealed class GuiService : IGuiService
         }
     }
 }
-

@@ -64,9 +64,9 @@ public sealed class OrthographicCameraTests
             Height = 6.0f
         };
 
-        Matrix4 expected = Matrix4.CreateOrthographic(camera.Width, camera.Height, RenderConstants.CameraNearPlane, RenderConstants.CameraFarPlane);
+        var expected = Matrix4.CreateOrthographic(camera.Width, camera.Height, RenderConstants.CameraNearPlane,
+            RenderConstants.CameraFarPlane);
 
         Assert.Equal(expected, camera.ProjectionMatrix);
     }
 }
-

@@ -60,4 +60,3 @@ public sealed class RenderSettingsTests
         _ = Assert.Throws<ArgumentOutOfRangeException>(() => settings.Validate());
     }
 }
-

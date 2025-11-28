@@ -53,4 +53,3 @@ public class FrameTimeCounterTests
         averageField?.SetValue(null, 0d);
     }
 }
-

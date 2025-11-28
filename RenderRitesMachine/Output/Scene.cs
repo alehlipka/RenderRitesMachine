@@ -1,68 +1,69 @@
 using Leopotam.EcsLite;
 using OpenTK.Windowing.Common;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Base class for all application scenes. Provides an ECS world, update/render/resize systems,
-/// a camera, and shared services.
+///     Base class for all application scenes. Provides an ECS world, update/render/resize systems,
+///     a camera, and shared services.
 /// </summary>
 public abstract class Scene : IDisposable
 {
-    /// <summary>
-    /// Scene name.
-    /// </summary>
-    public string Name { get; }
+    private readonly SystemSharedObject _shared;
+    private readonly ITimeService _timeService;
 
     /// <summary>
-    /// ECS world that stores entities and components.
-    /// </summary>
-    protected readonly EcsWorld World;
-
-    /// <summary>
-    /// Systems executed during the update phase each frame.
-    /// </summary>
-    protected readonly EcsSystems UpdateSystems;
-
-    /// <summary>
-    /// Systems executed during the render phase each frame.
-    /// </summary>
-    protected readonly EcsSystems RenderSystems;
-
-    /// <summary>
-    /// Systems executed when the window is resized.
-    /// </summary>
-    protected readonly EcsSystems ResizeSystems;
-
-    /// <summary>
-    /// Scene camera responsible for view/projection transforms.
-    /// </summary>
-    protected readonly ICamera Camera;
-
-    /// <summary>
-    /// Assets service that loads meshes, shaders, and textures.
+    ///     Assets service that loads meshes, shaders, and textures.
     /// </summary>
     protected readonly IAssetsService Assets;
 
     /// <summary>
-    /// Audio service shared across the scene.
+    ///     Audio service shared across the scene.
     /// </summary>
     protected readonly IAudioService Audio;
 
-    private bool _isLoaded;
-    private readonly ITimeService _timeService;
-    private readonly SystemSharedObject _shared;
-    protected IGuiService Gui { get; }
+    /// <summary>
+    ///     Scene camera responsible for view/projection transforms.
+    /// </summary>
+    protected readonly ICamera Camera;
 
-    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
-        : this(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger, new PerspectiveCamera())
+    /// <summary>
+    ///     Systems executed during the render phase each frame.
+    /// </summary>
+    protected readonly EcsSystems RenderSystems;
+
+    /// <summary>
+    ///     Systems executed when the window is resized.
+    /// </summary>
+    protected readonly EcsSystems ResizeSystems;
+
+    /// <summary>
+    ///     Systems executed during the update phase each frame.
+    /// </summary>
+    protected readonly EcsSystems UpdateSystems;
+
+    /// <summary>
+    ///     ECS world that stores entities and components.
+    /// </summary>
+    protected readonly EcsWorld World;
+
+    private bool _isLoaded;
+
+    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService,
+        IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger)
+        : this(name, assetsService, timeService, renderService, audioService, guiService, sceneManager, logger,
+            new PerspectiveCamera())
     {
     }
 
-    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService, IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger, ICamera camera)
+    protected Scene(string name, IAssetsService assetsService, ITimeService timeService, IRenderService renderService,
+        IAudioService audioService, IGuiService guiService, ISceneManager sceneManager, ILogger logger, ICamera camera)
     {
         ArgumentNullException.ThrowIfNull(camera);
 
@@ -71,7 +72,8 @@ public abstract class Scene : IDisposable
         Camera = camera;
         Assets = assetsService;
         Audio = audioService;
-        _shared = new SystemSharedObject(Camera, _timeService, Assets, renderService, audioService, guiService, sceneManager, logger);
+        _shared = new SystemSharedObject(Camera, _timeService, Assets, renderService, audioService, guiService,
+            sceneManager, logger);
 
         Name = name;
         World = new EcsWorld();
@@ -81,77 +83,11 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Assigns the window instance so systems can access it via <see cref="SystemSharedObject"/>.
+    ///     Scene name.
     /// </summary>
-    /// <param name="window">Application window.</param>
-    public void SetWindow(Window window)
-    {
-        _shared.Window = window;
-    }
+    public string Name { get; }
 
-    /// <summary>
-    /// Initializes the scene. Called automatically on the first use.
-    /// </summary>
-    public void Initialize()
-    {
-        if (_isLoaded)
-        {
-            return;
-        }
-
-        _isLoaded = true;
-        _shared.Logger.LogDebug($"Initializing scene '{Name}'");
-        OnLoad();
-        UpdateSystems.Init();
-        ResizeSystems.Init();
-        _shared.Logger.LogInfo($"Scene '{Name}' initialized successfully");
-    }
-
-    /// <summary>
-    /// Updates the scene each frame before rendering.
-    /// </summary>
-    /// <param name="args">Frame timing arguments.</param>
-    public void UpdateScene(FrameEventArgs args)
-    {
-        if (!_isLoaded)
-        {
-            return;
-        }
-
-        _timeService.UpdateDeltaTime = (float)args.Time;
-        UpdateSystems.Run();
-    }
-
-    /// <summary>
-    /// Renders the scene each frame.
-    /// </summary>
-    /// <param name="args">Frame timing arguments.</param>
-    public void RenderScene(FrameEventArgs args)
-    {
-        if (!_isLoaded)
-        {
-            return;
-        }
-
-        _timeService.RenderDeltaTime = (float)args.Time;
-        _shared.ClearActiveShaders();
-        RenderSystems.Run();
-        _shared.UpdateActiveShaders();
-    }
-
-    /// <summary>
-    /// Handles window resize events.
-    /// </summary>
-    /// <param name="e">Resize event arguments.</param>
-    public void ResizeScene(ResizeEventArgs e)
-    {
-        if (!_isLoaded)
-        {
-            return;
-        }
-
-        ResizeSystems.Run();
-    }
+    protected IGuiService Gui { get; }
 
     public void Dispose()
     {
@@ -180,7 +116,77 @@ public abstract class Scene : IDisposable
     }
 
     /// <summary>
-    /// Called during scene initialization. Override to load resources and configure entities.
+    ///     Assigns the window instance so systems can access it via <see cref="SystemSharedObject" />.
+    /// </summary>
+    /// <param name="window">Application window.</param>
+    public void SetWindow(Window window) => _shared.Window = window;
+
+    /// <summary>
+    ///     Initializes the scene. Called automatically on the first use.
+    /// </summary>
+    public void Initialize()
+    {
+        if (_isLoaded)
+        {
+            return;
+        }
+
+        _isLoaded = true;
+        _shared.Logger.LogDebug($"Initializing scene '{Name}'");
+        OnLoad();
+        UpdateSystems.Init();
+        ResizeSystems.Init();
+        _shared.Logger.LogInfo($"Scene '{Name}' initialized successfully");
+    }
+
+    /// <summary>
+    ///     Updates the scene each frame before rendering.
+    /// </summary>
+    /// <param name="args">Frame timing arguments.</param>
+    public void UpdateScene(FrameEventArgs args)
+    {
+        if (!_isLoaded)
+        {
+            return;
+        }
+
+        _timeService.UpdateDeltaTime = (float)args.Time;
+        UpdateSystems.Run();
+    }
+
+    /// <summary>
+    ///     Renders the scene each frame.
+    /// </summary>
+    /// <param name="args">Frame timing arguments.</param>
+    public void RenderScene(FrameEventArgs args)
+    {
+        if (!_isLoaded)
+        {
+            return;
+        }
+
+        _timeService.RenderDeltaTime = (float)args.Time;
+        _shared.ClearActiveShaders();
+        RenderSystems.Run();
+        _shared.UpdateActiveShaders();
+    }
+
+    /// <summary>
+    ///     Handles window resize events.
+    /// </summary>
+    /// <param name="e">Resize event arguments.</param>
+    public void ResizeScene(ResizeEventArgs e)
+    {
+        if (!_isLoaded)
+        {
+            return;
+        }
+
+        ResizeSystems.Run();
+    }
+
+    /// <summary>
+    ///     Called during scene initialization. Override to load resources and configure entities.
     /// </summary>
     protected abstract void OnLoad();
 }

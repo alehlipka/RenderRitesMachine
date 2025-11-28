@@ -1,4 +1,5 @@
 using OpenTK.Mathematics;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Services.Gui.Components;
 
@@ -38,4 +39,3 @@ public class Panel : GuiElement
     protected virtual Color4 ResolveBackgroundColor() => BackgroundColor;
     protected virtual Color4 ResolveBorderColor() => BorderColor;
 }
-

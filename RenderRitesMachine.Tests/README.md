@@ -7,11 +7,13 @@
 ### Через командную строку
 
 Из корня решения:
+
 ```bash
 dotnet test
 ```
 
 Из директории проекта тестов:
+
 ```bash
 cd RenderRitesMachine.Tests
 dotnet test
@@ -20,27 +22,32 @@ dotnet test
 ### С различными опциями
 
 **Подробный вывод:**
+
 ```bash
 dotnet test --verbosity normal
 dotnet test --verbosity detailed
 ```
 
 **Запуск конкретного класса тестов:**
+
 ```bash
 dotnet test --filter "FullyQualifiedName~PerspectiveCameraTests"
 ```
 
 **Запуск конкретного теста:**
+
 ```bash
 dotnet test --filter "FullyQualifiedName~PerspectiveCameraTests.Constructor_InitializesWithDefaultValues"
 ```
 
 **Запуск только пройденных тестов (исключая пропущенные):**
+
 ```bash
 dotnet test --filter "FullyQualifiedName!~SystemSharedObjectTests"
 ```
 
 **С покрытием кода:**
+
 ```bash
 dotnet test /p:CollectCoverage=true
 ```
@@ -74,6 +81,7 @@ dotnet test /p:CollectCoverage=true
 4. **В тестах используется мок `IOpenGLWrapper`** - позволяет тестировать логику без реального OpenGL контекста
 
 Этот подход позволяет:
+
 - ✅ Тестировать логику управления шейдерами без OpenGL контекста
 - ✅ Проверять правильность вызовов OpenGL методов через моки
 - ✅ Сохранить обратную совместимость (по умолчанию используется реальный `OpenGLWrapper`)

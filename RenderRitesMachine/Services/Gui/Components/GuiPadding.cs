@@ -1,7 +1,7 @@
 namespace RenderRitesMachine.Services.Gui.Components;
 
 /// <summary>
-/// Represents inner spacing (padding) for a GUI element.
+///     Represents inner spacing (padding) for a GUI element.
 /// </summary>
 public struct GuiPadding
 {
@@ -33,5 +33,3 @@ public struct GuiPadding
     public int Horizontal => Left + Right;
     public int Vertical => Top + Bottom;
 }
-
-

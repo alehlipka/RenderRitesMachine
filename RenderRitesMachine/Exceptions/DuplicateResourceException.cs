@@ -1,22 +1,12 @@
 namespace RenderRitesMachine.Exceptions;
 
 /// <summary>
-/// Thrown when attempting to add a resource with an existing name.
+///     Thrown when attempting to add a resource with an existing name.
 /// </summary>
 public class DuplicateResourceException : Exception
 {
     /// <summary>
-    /// Name of the resource that already exists.
-    /// </summary>
-    public string ResourceName { get; } = string.Empty;
-
-    /// <summary>
-    /// Resource type (e.g., mesh, shader, texture, bounding box).
-    /// </summary>
-    public string ResourceType { get; } = string.Empty;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DuplicateResourceException"/> class.
+    ///     Initializes a new instance of the <see cref="DuplicateResourceException" /> class.
     /// </summary>
     /// <param name="resourceType">Resource type (e.g., mesh, shader, texture, bounding box).</param>
     /// <param name="resourceName">Name of the resource that already exists.</param>
@@ -28,7 +18,7 @@ public class DuplicateResourceException : Exception
     }
 
     /// <summary>
-    /// Initializes a new instance with a custom error message.
+    ///     Initializes a new instance with a custom error message.
     /// </summary>
     /// <param name="message">Error description.</param>
     public DuplicateResourceException(string message) : base(message)
@@ -38,7 +28,7 @@ public class DuplicateResourceException : Exception
     }
 
     /// <summary>
-    /// Initializes a new instance with a custom error message and inner exception.
+    ///     Initializes a new instance with a custom error message and inner exception.
     /// </summary>
     /// <param name="message">Error description.</param>
     /// <param name="innerException">Underlying exception.</param>
@@ -51,4 +41,14 @@ public class DuplicateResourceException : Exception
     public DuplicateResourceException()
     {
     }
+
+    /// <summary>
+    ///     Name of the resource that already exists.
+    /// </summary>
+    public string ResourceName { get; } = string.Empty;
+
+    /// <summary>
+    ///     Resource type (e.g., mesh, shader, texture, bounding box).
+    /// </summary>
+    public string ResourceType { get; } = string.Empty;
 }

@@ -28,7 +28,7 @@ internal sealed class FloatingAnimationSystem : IEcsRunSystem
 
             animation.ElapsedTime += delta;
 
-            float angle = (MathF.Tau * animation.Frequency * animation.ElapsedTime) + animation.Phase;
+            float angle = MathF.Tau * animation.Frequency * animation.ElapsedTime + animation.Phase;
             float offset = animation.Amplitude * MathF.Sin(angle);
 
             Vector3 position = animation.BasePosition + new Vector3(0.0f, offset, 0.0f);

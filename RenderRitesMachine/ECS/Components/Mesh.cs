@@ -22,4 +22,3 @@ public struct Mesh : IEcsAutoReset<Mesh>
         c.Name = string.Empty;
     }
 }
-

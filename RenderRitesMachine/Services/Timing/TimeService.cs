@@ -1,7 +1,7 @@
-namespace RenderRitesMachine.Services;
+namespace RenderRitesMachine.Services.Timing;
 
 /// <summary>
-/// Tracks delta times between update and render frames.
+///     Tracks delta times between update and render frames.
 /// </summary>
 public class TimeService : ITimeService
 {

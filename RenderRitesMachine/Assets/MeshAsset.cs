@@ -4,10 +4,11 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.Assets;
 
 /// <summary>
-/// Mesh resource that stores VAO/VBO/EBO handles and metadata, disposing OpenGL resources as needed.
+///     Mesh resource that stores VAO/VBO/EBO handles and metadata, disposing OpenGL resources as needed.
 /// </summary>
 public sealed class MeshAsset : IDisposable
 {
+    private bool _disposed;
     public int Vao { get; set; }
     public int Vbo { get; set; }
     public int Ebo { get; set; }
@@ -15,17 +16,15 @@ public sealed class MeshAsset : IDisposable
     public Vector3 Minimum { get; set; }
     public Vector3 Maximum { get; set; }
 
-    private bool _disposed;
-
-    ~MeshAsset()
-    {
-        Dispose(false);
-    }
-
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    ~MeshAsset()
+    {
+        Dispose(false);
     }
 
     private void Dispose(bool disposing)

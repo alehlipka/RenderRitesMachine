@@ -1,16 +1,28 @@
 using OpenTK.Mathematics;
 using RenderRitesMachine.Exceptions;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Tests for <see cref="AudioService"/>.
-/// Note: full coverage requires an OpenAL context and audio hardware, so some tests may be skipped in headless environments.
+///     Tests for <see cref="AudioService" />.
+///     Note: full coverage requires an OpenAL context and audio hardware, so some tests may be skipped in headless
+///     environments.
 /// </summary>
 public sealed class AudioServiceTests : IDisposable
 {
     private readonly List<AudioService> _services = [];
+
+    public void Dispose()
+    {
+        foreach (AudioService service in _services)
+        {
+            service.Dispose();
+        }
+
+        _services.Clear();
+    }
 
     [Fact]
     public void ConstructorCreatesAudioService()
@@ -42,7 +54,8 @@ public sealed class AudioServiceTests : IDisposable
         }
         catch (AudioInitializationException)
         {
-            Assert.Fail("AudioService initialization should not throw AudioInitializationException in normal conditions");
+            Assert.Fail(
+                "AudioService initialization should not throw AudioInitializationException in normal conditions");
         }
     }
 
@@ -98,9 +111,10 @@ public sealed class AudioServiceTests : IDisposable
     public void LoadAudioWithNonExistentFileThrowsFileNotFoundException()
     {
         AudioService service = CreateService();
-        string nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".mp3");
+        string nonExistentPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".mp3");
 
-        FileNotFoundException exception = Assert.Throws<FileNotFoundException>(() => service.LoadAudio("audio", nonExistentPath));
+        FileNotFoundException exception =
+            Assert.Throws<FileNotFoundException>(() => service.LoadAudio("audio", nonExistentPath));
         Assert.Contains(nonExistentPath, exception.Message, StringComparison.Ordinal);
     }
 
@@ -1012,15 +1026,17 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Creates a temporary audio file for testing.
+    ///     Creates a temporary audio file for testing.
     /// </summary>
     private static string CreateTempAudioFile()
     {
-        string tempFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".wav");
+        string tempFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".wav");
 
         byte[] wavHeader =
         [
-            0x52, 0x49, 0x46, 0x46, 0x24, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6D, 0x74, 0x20, 0x10, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x44, 0xAC, 0x00, 0x00, 0x88, 0x58, 0x01, 0x00, 0x02, 0x00, 0x10, 0x00, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00, 0x00, 0x00
+            0x52, 0x49, 0x46, 0x46, 0x24, 0x00, 0x00, 0x00, 0x57, 0x41, 0x56, 0x45, 0x66, 0x6D, 0x74, 0x20, 0x10, 0x00,
+            0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x44, 0xAC, 0x00, 0x00, 0x88, 0x58, 0x01, 0x00, 0x02, 0x00, 0x10, 0x00,
+            0x64, 0x61, 0x74, 0x61, 0x00, 0x00, 0x00, 0x00
         ];
 
         File.WriteAllBytes(tempFile, wavHeader);
@@ -1028,7 +1044,7 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Returns the path to the demo audio file if it exists.
+    ///     Returns the path to the demo audio file if it exists.
     /// </summary>
     private static string? GetTestAudioFile()
     {
@@ -1043,7 +1059,7 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Creates a new <see cref="AudioService"/> instance for testing.
+    ///     Creates a new <see cref="AudioService" /> instance for testing.
     /// </summary>
     private AudioService CreateService(ILogger? logger = null)
     {
@@ -1053,8 +1069,8 @@ public sealed class AudioServiceTests : IDisposable
     }
 
     /// <summary>
-    /// Attempts to create a new <see cref="AudioService"/> for testing.
-    /// Returns null if initialization fails.
+    ///     Attempts to create a new <see cref="AudioService" /> for testing.
+    ///     Returns null if initialization fails.
     /// </summary>
     private AudioService? TryCreateService(ILogger? logger = null)
     {
@@ -1066,14 +1082,5 @@ public sealed class AudioServiceTests : IDisposable
         {
             return null;
         }
-    }
-
-    public void Dispose()
-    {
-        foreach (AudioService service in _services)
-        {
-            service.Dispose();
-        }
-        _services.Clear();
     }
 }

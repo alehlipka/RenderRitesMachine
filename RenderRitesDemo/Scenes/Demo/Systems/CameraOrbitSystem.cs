@@ -6,9 +6,9 @@ namespace RenderRitesDemo.Scenes.Demo.Systems;
 
 internal sealed class CameraOrbitSystem : IEcsRunSystem
 {
+    private readonly float _height;
     private readonly Vector3 _pivot;
     private readonly float _radius;
-    private readonly float _height;
     private readonly float _speed;
     private float _angle;
 

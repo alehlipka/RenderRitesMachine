@@ -4,7 +4,7 @@ using StbTrueTypeSharp;
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// Bitmap font baked via stb_truetype for rendering text onto the GUI surface.
+///     Bitmap font baked via stb_truetype for rendering text onto the GUI surface.
 /// </summary>
 public sealed class GuiFont
 {
@@ -13,15 +13,9 @@ public sealed class GuiFont
     private const int CharCount = LastChar - FirstChar + 1; // 1248 characters
 
     private readonly Dictionary<char, Glyph> _glyphs;
-    internal byte[] Atlas { get; }
 
-    public int PixelHeight { get; }
-    public int AtlasWidth { get; }
-    public int AtlasHeight { get; }
-    public float LineHeight { get; }
-    public float Baseline { get; }
-
-    private GuiFont(int pixelHeight, int atlasWidth, int atlasHeight, byte[] atlas, Dictionary<char, Glyph> glyphs, float lineHeight, float baseline)
+    private GuiFont(int pixelHeight, int atlasWidth, int atlasHeight, byte[] atlas, Dictionary<char, Glyph> glyphs,
+        float lineHeight, float baseline)
     {
         PixelHeight = pixelHeight;
         AtlasWidth = atlasWidth;
@@ -31,6 +25,14 @@ public sealed class GuiFont
         LineHeight = lineHeight;
         Baseline = baseline;
     }
+
+    internal byte[] Atlas { get; }
+
+    public int PixelHeight { get; }
+    public int AtlasWidth { get; }
+    public int AtlasHeight { get; }
+    public float LineHeight { get; }
+    public float Baseline { get; }
 
     public static GuiFont LoadFromFile(string path, int pixelHeight = 20, int atlasWidth = 1024, int atlasHeight = 1024)
     {
@@ -43,7 +45,8 @@ public sealed class GuiFont
         return LoadFromMemory(fontData, pixelHeight, atlasWidth, atlasHeight);
     }
 
-    public static GuiFont LoadFromMemory(byte[] fontData, int pixelHeight = 20, int atlasWidth = 1024, int atlasHeight = 1024)
+    public static GuiFont LoadFromMemory(byte[] fontData, int pixelHeight = 20, int atlasWidth = 1024,
+        int atlasHeight = 1024)
     {
         ArgumentNullException.ThrowIfNull(fontData);
 
@@ -61,7 +64,8 @@ public sealed class GuiFont
                 var bakedChars = new StbTrueType.stbtt_bakedchar[CharCount];
                 fixed (StbTrueType.stbtt_bakedchar* bakedPtr = bakedChars)
                 {
-                    int result = StbTrueType.stbtt_BakeFontBitmap(fontPtr, 0, pixelHeight, atlasPtr, atlasWidth, atlasHeight, FirstChar, CharCount, bakedPtr);
+                    int result = StbTrueType.stbtt_BakeFontBitmap(fontPtr, 0, pixelHeight, atlasPtr, atlasWidth,
+                        atlasHeight, FirstChar, CharCount, bakedPtr);
                     if (result <= 0)
                     {
                         throw new InvalidOperationException("Failed to bake font bitmap.");
@@ -128,10 +132,7 @@ public sealed class GuiFont
         return new Vector2(maxWidth, height);
     }
 
-    internal bool TryGetGlyph(char character, out Glyph glyph)
-    {
-        return _glyphs.TryGetValue(character, out glyph);
-    }
+    internal bool TryGetGlyph(char character, out Glyph glyph) => _glyphs.TryGetValue(character, out glyph);
 
     internal readonly struct Glyph
     {

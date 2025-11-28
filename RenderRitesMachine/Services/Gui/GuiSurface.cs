@@ -3,21 +3,16 @@ using OpenTK.Mathematics;
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// CPU-side RGBA surface used for GUI drawing.
+///     CPU-side RGBA surface used for GUI drawing.
 /// </summary>
 public sealed class GuiSurface
 {
     private byte[] _buffer = Array.Empty<byte>();
-    private bool _isDirty;
 
     public int Width { get; private set; }
     public int Height { get; private set; }
 
-    public bool IsDirty
-    {
-        get => _isDirty;
-        private set => _isDirty = value;
-    }
+    public bool IsDirty { get; private set; }
 
     public ReadOnlySpan<byte> Buffer => _buffer;
 
@@ -130,10 +125,7 @@ public sealed class GuiSurface
         FillRectangle(x, y, thickness, length, color);
     }
 
-    public void MarkClean()
-    {
-        IsDirty = false;
-    }
+    public void MarkClean() => IsDirty = false;
 
     public void BlendPixel(int x, int y, Color4 color, float alpha)
     {
@@ -162,11 +154,11 @@ public sealed class GuiSurface
         float dstB = _buffer[index + 2];
         float dstA = _buffer[index + 3] / 255f;
 
-        _buffer[index] = (byte)Math.Clamp((srcR * srcAlpha) + (dstR * invAlpha), 0f, 255f);
-        _buffer[index + 1] = (byte)Math.Clamp((srcG * srcAlpha) + (dstG * invAlpha), 0f, 255f);
-        _buffer[index + 2] = (byte)Math.Clamp((srcB * srcAlpha) + (dstB * invAlpha), 0f, 255f);
+        _buffer[index] = (byte)Math.Clamp(srcR * srcAlpha + dstR * invAlpha, 0f, 255f);
+        _buffer[index + 1] = (byte)Math.Clamp(srcG * srcAlpha + dstG * invAlpha, 0f, 255f);
+        _buffer[index + 2] = (byte)Math.Clamp(srcB * srcAlpha + dstB * invAlpha, 0f, 255f);
 
-        float outAlpha = srcAlpha + (dstA * invAlpha);
+        float outAlpha = srcAlpha + dstA * invAlpha;
         _buffer[index + 3] = (byte)Math.Clamp(outAlpha * 255f, 0f, 255f);
     }
 
@@ -190,4 +182,3 @@ public sealed class GuiSurface
 
     private bool IsInside(int x, int y) => x >= 0 && x < Width && y >= 0 && y < Height;
 }
-

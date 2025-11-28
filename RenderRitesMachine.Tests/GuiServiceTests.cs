@@ -1,6 +1,6 @@
 using Moq;
 using OpenTK.Mathematics;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Diagnostics;
 using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Tests;
@@ -132,29 +132,16 @@ public sealed class GuiServiceTests
         public int RenderCalls { get; private set; }
         public (int Width, int Height) LastSize { get; private set; }
 
-        public void Initialize()
-        {
-            InitializeCalls++;
-        }
+        public void Initialize() => InitializeCalls++;
 
-        public void EnsureTextureSize(int width, int height)
-        {
-            LastSize = (width, height);
-        }
+        public void EnsureTextureSize(int width, int height) => LastSize = (width, height);
 
-        public void UploadSurface(GuiSurface surface)
-        {
-            UploadCalls++;
-        }
+        public void UploadSurface(GuiSurface surface) => UploadCalls++;
 
-        public void Render()
-        {
-            RenderCalls++;
-        }
+        public void Render() => RenderCalls++;
 
         public void Dispose()
         {
         }
     }
 }
-

@@ -26,19 +26,12 @@ public static class FrameTimeCounter
             return;
         }
 
-        _averageFrameTimeMs = _frameCount > 0 ? (_totalTime / _frameCount * 1000) : 0;
+        _averageFrameTimeMs = _frameCount > 0 ? _totalTime / _frameCount * 1000 : 0;
         _frameCount = 0;
         Stopwatch.Restart();
     }
 
-    public static double GetFrameTimeMilliseconds()
-    {
-        return _averageFrameTimeMs;
-    }
+    public static double GetFrameTimeMilliseconds() => _averageFrameTimeMs;
 
-    public static double GetFrameTimeSeconds()
-    {
-        return _averageFrameTimeMs / 1000;
-    }
+    public static double GetFrameTimeSeconds() => _averageFrameTimeMs / 1000;
 }
-

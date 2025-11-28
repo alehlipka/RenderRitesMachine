@@ -3,22 +3,12 @@ using OpenTK.Graphics.OpenGL4;
 namespace RenderRitesMachine.Exceptions;
 
 /// <summary>
-/// Thrown when an OpenGL error is detected.
+///     Thrown when an OpenGL error is detected.
 /// </summary>
 public class OpenGLErrorException : Exception
 {
     /// <summary>
-    /// OpenGL error code.
-    /// </summary>
-    public ErrorCode ErrorCode { get; }
-
-    /// <summary>
-    /// Name of the operation during which the error occurred.
-    /// </summary>
-    public string Operation { get; } = string.Empty;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OpenGLErrorException"/> class.
+    ///     Initializes a new instance of the <see cref="OpenGLErrorException" /> class.
     /// </summary>
     /// <param name="operation">Operation name where the error occurred.</param>
     /// <param name="errorCode">OpenGL error code.</param>
@@ -30,7 +20,7 @@ public class OpenGLErrorException : Exception
     }
 
     /// <summary>
-    /// Initializes a new instance with a custom error message.
+    ///     Initializes a new instance with a custom error message.
     /// </summary>
     /// <param name="message">Error description.</param>
     public OpenGLErrorException(string message) : base(message)
@@ -40,7 +30,7 @@ public class OpenGLErrorException : Exception
     }
 
     /// <summary>
-    /// Initializes a new instance with a custom error message and inner exception.
+    ///     Initializes a new instance with a custom error message and inner exception.
     /// </summary>
     /// <param name="message">Error description.</param>
     /// <param name="innerException">Underlying exception.</param>
@@ -53,4 +43,14 @@ public class OpenGLErrorException : Exception
     public OpenGLErrorException()
     {
     }
+
+    /// <summary>
+    ///     OpenGL error code.
+    /// </summary>
+    public ErrorCode ErrorCode { get; }
+
+    /// <summary>
+    ///     Name of the operation during which the error occurred.
+    /// </summary>
+    public string Operation { get; } = string.Empty;
 }

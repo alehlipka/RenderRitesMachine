@@ -3,41 +3,14 @@ using OpenTK.Windowing.Common;
 namespace RenderRitesMachine.Configuration;
 
 /// <summary>
-/// Global access point for render settings with override support.
+///     Global access point for render settings with override support.
 /// </summary>
 public static class RenderConstants
 {
     /// <summary>
-    /// Current engine settings.
+    ///     Current engine settings.
     /// </summary>
     public static RenderSettings Settings { get; private set; } = new();
-
-    /// <summary>
-    /// Resets settings to their defaults.
-    /// </summary>
-    public static void Reset()
-    {
-        Settings = new RenderSettings();
-    }
-
-    /// <summary>
-    /// Replaces the settings with a new instance.
-    /// </summary>
-    public static void Configure(RenderSettings settings)
-    {
-        ArgumentNullException.ThrowIfNull(settings);
-        settings.Validate();
-        Settings = settings with { };
-    }
-
-    /// <summary>
-    /// Updates the settings based on the current values.
-    /// </summary>
-    public static void Configure(Func<RenderSettings, RenderSettings> configure)
-    {
-        ArgumentNullException.ThrowIfNull(configure);
-        Configure(configure(Settings));
-    }
 
     public static int MaxStencilValue => Settings.MaxStencilValue;
     public static float AnisotropicFilteringLevel => Settings.AnisotropicFilteringLevel;
@@ -58,4 +31,28 @@ public static class RenderConstants
     public static int DefaultSamples => Settings.DefaultSamples;
     public static WindowState DefaultWindowState => Settings.DefaultWindowState;
     public static double UpdateFrequency => Settings.UpdateFrequency;
+
+    /// <summary>
+    ///     Resets settings to their defaults.
+    /// </summary>
+    public static void Reset() => Settings = new RenderSettings();
+
+    /// <summary>
+    ///     Replaces the settings with a new instance.
+    /// </summary>
+    public static void Configure(RenderSettings settings)
+    {
+        ArgumentNullException.ThrowIfNull(settings);
+        settings.Validate();
+        Settings = settings with { };
+    }
+
+    /// <summary>
+    ///     Updates the settings based on the current values.
+    /// </summary>
+    public static void Configure(Func<RenderSettings, RenderSettings> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+        Configure(configure(Settings));
+    }
 }

@@ -1,8 +1,11 @@
 using OpenTK.Mathematics;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.Output;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.ECS;
 
@@ -17,6 +20,12 @@ public class SystemSharedObject(
     ILogger logger,
     IOpenGLWrapper? openGLWrapper = null)
 {
+    private readonly HashSet<int> _activeShaders = [];
+
+    private readonly IOpenGLWrapper _openGL = openGLWrapper ?? new OpenGLWrapper();
+    private Matrix4 _lastProjectionMatrix;
+    private Matrix4 _lastViewMatrix;
+    private bool _matricesInitialized;
     public ICamera Camera { get; } = camera;
     public ITimeService Time { get; } = time;
     public IAssetsService Assets { get; } = assets;
@@ -26,13 +35,7 @@ public class SystemSharedObject(
     public ISceneManager SceneManager { get; } = sceneManager;
     public ILogger Logger { get; } = logger;
     public Window? Window { get; set; }
-    public RenderStatistics RenderStats { get; } = new RenderStatistics();
-
-    private readonly IOpenGLWrapper _openGL = openGLWrapper ?? new OpenGLWrapper();
-    private readonly HashSet<int> _activeShaders = [];
-    private Matrix4 _lastViewMatrix;
-    private Matrix4 _lastProjectionMatrix;
-    private bool _matricesInitialized;
+    public RenderStatistics RenderStats { get; } = new();
 
     public void MarkShaderActive(int shaderId)
     {
@@ -47,7 +50,8 @@ public class SystemSharedObject(
         Matrix4 currentView = Camera.ViewMatrix;
         Matrix4 currentProjection = Camera.ProjectionMatrix;
 
-        if (!_matricesInitialized || !MatricesEqual(currentView, _lastViewMatrix) || !MatricesEqual(currentProjection, _lastProjectionMatrix))
+        if (!_matricesInitialized || !MatricesEqual(currentView, _lastViewMatrix) ||
+            !MatricesEqual(currentProjection, _lastProjectionMatrix))
         {
             _lastViewMatrix = currentView;
             _lastProjectionMatrix = currentProjection;
@@ -60,10 +64,7 @@ public class SystemSharedObject(
         }
     }
 
-    public void ClearActiveShaders()
-    {
-        _activeShaders.Clear();
-    }
+    public void ClearActiveShaders() => _activeShaders.Clear();
 
     private static bool MatricesEqual(Matrix4 a, Matrix4 b)
     {

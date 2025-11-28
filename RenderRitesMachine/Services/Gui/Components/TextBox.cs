@@ -1,20 +1,20 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Services.Gui.Components;
 
 /// <summary>
-/// Text input component that supports text editing with cursor navigation.
+///     Text input component that supports text editing with cursor navigation.
 /// </summary>
 public sealed class TextBox : Panel
 {
-    private string _text = string.Empty;
-    private int _cursorPosition;
-    private bool _hasFocus;
-    private float _scrollOffset;
-    private double _cursorBlinkTime;
-    private bool _cursorVisible = true;
     private const double CursorBlinkInterval = 0.5;
+    private double _cursorBlinkTime;
+    private int _cursorPosition;
+    private bool _cursorVisible = true;
+    private float _scrollOffset;
+    private string _text = string.Empty;
 
     public TextBox(GuiFont font)
     {
@@ -32,9 +32,7 @@ public sealed class TextBox : Panel
     public Color4 FocusBorderColor { get; set; }
     public int MaxLength { get; set; } = 0; // 0 = unlimited
     public string PlaceholderText { get; set; } = string.Empty;
-    public Color4 PlaceholderColor { get; set; } = new Color4(0.5f, 0.5f, 0.5f, 1f);
-    public event Action<string>? TextChanged;
-    public event Action? EnterPressed;
+    public Color4 PlaceholderColor { get; set; } = new(0.5f, 0.5f, 0.5f, 1f);
 
     public string Text
     {
@@ -57,17 +55,20 @@ public sealed class TextBox : Panel
         }
     }
 
-    public bool HasFocus => _hasFocus;
+    public bool HasFocus { get; private set; }
+
+    public event Action<string>? TextChanged;
+    public event Action? EnterPressed;
 
     public void SetFocus(bool focus)
     {
-        if (_hasFocus == focus)
+        if (HasFocus == focus)
         {
             return;
         }
 
-        _hasFocus = focus;
-        if (_hasFocus)
+        HasFocus = focus;
+        if (HasFocus)
         {
             _cursorVisible = true;
             _cursorBlinkTime = 0;
@@ -97,7 +98,7 @@ public sealed class TextBox : Panel
                 break;
 
             case GuiEventType.KeyDown:
-                if (_hasFocus && evt.Key.HasValue)
+                if (HasFocus && evt.Key.HasValue)
                 {
                     HandleKeyDown(evt.Key.Value);
                 }
@@ -105,7 +106,7 @@ public sealed class TextBox : Panel
                 break;
 
             case GuiEventType.TextInput:
-                if (_hasFocus && evt.Character.HasValue)
+                if (HasFocus && evt.Character.HasValue)
                 {
                     HandleTextInput(evt.Character.Value);
                 }
@@ -123,7 +124,7 @@ public sealed class TextBox : Panel
             return;
         }
 
-        if (_hasFocus)
+        if (HasFocus)
         {
             _cursorBlinkTime += time.RenderDeltaTime;
             if (_cursorBlinkTime >= CursorBlinkInterval)
@@ -138,7 +139,7 @@ public sealed class TextBox : Panel
         }
 
         Color4 originalBorder = BorderColor;
-        if (_hasFocus)
+        if (HasFocus)
         {
             BorderColor = FocusBorderColor;
         }
@@ -165,7 +166,7 @@ public sealed class TextBox : Panel
             RenderVisibleText(gui, displayText, displayColor, textX, textY);
         }
 
-        if (_hasFocus && _cursorVisible)
+        if (HasFocus && _cursorVisible)
         {
             DrawCursor(gui, textX, textY);
         }
@@ -419,9 +420,5 @@ public sealed class TextBox : Panel
         return (startIndex, endIndex, startOffset);
     }
 
-    private float GetGlyphAdvance(char ch)
-    {
-        return Font.TryGetGlyph(ch, out GuiFont.Glyph glyph) ? glyph.XAdvance : 0f;
-    }
+    private float GetGlyphAdvance(char ch) => Font.TryGetGlyph(ch, out GuiFont.Glyph glyph) ? glyph.XAdvance : 0f;
 }
-

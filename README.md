@@ -28,8 +28,7 @@
 - **OpenAL** (для аудио системы)
 - **Поддерживаемые платформы**:
   - **Windows** (протестировано на Windows 10/11)
-  - **Linux** (протестировано на современных дистрибутивах)
-- **IDE** (опционально): Visual Studio 2022, JetBrains Rider, или Visual Studio Code
+  - **Linux** (протестировано на Manjaro Linux KDE/XFCE)
 
 ## 🛠️ Установка
 
@@ -121,8 +120,8 @@ public class MyScene : Scene
         texture.Name = "my-texture";
 
         // Регистрация систем
-        _ = UpdateSystems.Add(new MyUpdateSystem());
-        _ = RenderSystems.Add(new MainRenderSystem());
+        UpdateSystems.Add(new MyUpdateSystem());
+        RenderSystems.Add(new MainRenderSystem());
     }
 }
 ```

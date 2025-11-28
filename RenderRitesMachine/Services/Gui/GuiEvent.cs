@@ -4,7 +4,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// Rich input event used by GUI systems.
+///     Rich input event used by GUI systems.
 /// </summary>
 public readonly record struct GuiEvent
 {
@@ -52,4 +52,3 @@ public readonly record struct GuiEvent
     public static GuiEvent TextInput(char character) =>
         new(GuiEventType.TextInput, Vector2.Zero, null, null, Vector2.Zero, character);
 }
-

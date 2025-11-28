@@ -4,14 +4,14 @@ using RenderRitesMachine.Configuration;
 namespace RenderRitesMachine.Output;
 
 /// <summary>
-/// Perspective camera with adjustable position, orientation, and projection parameters.
+///     Perspective camera with adjustable position, orientation, and projection parameters.
 /// </summary>
 public class PerspectiveCamera : CameraBase
 {
     private float _fov = MathHelper.PiOver2;
 
     /// <summary>
-    /// Field of view in degrees, clamped between 1 and 90.
+    ///     Field of view in degrees, clamped between 1 and 90.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when the value is outside the allowed range.</exception>
     public float Fov
@@ -21,7 +21,8 @@ public class PerspectiveCamera : CameraBase
         {
             if (value < RenderConstants.CameraMinFov || value > RenderConstants.CameraMaxFov)
             {
-                throw new ArgumentOutOfRangeException(nameof(value), value, $"FOV must be between {RenderConstants.CameraMinFov} and {RenderConstants.CameraMaxFov} degrees.");
+                throw new ArgumentOutOfRangeException(nameof(value), value,
+                    $"FOV must be between {RenderConstants.CameraMinFov} and {RenderConstants.CameraMaxFov} degrees.");
             }
 
             float angle = MathHelper.Clamp(value, RenderConstants.CameraMinFov, RenderConstants.CameraMaxFov);
@@ -35,8 +36,6 @@ public class PerspectiveCamera : CameraBase
     }
 
     /// <inheritdoc />
-    protected override Matrix4 CreateProjectionMatrix()
-    {
-        return Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio, RenderConstants.CameraNearPlane, RenderConstants.CameraFarPlane);
-    }
+    protected override Matrix4 CreateProjectionMatrix() => Matrix4.CreatePerspectiveFieldOfView(_fov, AspectRatio,
+        RenderConstants.CameraNearPlane, RenderConstants.CameraFarPlane);
 }

@@ -30,8 +30,5 @@ public static class FpsCounter
         Stopwatch.Restart();
     }
 
-    public static double GetFps()
-    {
-        return _averageFps;
-    }
+    public static double GetFps() => _averageFps;
 }

@@ -9,7 +9,7 @@ public sealed class GuiEventQueueTests
     [Fact]
     public void EnqueueAndDequeueWorks()
     {
-        var queue = new GuiEventQueue(capacity: 4);
+        var queue = new GuiEventQueue(4);
         queue.Enqueue(GuiEvent.MouseMove(new Vector2(10, 20)));
 
         Assert.True(queue.TryDequeue(out GuiEvent evt));
@@ -20,7 +20,7 @@ public sealed class GuiEventQueueTests
     [Fact]
     public void CapacityOverflowDropsOldest()
     {
-        var queue = new GuiEventQueue(capacity: 2);
+        var queue = new GuiEventQueue(2);
 
         queue.Enqueue(GuiEvent.KeyDown(Keys.A));
         queue.Enqueue(GuiEvent.KeyDown(Keys.B));
@@ -48,4 +48,3 @@ public sealed class GuiEventQueueTests
         Assert.Equal(0, queue.Count);
     }
 }
-

@@ -1,4 +1,4 @@
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Tests;
 
@@ -26,4 +26,3 @@ public sealed class TimeServiceTests
         Assert.Equal(0.75f, service.RenderDeltaTime);
     }
 }
-

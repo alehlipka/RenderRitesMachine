@@ -2,10 +2,10 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Assets;
 
-namespace RenderRitesMachine.Services;
+namespace RenderRitesMachine.Services.Graphics;
 
 /// <summary>
-/// Rendering service that draws meshes, bounding boxes, and other primitives.
+///     Rendering service that draws meshes, bounding boxes, and other primitives.
 /// </summary>
 public class RenderService : IRenderService
 {
@@ -13,7 +13,8 @@ public class RenderService : IRenderService
     private int _currentTextureId = -1;
     private int _currentVao = -1;
 
-    public void Render(int vao, int indicesCount, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset? texture, PrimitiveType primitiveType)
+    public void Render(int vao, int indicesCount, ShaderAsset shader, Matrix4 meshModelMatrix, TextureAsset? texture,
+        PrimitiveType primitiveType)
     {
         ArgumentNullException.ThrowIfNull(shader);
 

@@ -45,7 +45,8 @@ internal sealed class GuiTextRenderer
         }
     }
 
-    private static void BlitGlyph(GuiSurface surface, GuiFont font, GuiFont.Glyph glyph, int destX, int destY, Color4 color)
+    private static void BlitGlyph(GuiSurface surface, GuiFont font, GuiFont.Glyph glyph, int destX, int destY,
+        Color4 color)
     {
         for (int row = 0; row < glyph.Height; row++)
         {
@@ -53,7 +54,7 @@ internal sealed class GuiTextRenderer
             for (int col = 0; col < glyph.Width; col++)
             {
                 int srcX = glyph.X0 + col;
-                int atlasIndex = (srcY * font.AtlasWidth) + srcX;
+                int atlasIndex = srcY * font.AtlasWidth + srcX;
                 byte coverage = font.Atlas[atlasIndex];
                 float alpha = coverage / 255f;
                 if (alpha <= 0f)
@@ -66,4 +67,3 @@ internal sealed class GuiTextRenderer
         }
     }
 }
-

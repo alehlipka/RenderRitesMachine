@@ -1,12 +1,13 @@
 using OpenTK.Mathematics;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Services.Gui.Components;
 
 public sealed class Button : Panel
 {
-    private string _text = string.Empty;
     private bool _isHovered;
     private bool _isPressed;
+    private string _text = string.Empty;
 
     public Button(GuiFont font)
     {
@@ -21,13 +22,14 @@ public sealed class Button : Panel
     public Color4 TextColor { get; set; }
     public Color4 HoverBackgroundColor { get; set; }
     public Color4 PressedBackgroundColor { get; set; }
-    public event Action? Clicked;
 
     public string Text
     {
         get => _text;
         set => _text = value ?? string.Empty;
     }
+
+    public event Action? Clicked;
 
     protected override Color4 ResolveBackgroundColor()
     {
@@ -105,4 +107,3 @@ public sealed class Button : Panel
         gui.DrawText(Font, Text, textX, textY, TextColor);
     }
 }
-

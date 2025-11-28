@@ -2,21 +2,21 @@ using Leopotam.EcsLite;
 using OpenTK.Mathematics;
 using RenderRitesMachine.Debug;
 using RenderRitesMachine.ECS;
-using RenderRitesMachine.Services;
 using RenderRitesMachine.Services.Gui;
 using RenderRitesMachine.Services.Gui.Components;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesDemo.Scenes.Demo.Systems;
 
 internal sealed class GuiSystem : IEcsRunSystem
 {
-    private readonly Panel _rootPanel;
-    private readonly Label _fpsLabel;
-    private readonly Label _objectsLabel;
-    private readonly Label _frameTimeLabel;
-    private readonly Button _toggleCrosshairButton;
-    private readonly TextBox _textBox;
     private readonly List<GuiEvent> _eventBuffer = [];
+    private readonly Label _fpsLabel;
+    private readonly Label _frameTimeLabel;
+    private readonly Label _objectsLabel;
+    private readonly Panel _rootPanel;
+    private readonly TextBox _textBox;
+    private readonly Button _toggleCrosshairButton;
     private bool _showCrosshair = true;
 
     public GuiSystem(GuiFont font)
@@ -123,4 +123,3 @@ internal sealed class GuiSystem : IEcsRunSystem
         gui.DrawVerticalLine(centerX, centerY - 12, 24, 1, Color4.White);
     }
 }
-

@@ -11,29 +11,6 @@ public class MainRenderSystem : IEcsRunSystem
 {
     private readonly Dictionary<string, MeshAsset> _meshAssetCache = [];
 
-    private struct RenderItem
-    {
-        public int Entity;
-        public Matrix4 ModelMatrix;
-        public MeshAsset MeshAsset;
-        public ShaderAsset ShaderAsset;
-        public TextureAsset TextureAsset;
-        public float DistanceSquared;
-    }
-
-    private static void SortByDistance(List<RenderItem> items, Vector3 cameraPos)
-    {
-        for (int i = 0; i < items.Count; i++)
-        {
-            RenderItem item = items[i];
-            Vector3 objectPos = item.ModelMatrix.Row3.Xyz;
-            item.DistanceSquared = (objectPos - cameraPos).LengthSquared;
-            items[i] = item;
-        }
-
-        items.Sort((a, b) => a.DistanceSquared.CompareTo(b.DistanceSquared));
-    }
-
     public void Run(IEcsSystems systems)
     {
         EcsWorld world = systems.GetWorld();
@@ -99,13 +76,37 @@ public class MainRenderSystem : IEcsRunSystem
                 currentShaderId = item.ShaderAsset.Id;
             }
 
-            int stencilId = (item.Entity % RenderConstants.MaxStencilValue) + 1;
+            int stencilId = item.Entity % RenderConstants.MaxStencilValue + 1;
             GL.StencilFunc(StencilFunction.Gequal, stencilId, 0xFF);
 
-            shared.Render.Render(item.MeshAsset.Vao, item.MeshAsset.IndicesCount, item.ShaderAsset, item.ModelMatrix, item.TextureAsset, PrimitiveType.Triangles);
+            shared.Render.Render(item.MeshAsset.Vao, item.MeshAsset.IndicesCount, item.ShaderAsset, item.ModelMatrix,
+                item.TextureAsset, PrimitiveType.Triangles);
             shared.RenderStats.RenderedObjects++;
         }
 
         GL.Disable(EnableCap.StencilTest);
+    }
+
+    private static void SortByDistance(List<RenderItem> items, Vector3 cameraPos)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            RenderItem item = items[i];
+            Vector3 objectPos = item.ModelMatrix.Row3.Xyz;
+            item.DistanceSquared = (objectPos - cameraPos).LengthSquared;
+            items[i] = item;
+        }
+
+        items.Sort((a, b) => a.DistanceSquared.CompareTo(b.DistanceSquared));
+    }
+
+    private struct RenderItem
+    {
+        public int Entity;
+        public Matrix4 ModelMatrix;
+        public MeshAsset MeshAsset;
+        public ShaderAsset ShaderAsset;
+        public TextureAsset TextureAsset;
+        public float DistanceSquared;
     }
 }

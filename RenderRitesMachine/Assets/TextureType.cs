@@ -2,5 +2,5 @@ namespace RenderRitesMachine.Assets;
 
 public enum TextureType
 {
-    ColorMap = 0,
+    ColorMap = 0
 }

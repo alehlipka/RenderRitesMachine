@@ -4,19 +4,28 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RenderRitesMachine.Debug;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
 
 namespace RenderRitesMachine.Output;
 
-public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManager sceneManager, IGuiService guiService, IRenderService renderService, ILogger? logger = null) : GameWindow(gws, nws)
+public class Window(
+    GameWindowSettings gws,
+    NativeWindowSettings nws,
+    SceneManager sceneManager,
+    IGuiService guiService,
+    IRenderService renderService,
+    ILogger? logger = null) : GameWindow(gws, nws)
 {
-    private readonly SceneManager _sceneManager = sceneManager;
-    private readonly IGuiService _guiService = guiService;
-    private readonly IRenderService _renderService = renderService;
-    private readonly ILogger? _logger = logger;
-    private KeyboardState _previousKeyboardState = null!;
     private static readonly Keys[] TrackedKeys = Enum.GetValues<Keys>();
+    private readonly IGuiService _guiService = guiService;
+    private readonly ILogger? _logger = logger;
+    private readonly IRenderService _renderService = renderService;
+    private readonly SceneManager _sceneManager = sceneManager;
+
+    private string? _lastSceneName;
+    private KeyboardState _previousKeyboardState = null!;
 
     protected override void OnLoad()
     {
@@ -54,8 +63,6 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
         _guiService.Resize(e.Width, e.Height);
         _sceneManager.Current?.ResizeScene(e);
     }
-
-    private string? _lastSceneName;
 
     protected override void OnUpdateFrame(FrameEventArgs args)
     {
@@ -160,7 +167,10 @@ public class Window(GameWindowSettings gws, NativeWindowSettings nws, SceneManag
 
         foreach (Keys key in TrackedKeys)
         {
-            if (key.Equals(Keys.Unknown)) continue;
+            if (key.Equals(Keys.Unknown))
+            {
+                continue;
+            }
 
             bool isDown = currentKeyboard.IsKeyDown(key);
             bool wasDown = _previousKeyboardState.IsKeyDown(key);

@@ -54,10 +54,11 @@ public class Ray(Vector3 origin, Vector3 direction)
         return tMin >= 0 ? tMin : null;
     }
 
-    public static Ray GetFromScreen(float mouseX, float mouseY, Vector2i windowSize, Vector3 cameraPosition, Matrix4 projection, Matrix4 view)
+    public static Ray GetFromScreen(float mouseX, float mouseY, Vector2i windowSize, Vector3 cameraPosition,
+        Matrix4 projection, Matrix4 view)
     {
-        float x = (2.0f * mouseX / windowSize.X) - 1.0f;
-        float y = 1.0f - (2.0f * mouseY / windowSize.Y);
+        float x = 2.0f * mouseX / windowSize.X - 1.0f;
+        float y = 1.0f - 2.0f * mouseY / windowSize.Y;
         Vector3 rayNormalizedDeviceCoords = new(x, y, -1.0f);
 
         Vector4 rayClip = new(rayNormalizedDeviceCoords.X, rayNormalizedDeviceCoords.Y, -1.0f, 1.0f);

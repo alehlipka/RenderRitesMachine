@@ -1,7 +1,7 @@
 namespace RenderRitesMachine.Services.Gui;
 
 /// <summary>
-/// Simple bounded queue for GUI input events.
+///     Simple bounded queue for GUI input events.
 /// </summary>
 public sealed class GuiEventQueue
 {
@@ -78,4 +78,3 @@ public sealed class GuiEventQueue
         return buffer;
     }
 }
-

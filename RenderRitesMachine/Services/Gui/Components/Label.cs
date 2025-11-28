@@ -1,4 +1,5 @@
 using OpenTK.Mathematics;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Services.Gui.Components;
 
@@ -42,4 +43,3 @@ public sealed class Label : GuiElement
         base.Render(gui, time);
     }
 }
-

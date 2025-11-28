@@ -2,13 +2,16 @@ using Moq;
 using OpenTK.Mathematics;
 using RenderRitesMachine.ECS;
 using RenderRitesMachine.Output;
-using RenderRitesMachine.Services;
+using RenderRitesMachine.Services.Audio;
+using RenderRitesMachine.Services.Diagnostics;
+using RenderRitesMachine.Services.Graphics;
 using RenderRitesMachine.Services.Gui;
+using RenderRitesMachine.Services.Timing;
 
 namespace RenderRitesMachine.Tests;
 
 /// <summary>
-/// Tests for <see cref="SystemSharedObject"/>.
+///     Tests for <see cref="SystemSharedObject" />.
 /// </summary>
 public sealed class SystemSharedObjectTests
 {
@@ -120,7 +123,7 @@ public sealed class SystemSharedObjectTests
         SystemSharedObject shared = CreateSystemSharedObject(mockOpenGL.Object);
         shared.Camera.Position = new Vector3(0, 0, 10);
         shared.Camera.AspectRatio = 16.0f / 9.0f;
-        var perspective = Assert.IsType<PerspectiveCamera>(shared.Camera);
+        PerspectiveCamera perspective = Assert.IsType<PerspectiveCamera>(shared.Camera);
         perspective.Fov = 60.0f;
 
         shared.MarkShaderActive(1);
@@ -130,7 +133,8 @@ public sealed class SystemSharedObjectTests
 
         shared.UpdateActiveShaders();
 
-        mockOpenGL.Verify(g => g.UniformMatrix4(It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<Matrix4>.IsAny), Times.Never);
+        mockOpenGL.Verify(g => g.UniformMatrix4(It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<Matrix4>.IsAny),
+            Times.Never);
     }
 
     [Fact]
@@ -226,7 +230,8 @@ public sealed class SystemSharedObjectTests
         mockOpenGL.Verify(g => g.UseProgram(shader2), Times.AtLeastOnce);
         mockOpenGL.Verify(g => g.UseProgram(shader3), Times.AtLeastOnce);
 
-        mockOpenGL.Verify(g => g.UniformMatrix4(It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<Matrix4>.IsAny), Times.AtLeast(6));
+        mockOpenGL.Verify(g => g.UniformMatrix4(It.IsAny<int>(), It.IsAny<bool>(), ref It.Ref<Matrix4>.IsAny),
+            Times.AtLeast(6));
     }
 
     [Fact]
