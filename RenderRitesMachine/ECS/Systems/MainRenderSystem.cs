@@ -59,10 +59,6 @@ public class MainRenderSystem : IEcsRunSystem
             });
         }
 
-        Vector3 cameraPos = shared.Camera.Position;
-
-        SortByDistance(renderItems, cameraPos);
-
         GL.Enable(EnableCap.StencilTest);
         GL.StencilMask(0xFF);
 
@@ -85,19 +81,6 @@ public class MainRenderSystem : IEcsRunSystem
         }
 
         GL.Disable(EnableCap.StencilTest);
-    }
-
-    private static void SortByDistance(List<RenderItem> items, Vector3 cameraPos)
-    {
-        for (int i = 0; i < items.Count; i++)
-        {
-            RenderItem item = items[i];
-            Vector3 objectPos = item.ModelMatrix.Row3.Xyz;
-            item.DistanceSquared = (objectPos - cameraPos).LengthSquared;
-            items[i] = item;
-        }
-
-        items.Sort((a, b) => a.DistanceSquared.CompareTo(b.DistanceSquared));
     }
 
     private struct RenderItem

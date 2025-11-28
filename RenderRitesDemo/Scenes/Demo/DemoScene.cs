@@ -54,18 +54,18 @@ internal sealed class DemoScene(
 
     private void RegisterSystems()
     {
-        _ = UpdateSystems
+        UpdateSystems
             .Add(new CameraOrbitSystem(Vector3.Zero, 6.0f, 1.8f, 0.35f))
             .Add(new RotationAnimationSystem())
             .Add(new FloatingAnimationSystem());
 
         GuiFont font = _guiFont ?? throw new InvalidOperationException("GUI font is not loaded.");
 
-        _ = RenderSystems
+        RenderSystems
             .Add(new MainRenderSystem())
             .Add(new GuiSystem(font));
 
-        _ = ResizeSystems
+        ResizeSystems
             .Add(new MainResizeSystem());
     }
 
@@ -88,16 +88,15 @@ internal sealed class DemoScene(
         string texturesRoot = Path.Combine(_assetsRoot, "Textures");
         Assets.AddTexture(TestTextureName, TextureType.ColorMap, Path.Combine(texturesRoot, "debug.jpg"));
 
-        string objectsRoot = Path.Combine(_assetsRoot, "Objects");
-        Assets.AddMeshFromFile(TestMeshName, Path.Combine(objectsRoot, "test.obj"));
+        Assets.AddSphere(TestMeshName, 1.2f, 50, 50);
     }
 
     private void SpawnDemoEntities()
     {
         CreateTestEntity(
             new Vector3(0f, -0.5f, 0f),
-            new Vector3(0.9f),
-            0.65f,
+            new Vector3(0.6f),
+            1.85f,
             0.25f,
             0.4f,
             0f
@@ -105,7 +104,7 @@ internal sealed class DemoScene(
 
         CreateTestEntity(
             new Vector3(2.0f, -0.4f, -1.8f),
-            new Vector3(0.75f),
+            new Vector3(1.0f),
             -0.45f,
             0.15f,
             0.55f,
@@ -171,7 +170,7 @@ internal sealed class DemoScene(
 
         try
         {
-            _ = Audio.LoadAudio(AmbientAudioName, audioPath);
+            Audio.LoadAudio(AmbientAudioName, audioPath);
             _ambientSourceId = Audio.CreateSource(AmbientAudioName, volume: 0.35f, loop: true);
             Audio.Play(_ambientSourceId.Value);
         }
