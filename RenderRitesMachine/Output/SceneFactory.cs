@@ -31,10 +31,29 @@ public class SceneFactory(IAssetsService assetsService, ITimeService timeService
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
             null,
             [typeof(string), typeof(IAssetsService), typeof(ITimeService), typeof(IRenderService), typeof(IAudioService), typeof(IGuiService), typeof(ISceneManager), typeof(ILogger)],
-            null) ?? throw new InvalidOperationException(
+            null);
+
+        if (constructor == null)
+        {
+            _logger.LogError($"Type {typeof(T).Name} must have a constructor with parameters: (string, IAssetsService, ITimeService, IRenderService, IAudioService, IGuiService, ISceneManager, ILogger)");
+            throw new InvalidOperationException(
                 $"Type {typeof(T).Name} must have a constructor with parameters: (string, IAssetsService, ITimeService, IRenderService, IAudioService, IGuiService, ISceneManager, ILogger)");
-        return _sceneManager == null
-            ? throw new InvalidOperationException("SceneManager must be set before creating scenes. Call SetSceneManager first.")
-            : (T)constructor.Invoke([name, _assetsService, _timeService, _renderService, _audioService, _guiService, _sceneManager, _logger]);
+        }
+
+        if (_sceneManager == null)
+        {
+            _logger.LogError("SceneManager must be set before creating scenes. Call SetSceneManager first.");
+            throw new InvalidOperationException("SceneManager must be set before creating scenes. Call SetSceneManager first.");
+        }
+
+        try
+        {
+            return (T)constructor.Invoke([name, _assetsService, _timeService, _renderService, _audioService, _guiService, _sceneManager, _logger]);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogException(LogLevel.Error, ex, $"Failed to create scene '{name}' of type {typeof(T).Name}");
+            throw;
+        }
     }
 }

@@ -56,11 +56,18 @@ public class AssetsService : IAssetsService
     /// <exception cref="KeyNotFoundException">Thrown when the mesh cannot be found.</exception>
     public MeshAsset GetMesh(string name)
     {
-        return string.IsNullOrWhiteSpace(name)
-            ? throw new ArgumentNullException(nameof(name), "Mesh name cannot be null or empty.")
-            : _meshes.TryGetValue(name, out MeshAsset? value) && value != null
-            ? value
-            : throw new KeyNotFoundException($"No mesh found with the name: {name}");
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Mesh name cannot be null or empty.");
+        }
+
+        if (!_meshes.TryGetValue(name, out MeshAsset? value) || value == null)
+        {
+            _logger?.LogError($"Mesh '{name}' not found");
+            throw new KeyNotFoundException($"No mesh found with the name: {name}");
+        }
+
+        return value;
     }
 
     /// <summary>
@@ -72,11 +79,18 @@ public class AssetsService : IAssetsService
     /// <exception cref="KeyNotFoundException">Thrown when the shader cannot be found.</exception>
     public ShaderAsset GetShader(string name)
     {
-        return string.IsNullOrWhiteSpace(name)
-            ? throw new ArgumentNullException(nameof(name), "Shader name cannot be null or empty.")
-            : _shaders.TryGetValue(name, out ShaderAsset? value) && value != null
-            ? value
-            : throw new KeyNotFoundException($"No shader found with the name: {name}");
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Shader name cannot be null or empty.");
+        }
+
+        if (!_shaders.TryGetValue(name, out ShaderAsset? value) || value == null)
+        {
+            _logger?.LogError($"Shader '{name}' not found");
+            throw new KeyNotFoundException($"No shader found with the name: {name}");
+        }
+
+        return value;
     }
 
     /// <summary>
@@ -97,11 +111,18 @@ public class AssetsService : IAssetsService
     /// <exception cref="KeyNotFoundException">Thrown when the texture cannot be found.</exception>
     public TextureAsset GetTexture(string name)
     {
-        return string.IsNullOrWhiteSpace(name)
-            ? throw new ArgumentNullException(nameof(name), "Texture name cannot be null or empty.")
-            : _textures.TryGetValue(name, out TextureAsset? value) && value != null
-            ? value
-            : throw new KeyNotFoundException($"No texture found with the name: {name}");
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Texture name cannot be null or empty.");
+        }
+
+        if (!_textures.TryGetValue(name, out TextureAsset? value) || value == null)
+        {
+            _logger?.LogError($"Texture '{name}' not found");
+            throw new KeyNotFoundException($"No texture found with the name: {name}");
+        }
+
+        return value;
     }
 
     /// <summary>
@@ -113,11 +134,18 @@ public class AssetsService : IAssetsService
     /// <exception cref="KeyNotFoundException">Thrown when the bounding box cannot be found.</exception>
     public BoundingBoxAsset GetBoundingBox(string name)
     {
-        return string.IsNullOrWhiteSpace(name)
-            ? throw new ArgumentNullException(nameof(name), "Bounding box name cannot be null or empty.")
-            : _boundingBoxes.TryGetValue(name, out BoundingBoxAsset? value) && value != null
-            ? value
-            : throw new KeyNotFoundException($"No bounding box found with the name: {name}");
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentNullException(nameof(name), "Bounding box name cannot be null or empty.");
+        }
+
+        if (!_boundingBoxes.TryGetValue(name, out BoundingBoxAsset? value) || value == null)
+        {
+            _logger?.LogError($"Bounding box '{name}' not found");
+            throw new KeyNotFoundException($"No bounding box found with the name: {name}");
+        }
+
+        return value;
     }
 
     /// <summary>

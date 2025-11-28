@@ -76,6 +76,7 @@ public sealed class AudioService : IAudioService
 
         if (!File.Exists(filePath))
         {
+            _logger?.LogError($"Audio file not found: {filePath}");
             throw new FileNotFoundException($"Audio file not found: {filePath}", filePath);
         }
 
@@ -87,6 +88,7 @@ public sealed class AudioService : IAudioService
 
         if (!_audioDevice.HasValue || !_audioContext.HasValue)
         {
+            _logger?.LogError("AudioService is not initialized");
             throw new InvalidOperationException("AudioService is not initialized");
         }
 
@@ -111,6 +113,7 @@ public sealed class AudioService : IAudioService
 
             if (samplesList.Count == 0)
             {
+                _logger?.LogError($"No audio data read from file: {filePath}");
                 throw new InvalidDataException("No audio data read from file");
             }
 
@@ -159,11 +162,13 @@ public sealed class AudioService : IAudioService
             ALError genError = AL.GetError();
             if (genError != ALError.NoError)
             {
+                _logger?.LogError($"OpenAL error after GenBuffer: {genError}");
                 throw new InvalidOperationException($"OpenAL error after GenBuffer: {genError}");
             }
 
             if (alBuffer == 0)
             {
+                _logger?.LogError("OpenAL GenBuffer returned 0, which indicates an error (context may not be active)");
                 throw new InvalidOperationException("OpenAL GenBuffer returned 0, which indicates an error (context may not be active)");
             }
 
@@ -173,6 +178,7 @@ public sealed class AudioService : IAudioService
             if (error != ALError.NoError)
             {
                 AL.DeleteBuffer(alBuffer);
+                _logger?.LogError($"OpenAL error after BufferData: {error}");
                 throw new InvalidOperationException($"OpenAL error after BufferData: {error}");
             }
 
@@ -192,11 +198,13 @@ public sealed class AudioService : IAudioService
     {
         if (!_audioBuffers.TryGetValue(audioName, out int bufferId))
         {
+            _logger?.LogError($"Audio '{audioName}' not found. Load it first using LoadAudio.");
             throw new KeyNotFoundException($"Audio '{audioName}' not found. Load it first using LoadAudio.");
         }
 
         if (!_audioDevice.HasValue || !_audioContext.HasValue)
         {
+            _logger?.LogError("AudioService is not initialized");
             throw new InvalidOperationException("AudioService is not initialized");
         }
 

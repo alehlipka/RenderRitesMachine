@@ -62,6 +62,7 @@ public sealed class GuiService : IGuiService
 
         if (_frameInProgress)
         {
+            _logger.LogError("BeginFrame called before previous frame ended.");
             throw new InvalidOperationException("BeginFrame called before previous frame ended.");
         }
 
@@ -161,6 +162,7 @@ public sealed class GuiService : IGuiService
     {
         if (!_initialized)
         {
+            _logger.LogError("GUI service is not initialized. Call EnsureInitialized first.");
             throw new InvalidOperationException("GUI service is not initialized. Call EnsureInitialized first.");
         }
     }
@@ -171,6 +173,7 @@ public sealed class GuiService : IGuiService
 
         if (!_frameInProgress)
         {
+            _logger.LogError("Drawing operations require an active frame. Call BeginFrame first.");
             throw new InvalidOperationException("Drawing operations require an active frame. Call BeginFrame first.");
         }
     }
