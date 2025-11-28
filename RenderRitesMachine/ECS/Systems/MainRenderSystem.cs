@@ -90,6 +90,5 @@ public class MainRenderSystem : IEcsRunSystem
         public MeshAsset MeshAsset;
         public ShaderAsset ShaderAsset;
         public TextureAsset TextureAsset;
-        public float DistanceSquared;
     }
 }
